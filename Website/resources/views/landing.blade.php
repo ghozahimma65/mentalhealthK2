@@ -134,3 +134,26 @@
     });
   </script>
 </section>
+
+
+
+    
+   <main id="home" class="text-center py-8 px-4">
+    <h1 class="font-bold text-base md:text-lg max-w-md mx-auto">
+     <br/>
+     SISTEM PAKAR
+    </h1>
+   </main>
+   <section id="dashboard" class="bg-black text-white px-6 py-12 max-w-4xl mx-auto">
+    <p class="font-bold text-lg md:text-xl max-w-3xl mx-auto leading-snug">
+     “Kami membuat DepresiCheck sebagai proyek akhir Tahun untuk membantu teman-teman kami yang mungkin mengalami depresi untuk mengetahui tingkat depresi mereka dan menemukan solusi yang sesuai”
+    </p>
+   </section>
+   <section id="menu" class="hidden">
+    <!-- Content for Menu -->
+   </section>
+   <section id="cek-diagnosa" class="hidden">
+    <!-- Content for Cek Diagnosa -->
+   </section>
+  </body>
+ </html>
