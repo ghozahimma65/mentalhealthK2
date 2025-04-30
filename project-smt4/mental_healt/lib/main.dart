@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_project/screens/HasilTesScreen.dart';
-import 'package:mobile_project/screens/KuisScreen.dart';
-import 'package:mobile_project/screens/PertanyaanScreen.dart';
-import 'package:mobile_project/screens/TesDiagnosaScreen.dart';
-import 'package:mobile_project/screens/login_screen.dart';
-import 'package:mobile_project/screens/signup_screen.dart';
-import 'package:mobile_project/screens/unboarding_screen.dart';
-import 'package:mobile_project/screens/splash_screen.dart'; 
+import 'package:mobile_project/screen/HasilTesScreen.dart';
+import 'package:mobile_project/screen/KuisScreen.dart';
+import 'package:mobile_project/screen/PertanyaanScreen.dart';
+import 'package:mobile_project/screen/TesDiagnosaScreen.dart';
+import 'package:mobile_project/screen/login_screen.dart';
+import 'package:mobile_project/screen/signup_screen.dart';
+import 'package:mobile_project/screen/splash_screen.dart';
+import 'package:mobile_project/screen/unboarding_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,3 +34,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
