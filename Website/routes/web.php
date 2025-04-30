@@ -25,6 +25,11 @@ Route::get('/admin/dashboard', function () {
     return view('admin_dashboard');
 })->name('admin_dashboard');
 
+Route::get('/admin/tambah', function () {
+    return view('tambah_admin');
+})->name('tambah_admin');
+
+
 
 // Route tambahan dari Laravel Breeze/Fortify
 require __DIR__.'/auth.php';

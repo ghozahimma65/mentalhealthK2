@@ -47,9 +47,10 @@
      <span class="text-gray-300 font-normal mt-4 mb-1">
       Pengaturan
      </span>
-     <a class="block py-2 px-3 rounded hover:bg-gray-100" href="#">
+     <a class="block py-2 px-3 rounded hover:bg-gray-100" href="{{ route('tambah_admin') }}">
       Admin
-     </a>
+    </a>
+   
      <a class="block py-2 px-3 rounded hover:bg-gray-100" href="#">
       Logout
      </a>
@@ -141,7 +142,13 @@
         </span>
         <span class="font-normal text-gray-400">
          Admin
-        </span>
+         <script>
+            document.querySelector('form').addEventListener('submit', function(event) {
+              event.preventDefault();
+              window.location.href = "{{ route('tambah_admin') }}";
+            });
+          </script>
+          
         <i class="fas fa-ellipsis-h text-gray-400">
         </i>
        </div>
