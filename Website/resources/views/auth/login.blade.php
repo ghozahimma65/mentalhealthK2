@@ -63,6 +63,12 @@
      </div>
      <button class="w-full bg-[#4a86c5] text-white font-semibold text-sm rounded-full py-2 mt-2 hover:bg-[#3a6db3] transition-colors" type="submit">
       Login
+      <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+          event.preventDefault();
+          window.location.href = "{{ route('admin_dashboard') }}";
+        });
+      </script>
      </button>
     </form>
    </div>
