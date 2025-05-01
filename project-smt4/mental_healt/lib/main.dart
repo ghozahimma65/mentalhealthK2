@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:mobile_project/screen/HasilTesScreen.dart';
 import 'package:mobile_project/screen/KuisScreen.dart';
 import 'package:mobile_project/screen/PertanyaanScreen.dart';
@@ -34,4 +35,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
