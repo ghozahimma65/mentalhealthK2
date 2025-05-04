@@ -46,7 +46,7 @@ class LoginScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // ⬇ Langsung navigasi ke halaman Tes Diagnosa
-                    Navigator.pushReplacementNamed(context, '/tesdiagnosa');
+                    Navigator.pushReplacementNamed(context, '/homepage');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
@@ -75,4 +75,3 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
-
