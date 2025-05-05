@@ -53,7 +53,7 @@
   {{-- Dashboard Section --}}
   <section id="dashboard" class="bg-black text-white px-6 py-12 max-w-4xl mx-auto">
     <p class="font-bold text-lg md:text-xl max-w-3xl mx-auto leading-snug">
-      “Kami membuat DepresiCheck sebagai proyek akhir Tahun untuk membantu teman-teman kami yang mungkin mengalami depresi untuk mengetahui tingkat depresi mereka dan menemukan solusi yang sesuai”
+      “Kami membuat Aplikasi Diagnosa sebagai proyek akhir Tahun untuk membantu teman-teman kami yang mungkin mengalami depresi untuk mengetahui tingkat depresi mereka dan menemukan solusi yang sesuai”
     </p>
   </section>
 
@@ -64,13 +64,13 @@
     </h1>
     <section class="space-y-6">
       <div class="bg-[#f0f7fa] px-6 py-6 text-xs text-[#000c3b]">
-        Apa itu DepresiCheck?
+        Apa itu Diagnosa?
       </div>
       <div class="bg-[#f0f7fa] px-6 py-6 text-xs text-[#000c3b]">
-        Siapa yang bisa mengakses DepresiCheck?
+        Siapa yang bisa mengakses Diagnosa
       </div>
       <div class="bg-[#f0f7fa] px-6 py-6 text-xs text-[#000c3b]">
-        Apakah hasil dari DepresiCheck dapat diandalkan?
+        Apakah hasil dari Diagnosa dapat diandalkan?
       </div>
     </section>
   </main>
