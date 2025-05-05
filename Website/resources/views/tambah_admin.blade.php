@@ -161,7 +161,7 @@
  <body class="bg-[#EDF6F9] text-[#1D3557]">
   <header class="flex items-center justify-between px-4 py-3 bg-white shadow-sm">
    <div class="flex items-center space-x-2">
-    <img alt="Diagnosa logo with sad face icon in blue square" class="w-8 h-8" height="32" src="https://storage.googleapis.com/a1aa/image/57103051-bc74-43f8-5562-782c09968752.jpg" width="32"/>
+    <img alt="Diagnosa logo with sad face icon in blue square" class="w-8 h-8" height="32" src="{{ asset('assets/logo.png') }}" width="32"/>
     <span class="font-semibold text-[#1D3557] text-base md:text-lg">
      Dashboard
     </span>
