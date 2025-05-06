@@ -16,7 +16,7 @@ import 'package:mobile_project/screen/unboarding_screen.dart'; // <-- Perbaiki p
 import 'package:mobile_project/screen/home_page.dart';
 // Import untuk Profile Screen (yang baru)
 import 'package:mobile_project/screen/profile_screen.dart';
-import 'package:mobile_project/screen/unboarding_screen.dart'; // <-- Tambah ini
+// <-- Tambah ini
 
 // --- GANTI 'package:mobile_project/screen/' jika path Anda berbeda ---
 
