@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 // class MyApp extends StatelessWidget { ... } // Asumsi MyApp sudah ada
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -264,7 +266,6 @@ class _HomePageState extends State<HomePage> {
                        // Mungkin navigasi juga?
                        Navigator.pushNamed(context, '/tesdiagnosa');
                     },
-                    child: Text('Tes Sekarang'),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.deepPurple,
                       backgroundColor:
@@ -275,6 +276,7 @@ class _HomePageState extends State<HomePage> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                     ),
+                    child: Text('Tes Sekarang'),
                   ),
                 ],
               ),
@@ -391,7 +393,7 @@ class _HomePageState extends State<HomePage> {
     Widget _buildRecommendationCard(
       String imagePath, String title, String subtitle) {
         // ... (kode _buildRecommendationCard Anda)
-        return Container(
+        return SizedBox(
       width: 160, // Lebar card
       child: Card(
         clipBehavior:

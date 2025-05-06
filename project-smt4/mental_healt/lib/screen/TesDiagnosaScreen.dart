@@ -93,8 +93,8 @@ class TesDiagnosaScreen extends StatelessWidget {
             // Gambar Ilustrasi (disebelah kanan)
             Image.asset(
               imagePath,
-              height: 75, // Sesuaikan ukuran gambar
-              width: 75, // Sesuaikan ukuran gambar
+              height: 90, // Sesuaikan ukuran gambar
+              width: 90, // Sesuaikan ukuran gambar
               fit: BoxFit.contain, // Agar gambar tidak terpotong aneh
               errorBuilder: (context, error, stackTrace) {
                 // Pengganti jika gambar tidak ada/error
@@ -142,7 +142,7 @@ class TesDiagnosaScreen extends StatelessWidget {
             buttonBgColor: Colors.white,
             buttonTextColor: Colors.deepPurple,
             imagePath:
-                'assets/images/test_mental_health.png', // GANTI PATH GAMBAR
+                'assets/images/mental_health.png', // GANTI PATH GAMBAR
             gradient: LinearGradient(
               // Contoh Gradient Ungu
               colors: [Colors.deepPurple.shade400, Colors.deepPurple.shade700],
@@ -165,7 +165,7 @@ class TesDiagnosaScreen extends StatelessWidget {
             cardColor: Colors.blue, // Warna biru
             buttonBgColor: Colors.white,
             buttonTextColor: Colors.blue,
-            imagePath: 'assets/images/test_depression.png', // GANTI PATH GAMBAR
+            imagePath: 'assets/images/depression.png', // GANTI PATH GAMBAR
             gradient: LinearGradient(
               // Contoh Gradient Biru
               colors: [Colors.blue.shade400, Colors.blue.shade700],
@@ -187,7 +187,7 @@ class TesDiagnosaScreen extends StatelessWidget {
             cardColor: Colors.teal, // Warna hijau toska/teal
             buttonBgColor: Colors.white,
             buttonTextColor: Colors.teal,
-            imagePath: 'assets/images/test_bipolar.png', // GANTI PATH GAMBAR
+            imagePath: 'assets/images/bipolar.png', // GANTI PATH GAMBAR
             gradient: LinearGradient(
               // Contoh Gradient Teal
               colors: [Colors.teal.shade400, Colors.teal.shade700],
@@ -209,7 +209,7 @@ class TesDiagnosaScreen extends StatelessWidget {
             cardColor: Colors.orange, // Warna oranye
             buttonBgColor: Colors.white,
             buttonTextColor: Colors.orange,
-            imagePath: 'assets/images/test_anxiety.png', // GANTI PATH GAMBAR
+            imagePath: 'assets/images/anxiety_disorder.png', // GANTI PATH GAMBAR
             gradient: LinearGradient(
               // Contoh Gradient Orange
               colors: [Colors.orange.shade400, Colors.orange.shade700],

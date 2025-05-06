@@ -79,7 +79,7 @@ class DetailHasilTesScreen extends StatelessWidget {
                             color: colorRingan,
                             value: scoreRingan, // Nilai dari argumen
                             title:
-                                '${scoreRingan.toStringAsFixed(1)}', // Teks di potongan
+                                scoreRingan.toStringAsFixed(1), // Teks di potongan
                             radius: 70, // Ukuran potongan pie
                             titleStyle: const TextStyle(
                                 fontSize: 14,
@@ -91,7 +91,7 @@ class DetailHasilTesScreen extends StatelessWidget {
                           PieChartSectionData(
                             color: colorSedang,
                             value: scoreSedang, // Nilai dari argumen
-                            title: '${scoreSedang.toStringAsFixed(1)}',
+                            title: scoreSedang.toStringAsFixed(1),
                             radius: 70,
                             titleStyle: const TextStyle(
                                 fontSize: 14,
@@ -103,7 +103,7 @@ class DetailHasilTesScreen extends StatelessWidget {
                           PieChartSectionData(
                             color: colorBerat,
                             value: scoreBerat, // Nilai dari argumen
-                            title: '${scoreBerat.toStringAsFixed(1)}',
+                            title: scoreBerat.toStringAsFixed(1),
                             radius: 70,
                             titleStyle: const TextStyle(
                                 fontSize: 14,
