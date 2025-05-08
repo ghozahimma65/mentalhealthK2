@@ -80,12 +80,16 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 12),
                                 ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.purple,
-                                    ),
-                                    child: const Text('Tes Sekarang'),
-                                    ),
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/kuis',
+                                      arguments: 'mental_health', // langsung kirim tipe tes
+                                      );
+                                      },
+                                      child: const Text('Tes Diagnosa Sekarang'),
+                                      ),
+
                                     ],
                                     ),
                                     ),

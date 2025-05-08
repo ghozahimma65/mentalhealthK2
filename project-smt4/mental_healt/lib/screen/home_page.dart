@@ -50,10 +50,10 @@ class _HomePageState extends State<HomePage> {
         break;
       case 1:
         // Index 1 adalah 'Tes Diagnosa'
-        print("Navigating to /tesdiagnosa");
+        print("Navigating to /kuis");
         // Gunakan pushNamed untuk navigasi ke route bernama '/tesdiagnosa'
         // Pengguna bisa kembali ke HomePage dengan tombol back.
-        Navigator.pushNamed(context, '/tesdiagnosa');
+        Navigator.pushNamed(context, '/kuis');
         break;
       case 2:
         // Index 2 adalah 'Hasil Tes'

@@ -1,236 +1,143 @@
 import 'package:flutter/material.dart';
 
-// Nama class sesuai konvensi PascalCase
 class TesDiagnosaScreen extends StatelessWidget {
-  // Tambahkan const constructor
   const TesDiagnosaScreen({super.key});
-
-  // Helper Method untuk membuat satu kartu tes (agar tidak duplikat kode)
-  Widget _buildTestCard({
-    required BuildContext context, // Dibutuhkan untuk navigasi & styling
-    required String title,
-    required String description,
-    required String buttonText,
-    required Color cardColor, // Warna solid utama kartu
-    required Color buttonBgColor, // Warna background tombol
-    required Color buttonTextColor, // Warna teks tombol
-    required String imagePath, // Path ke gambar ilustrasi
-    required VoidCallback onPressed, // Aksi ketika tombol ditekan
-    Gradient? gradient, // Gradient opsional untuk latar kartu
-  }) {
-    return Padding(
-      // Beri jarak antar kartu
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          // Gunakan gradient jika ada, jika tidak pakai warna solid
-          gradient: gradient,
-          color: gradient == null ? cardColor : null,
-          borderRadius: BorderRadius.circular(15.0),
-          boxShadow: [
-            BoxShadow(
-              color: cardColor.withOpacity(0.3),
-              spreadRadius: 1,
-              blurRadius: 6,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment:
-              CrossAxisAlignment.center, // Pusatkan item secara vertikal
-          children: [
-            // Kolom untuk Teks dan Tombol (disebelah kiri)
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment:
-                    MainAxisAlignment.center, // Pusatkan teks & tombol
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors
-                          .white, // Asumsi teks selalu putih di kartu berwarna
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white.withOpacity(0.9),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  ElevatedButton(
-                    onPressed:
-                        onPressed, // Gunakan fungsi onPressed yang diberikan
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonBgColor,
-                        foregroundColor: buttonTextColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 8),
-                        textStyle: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight
-                                .bold) // Ukuran teks tombol lebih kecil
-                        ),
-                    child: Text(buttonText),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 15), // Spasi antara teks dan gambar
-
-            // Gambar Ilustrasi (disebelah kanan)
-            Image.asset(
-              imagePath,
-              height: 90, // Sesuaikan ukuran gambar
-              width: 90, // Sesuaikan ukuran gambar
-              fit: BoxFit.contain, // Agar gambar tidak terpotong aneh
-              errorBuilder: (context, error, stackTrace) {
-                // Pengganti jika gambar tidak ada/error
-                return Container(
-                  height: 75,
-                  width: 75,
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: const Icon(Icons.image_not_supported,
-                      color: Colors.white54, size: 40),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('TES DIAGNOSA'),
-        // Hapus // jika ingin warna AppBar konsisten
-        // backgroundColor: Colors.deepPurple,
-        // foregroundColor: Colors.white,
-        elevation: 0, // Hilangkan bayangan jika desainnya flat
-        backgroundColor: Theme.of(context)
-            .scaffoldBackgroundColor, // Samakan dengan latar body
-        foregroundColor: Colors.black87, // Warna teks & ikon appbar jadi gelap
+        title: const Text('Tes Diagnosa'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: Colors.black87,
       ),
-      body: ListView(
-        // Gunakan ListView agar bisa discroll jika banyak tes
-        padding: const EdgeInsets.all(16.0), // Padding di sekeliling list
+      body: Stack(
         children: [
-          // Panggil helper method untuk setiap kartu tes
-          _buildTestCard(
-            context: context,
-            title: 'Mental Health',
-            description: 'Cek Mental Health Kamu sekarang!',
-            buttonText: 'Tes Sekarang',
-            cardColor: Colors.deepPurple, // Warna ungu
-            buttonBgColor: Colors.white,
-            buttonTextColor: Colors.deepPurple,
-            imagePath:
-                'assets/images/mental_health.png', // GANTI PATH GAMBAR
-            gradient: LinearGradient(
-              // Contoh Gradient Ungu
-              colors: [Colors.deepPurple.shade400, Colors.deepPurple.shade700],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+          // Background gradasi
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.deepPurple.shade300, Colors.deepPurple.shade700],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
             ),
-            onPressed: () {
-              print('Tombol Mental Health ditekan');
-              // Navigasi ke kuis spesifik atau umum
-              Navigator.pushNamed(context, '/kuis',
-                  arguments: 'mental_health'); // Kirim argumen (opsional)
-            },
           ),
 
-          _buildTestCard(
-            context: context,
-            title: 'Depression',
-            description: 'Cek Tingkat Depresi Kamu sekarang!',
-            buttonText: 'Tes Sekarang',
-            cardColor: Colors.blue, // Warna biru
-            buttonBgColor: Colors.white,
-            buttonTextColor: Colors.blue,
-            imagePath: 'assets/images/depression.png', // GANTI PATH GAMBAR
-            gradient: LinearGradient(
-              // Contoh Gradient Biru
-              colors: [Colors.blue.shade400, Colors.blue.shade700],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            onPressed: () {
-              print('Tombol Depression ditekan');
-              Navigator.pushNamed(context, '/kuis',
-                  arguments: 'depression'); // Kirim argumen (opsional)
-            },
-          ),
+          // Konten utama
+          SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 100, 20, 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Gambar utama di atas
+                Image.asset(
+                  'assets/images/mental_health.png',
+                  height: 200,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.image, size: 100, color: Colors.white70),
+                ),
+                const SizedBox(height: 30),
 
-          _buildTestCard(
-            context: context,
-            title: 'BIPOLAR',
-            description: 'Cek Tingkat Bipolar Kamu sekarang!',
-            buttonText: 'Tes Sekarang',
-            cardColor: Colors.teal, // Warna hijau toska/teal
-            buttonBgColor: Colors.white,
-            buttonTextColor: Colors.teal,
-            imagePath: 'assets/images/bipolar.png', // GANTI PATH GAMBAR
-            gradient: LinearGradient(
-              // Contoh Gradient Teal
-              colors: [Colors.teal.shade400, Colors.teal.shade700],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            onPressed: () {
-              print('Tombol Bipolar ditekan');
-              Navigator.pushNamed(context, '/kuis',
-                  arguments: 'bipolar'); // Kirim argumen (opsional)
-            },
-          ),
+                // Keterangan setelah gambar
+                Text(
+                  'Apa itu Tes Kesehatan Mental?',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Tes ini membantu kamu mengenali kondisi emosional dan psikologis yang sedang kamu alami. '
+                  'Tes ini bukan diagnosis resmi, tapi bisa menjadi langkah awal untuk peduli terhadap kesehatan mental kamu.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white.withOpacity(0.9),
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 30),
 
-          _buildTestCard(
-            context: context,
-            title: 'Anxiety Disorder',
-            description: 'Cek Tingkat Kecemasan Kamu sekarang!',
-            buttonText: 'Tes Sekarang',
-            cardColor: Colors.orange, // Warna oranye
-            buttonBgColor: Colors.white,
-            buttonTextColor: Colors.orange,
-            imagePath: 'assets/images/anxiety_disorder.png', // GANTI PATH GAMBAR
-            gradient: LinearGradient(
-              // Contoh Gradient Orange
-              colors: [Colors.orange.shade400, Colors.orange.shade700],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            onPressed: () {
-              print('Tombol Anxiety Disorder ditekan');
-              Navigator.pushNamed(context, '/kuis',
-                  arguments: 'anxiety'); // Kirim argumen (opsional)
-            },
-          ),
+                // Kartu Tes
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white24),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Mental Health Check',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Lakukan pemeriksaan cepat kondisi kesehatan mental kamu melalui beberapa pertanyaan yang sudah disiapkan.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white.withOpacity(0.9),
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          const Icon(Icons.timer, color: Colors.white70, size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Durasi: ±5-10 Menit',
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
 
-          // Tambahkan kartu lain jika perlu di sini
+                      // Tombol Mulai Tes
+                      Center(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/kuis', arguments: 'mental_health');
+                          },
+                          icon: const Icon(Icons.play_arrow),
+                          label: const Text('Mulai Tes Sekarang'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.deepPurple,
+                            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+                            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
-      // BottomNavigationBar biasanya tidak diletakkan di halaman detail seperti ini
-      // jika Anda menggunakan Navigator.pushNamed dari HomePage.
-      // BottomNavigationBar akan tetap terlihat di HomePage.
-      // Jika Anda ingin BottomNav ada di SEMUA halaman, strukturnya harus diubah
-      // (misalnya, Scaffold utama ada di luar dan body-nya yang berganti).
     );
   }
 }
