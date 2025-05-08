@@ -1,204 +1,167 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 
-// Nama class sesuai konvensi PascalCase
 class HasilTesScreen extends StatelessWidget {
-  // Tambahkan const constructor
-  const HasilTesScreen({super.key});
+  final Map<String, double> data; // e.g. {'Depresi Ringan': 30, 'Depresi Sedang': 40, 'Depresi Berat': 30}
+  final String message; // e.g. "Kecenderungan depresi sedang..."
+  
+  const HasilTesScreen({
+    super.key,
+    required this.data,
+    required this.message,
+  });
 
-  // Helper Method untuk membuat KARTU HASIL tes
-  // Mirip dengan _buildTestCard, tapi tombolnya beda dan mungkin menampilkan info lain
-  Widget _buildResultCard({
-    required BuildContext context,
-    required String title,
-    required String
-        description, // Mungkin nanti diganti ringkasan hasil/tanggal
-    required String buttonText,
-    required Color cardColor,
-    required Color buttonBgColor,
-    required Color buttonTextColor,
-    required String imagePath,
-    required VoidCallback onPressed, // Aksi saat tombol "Cek Hasil" ditekan
-    Gradient? gradient,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Container(
-        padding: const EdgeInsets.all(20),
+  @override
+  Widget build(BuildContext context) {
+    final List<Color> sectionColors = [
+      Colors.lightBlueAccent,
+      Colors.orangeAccent,
+      Colors.redAccent,
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Hasil Tes Depresi'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      extendBodyBehindAppBar: true,
+      body: Container(
+        width: double.infinity,
         decoration: BoxDecoration(
-          gradient: gradient,
-          color: gradient == null ? cardColor : null,
-          borderRadius: BorderRadius.circular(15.0),
-          boxShadow: [
-            BoxShadow(
-              color: cardColor.withOpacity(0.3),
-              spreadRadius: 1,
-              blurRadius: 6,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          gradient: LinearGradient(
+            colors: [Colors.purple.shade50, Colors.purple.shade200],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    description, // Tampilkan deskripsi atau ringkasan hasil
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white.withOpacity(0.9),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  ElevatedButton(
-                    onPressed: onPressed,
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonBgColor,
-                        foregroundColor: buttonTextColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+        child: SafeArea(
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+
+              // Kartu Chart
+              Card(
+                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                elevation: 6,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Distribusi Skor',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 8),
-                        textStyle: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold)),
-                    child: Text(buttonText), // Tombol "Cek Hasil"
+                      ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        height: 200,
+                        child: PieChart(
+                          PieChartData(
+                            sectionsSpace: 4,
+                            centerSpaceRadius: 40,
+                            startDegreeOffset: -90,
+                            sections: List.generate(data.length, (i) {
+                              final entry = data.entries.elementAt(i);
+                              return PieChartSectionData(
+                                value: entry.value,
+                                title: '${entry.value.toStringAsFixed(1)}%',
+                                color: sectionColors[i % sectionColors.length],
+                                radius: 80,
+                                titleStyle: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              );
+                            }),
+                          ),
+                          swapAnimationDuration: const Duration(milliseconds: 800),
+                          swapAnimationCurve: Curves.easeInOut,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Legend
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 8,
+                        alignment: WrapAlignment.center,
+                        children: List.generate(data.length, (i) {
+                          final entry = data.entries.elementAt(i);
+                          return _LegendItem(
+                            color: sectionColors[i % sectionColors.length],
+                            text: entry.key,
+                          );
+                        }),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-            const SizedBox(width: 15),
-            Image.asset(
-              imagePath,
-              height: 75,
-              width: 75,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 75,
-                  width: 75,
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: const Icon(Icons.image_not_supported,
-                      color: Colors.white54, size: 40),
-                );
-              },
-            ),
-          ],
+
+              const SizedBox(height: 20),
+
+              // Kartu Pesan
+              Card(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                color: Colors.white,
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    message,
+                    style: const TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+
+              const Spacer(),
+
+              // Tombol Selesai
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    ),
+                    child: const Text(
+                      'Selesai',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+class _LegendItem extends StatelessWidget {
+  final Color color;
+  final String text;
+  const _LegendItem({required this.color, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    // Data hasil tes statis sebagai contoh
-    // Di aplikasi nyata, data ini akan diambil dari database atau state management
-    final List<Map<String, dynamic>> dummyResults = [
-      {
-        'title': 'Depression',
-        'description':
-            'Cek Tingkat Depresi Kamu sekarang!', // Ganti dengan hasil/tanggal tes
-        'buttonText': 'Cek Hasil',
-        'cardColor': Colors.blue,
-        'buttonBgColor': Colors.white,
-        'buttonTextColor': Colors.blue,
-        'imagePath': 'assets/images/test_depression.png', // GANTI PATH GAMBAR
-        'gradient': LinearGradient(
-          colors: [Colors.blue.shade400, Colors.blue.shade700],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        'resultId': 'depression_001' // ID unik untuk hasil tes ini
-      },
-      // Tambahkan map lain di sini jika ada hasil tes lain
-      // { 'title': 'Anxiety', ... },
-    ];
-
-    return Scaffold(
-      // AppBar dibuat flat agar mirip desain
-      appBar: AppBar(
-        title: const Text(
-          'hasil tes', // Judul di kiri atas sesuai gambar
-          style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.normal), // Style disesuaikan
-        ),
-        elevation: 0,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        foregroundColor: Colors.black87,
-        automaticallyImplyLeading:
-            false, // Hilangkan tombol back jika tidak perlu
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Judul Utama Halaman
-            const Padding(
-              padding:
-                  EdgeInsets.only(top: 0, bottom: 20.0), // Jarak dari app bar
-              child: Text(
-                'Riwayat Hasil Tes',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-            ),
-
-            // Daftar Hasil Tes
-            Expanded(
-              // Gunakan Expanded agar ListView mengisi sisa ruang
-              child: ListView.builder(
-                itemCount: dummyResults.length, // Jumlah hasil tes
-                itemBuilder: (context, index) {
-                  final result = dummyResults[index];
-                  // Buat kartu untuk setiap hasil tes
-                  return _buildResultCard(
-                    context: context,
-                    title: result['title'],
-                    description: result['description'],
-                    buttonText: result['buttonText'],
-                    cardColor: result['cardColor'],
-                    buttonBgColor: result['buttonBgColor'],
-                    buttonTextColor: result['buttonTextColor'],
-                    imagePath: result['imagePath'],
-                    gradient: result['gradient'],
-                    onPressed: () {
-                      print(
-                          'Tombol Cek Hasil ${result['title']} (${result['resultId']}) ditekan');
-                      // TODO: Navigasi ke halaman detail hasil tes
-                      // Mungkin perlu mengirim resultId atau data lain
-                      // Navigator.pushNamed(context, '/detailhasil', arguments: result['resultId']);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(
-                                'Lihat Detail Hasil ${result['title']} belum diimplementasikan')),
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(width: 16, height: 16, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        const SizedBox(width: 6),
+        Text(text),
+      ],
     );
   }
 }

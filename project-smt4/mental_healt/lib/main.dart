@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 // --- PASTIKAN PATH DAN NAMA FILE/CLASS SUDAH BENAR SEMUA ---
 import 'package:mobile_project/screen/riwayat_hasil_tes.dart';
 import 'package:mobile_project/screen/detail_hasil_tes_screen.dart';
-import 'package:mobile_project/screen/TesDiagnosaScreen.dart';
 import 'package:mobile_project/screen/KuisScreen.dart';
 import 'package:mobile_project/screen/PertanyaanScreen.dart';
 import 'package:mobile_project/screen/login_screen.dart';
@@ -42,7 +41,7 @@ class MyApp extends StatelessWidget {
 
         '/login': (context) => const LoginScreen(), // Hapus const jika error / stateful
         '/signup': (context) => const SignUpScreen(), // Perlu const constructor
-        '/tesdiagnosa': (context) => const TesDiagnosaScreen(), // Perlu const constructor
+        
         '/kuis': (context) => const KuisScreen(), // Perlu const constructor
         '/pertanyaan': (context) => const PertanyaanScreen(), // Perlu const constructor
 

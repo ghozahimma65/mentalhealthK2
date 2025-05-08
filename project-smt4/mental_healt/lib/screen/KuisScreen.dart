@@ -27,23 +27,18 @@ class KuisScreen extends StatelessWidget {
     // Tentukan judul dan deskripsi berdasarkan jenis tes
     String screenTitle = 'Informasi Tes';
     String description = 'Tes ini akan berisi sejumlah pertanyaan untuk membantu mengukur tingkat kondisi mental Anda. Jawablah setiap pertanyaan dengan jujur sesuai kondisi Anda beberapa waktu terakhir.';
-    String imagePath = 'assets/images/mental_health.png'; // Gambar default
-
-    // Sesuaikan konten berdasarkan testType
-    if (testType == 'depression') {
-      screenTitle = 'Informasi Tes Depresi';
-      description = 'Tes ini fokus pada gejala depresi. Jawablah setiap pertanyaan berdasarkan apa yang Anda rasakan selama 2 minggu terakhir.';
-      imagePath = 'assets/images/depression.png'; // Ganti dengan gambar spesifik depresi
-    } else if (testType == 'anxiety') {
-       screenTitle = 'Informasi Tes Kecemasan';
-       description = 'Tes ini fokus pada gejala kecemasan (Anxiety). Jawablah setiap pertanyaan dengan jujur mengenai perasaan Anda.';
-       imagePath = 'assets/images/anxiety_disorder.png'; // Ganti dengan gambar spesifik anxiety
+    String imagePath = 'assets/images/gambar_kuis.png'; // Gambar default
+    
+    if (testType == 'mental_health') {
+      imagePath = 'assets/images/gambar_kuis.png';
     }
-    // Tambahkan else if untuk tipe tes lainnya (mental_health, bipolar, dll)
+    // Sesuaikan konten berdasarkan testType
+   
+   // Tambahkan else if untuk tipe tes lainnya (mental_health, bipolar, dll)
 
     // Data dummy untuk poin informasi
     const int questionCount = 15; // Ganti dengan jumlah pertanyaan asli
-    const String estimatedTime = "5-10 Menit"; // Ganti dengan perkiraan waktu
+    const String estimatedTime = "10 Menit"; // Ganti dengan perkiraan waktu
 
     return Scaffold(
       appBar: AppBar(
@@ -107,7 +102,7 @@ class KuisScreen extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(double.infinity, 50), // Lebar penuh, tinggi 50
-              backgroundColor: Theme.of(context).primaryColor, // Warna utama tema
+              backgroundColor: Colors.deepPurple, // Warna utama tema
               foregroundColor: Colors.white,
               textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               shape: RoundedRectangleBorder(
