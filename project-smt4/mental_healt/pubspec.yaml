@@ -4,27 +4,25 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.6.1
+  sdk: '>=3.2.0 <4.0.0' # Saya sarankan rentang yang lebih umum untuk Dart SDK
 
 dependencies:
   flutter:
     sdk: flutter
-  smooth_page_indicator: ^1.0.0
-  lucide_icons: ^0.257.0
+  smooth_page_indicator: ^1.0.0 # Mungkin perlu ^1.1.0 jika ada null safety issue
+  lucide_icons: ^0.257.0 # Mungkin perlu versi terbaru jika ada isu
   cupertino_icons: ^1.0.8
-  fl_chart: ^0.63.0 
-  flutter_native_splash: ^2.4.4
+  fl_chart: ^0.68.0 # Saya sarankan update ke versi terbaru
+  flutter_native_splash: ^2.4.0 # Versi stabil sebelumnya, atau cek terbaru
   just_audio: ^0.9.36
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
-
+  flutter_lints: ^3.0.0 # Coba turunkan versi lints jika ada masalah dengan SDK
 
 flutter:
   uses-material-design: true
-
   assets:
     - assets/images/
-    - assets/audio/  # <-- TAMBAHKAN INI
+    - assets/audio/
