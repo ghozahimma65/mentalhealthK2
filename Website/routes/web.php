@@ -3,33 +3,44 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminTambahController;
+use App\Http\Controllers\AuthController;
 
-// Route ke halaman landing (tanpa login)
+
+// Halaman landing
 Route::get('/', function () {
     return view('landing');
 });
 
-// Route ke dashboard pakai controller, harus login & terverifikasi
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+// Rute untuk halaman dashboard umum
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-// Group route yang butuh autentikasi
+// Grup route yang memerlukan autentikasi
 Route::middleware('auth')->group(function () {
+    // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Admin routes
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+        // Rute untuk Tambah Admin
+        // GET untuk menampilkan form tambah admin
+        Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah'); // Ini akan membuat rute bernama 'admin.tambah'
+
+        // POST untuk menyimpan data admin baru
+        Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store'); // Ini akan membuat rute bernama 'admin.tambah.store'
+
+        // Rute untuk Gejala
+        Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
+});
+Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
 });
 
-Route::get('/admin/dashboard', function () {
-    return view('admin_dashboard');
-})->name('admin_dashboard');
-
-Route::get('/admin/tambah', function () {
-    return view('tambah_admin');
-})->name('tambah_admin');
 
 
-
-// Route tambahan dari Laravel Breeze/Fortify
+// Auth routes dari Laravel Breeze
 require __DIR__.'/auth.php';

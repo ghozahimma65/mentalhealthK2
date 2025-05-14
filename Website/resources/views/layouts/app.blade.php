@@ -14,7 +14,7 @@
 <body class="bg-[#EDF6F9] text-[#2C3E70] min-h-screen">
 
     {{-- HEADER --}}
-    @include('partials.header')
+    @include('layouts.main')
 
     <main class="flex min-h-[calc(100vh-56px)]">
         
