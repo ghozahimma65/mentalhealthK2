@@ -1,17 +1,20 @@
-name: mental_healt
+name: mobile_project
 description: "A new Flutter project."
 publish_to: 'none'
-
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.0
+  sdk: ">=3.0.0 <4.0.0"  # cocok untuk Dart SDK 3.6.1
 
 dependencies:
   flutter:
     sdk: flutter
+  smooth_page_indicator: ^1.0.0
+  lucide_icons: ^0.257.0
   cupertino_icons: ^1.0.8
-  flutter_native_splash: ^2.4.6
+  flutter_native_splash: ^2.4.4
+  just_audio: ^0.9.36
+  pie_chart: ^5.1.0  # tambahkan di sini
 
 dev_dependencies:
   flutter_test:
@@ -22,43 +25,5 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/img/
-
-# Konfigurasi splash screen (diluar 'flutter:')
-flutter_native_splash:
-  color: "#ffffff"
-  image: assets/img/logo.png
-  android_12:
-    # The image parameter sets the splash screen icon image.  If this parameter is not specified,
-    # the app's launcher icon will be used instead.
-    # Please note that the splash screen will be clipped to a circle on the center of the screen.
-    # App icon with an icon background: This should be 960×960 pixels, and fit within a circle
-    # 640 pixels in diameter.
-    # App icon without an icon background: This should be 1152×1152 pixels, and fit within a circle
-    # 768 pixels in diameter.  To fit a 1152x1152 image within a circle with a 768 diameter, simply 
-    # ensure that the most important design elements of your image are placed within a circular area
-    # with a 768 diameter at the center of the 1152x1152 canvas.
-    #image: assets/android12splash.png
-    image: assets/img/logo.png
-
-    # Splash screen background color.
-    color: "#ffffff"
-
-    # App icon background color.
-    #icon_background_color: "#111111"
-
-    # The branding property allows you to specify an image used as branding in the splash screen.
-    # branding: assets/img/logo.png
-
-    # The image_dark, color_dark, icon_background_color_dark, and branding_dark set values that
-    # apply when the device is in dark mode. If they are not specified, the app will use the
-    # parameters from above.  If there is no parameter above, the app will use the light mode values.
-    #image_dark: assets/android12splash-invert.png
-    #color_dark: "#042a49"
-    #icon_background_color_dark: "#eeeeee"
-  android: true
-  ios: true
-  web: false
-  branding: null
-  android_gravity: center
-  ios_content_mode: center
+    - assets/images/
+    - assets/audio/
