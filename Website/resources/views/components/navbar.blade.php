@@ -25,11 +25,12 @@
     <a href="#faq" class="hover:underline">FAQ</a>
     <a href="#kontak" class="hover:underline">Kontak</a>
     <a
-    href="/login"
+    href="{{ route('admin.dashboard') }}"
     class="bg-[#7A9CC6] text-white text-sm font-semibold px-4 py-2 rounded-md select-none"
-    >
-    Login
-    </a>
+  >
+    Dashboard Admin
+  </a>
+
 
   </nav>
 </header>
