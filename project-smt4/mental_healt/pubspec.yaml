@@ -15,6 +15,7 @@ dependencies:
   fl_chart: ^0.63.0 
   flutter_native_splash: ^2.4.4
   just_audio: ^0.9.36
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:
