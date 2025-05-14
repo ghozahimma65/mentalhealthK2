@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController; // Asumsi controller ini sudah ada
 use App\Http\Controllers\ProfileController;   // Asumsi controller ini sudah ada
+use App\Http\Controllers\DiagnosaController;   // Asumsi controller ini sudah ada
 use App\Http\Controllers\GangguanController; // Pastikan controller ini sudah Anda buat
 
 /*
@@ -38,6 +39,7 @@ Route::get('/', function () {
 // Route untuk halaman detail Gangguan Mood
 // Ini akan ditangani oleh method showMoodDisorder di GangguanController
 Route::get('/gangguan/mood', [GangguanController::class, 'showMoodDisorder'])->name('gangguan.mood');
+Route::get('/cek/diagnosa', [DiagnosaController::class, 'showCekDiagnosaPage'])->name('diagnosa.cek');
 
 // Route ke dashboard pakai controller, harus login & terverifikasi
 Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -56,7 +58,7 @@ Route::middleware('auth')->group(function () {
 // Contoh route untuk admin (sesuaikan dengan kebutuhan Anda)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
-        return view('admin_dashboard'); // Pastikan view admin_dashboard.blade.php ada
+        return view('admin_dashboard') ; // Pastikan view admin_dashboard.blade.php ada
     })->name('dashboard');
 
     Route::get('/tambah', function () {
