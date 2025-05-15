@@ -15,6 +15,7 @@ dependencies:
   fl_chart: ^0.68.0 # Saya sarankan update ke versi terbaru
   flutter_native_splash: ^2.4.0 # Versi stabil sebelumnya, atau cek terbaru
   just_audio: ^0.9.36
+  pie_chart: ^5.1.0  # tambahkan di sini
 
 dev_dependencies:
   flutter_test:
@@ -25,4 +26,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/audio/
     - assets/audio/

@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
     String? routeName;
     switch (index) {
       case 0: print("Navigating to Home"); break;
-      case 1: routeName = '/tesdiagnosa'; break;
+      case 1: routeName = '/kuis'; break;
       case 2: routeName = '/hasil'; break;
       case 3: routeName = '/profile'; break;
       default: print("Invalid index: $index");
@@ -33,7 +33,11 @@ class _HomePageState extends State<HomePage> {
           Navigator.popUntil(context, (route) => route.isFirst);
        }
        // Navigasi ke route tujuan (jika kita sudah di home, ini akan push)
-       Navigator.pushNamed(context, routeName);
+       Navigator.pushNamed(
+    context,
+    routeName,
+    arguments: routeName == '/kuis' ? 'mental_health' : null, // hanya untuk kuis
+  );
     }
      // Update index terpilih untuk highlight bottom nav
      setState(() { _selectedIndex = index; });
