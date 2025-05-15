@@ -1,7 +1,25 @@
-// Nama file: meditation_screen.dart
+// Nama file: lib/screen/meditation_screen.dart
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart'; // <-- Pastikan import ini ada
-import 'dart:async'; // <-- Pastikan import ini ada
+import 'package:audioplayers/audioplayers.dart'; // <-- Import audioplayers
+import 'dart:async';
+import 'dart:math'; // Untuk min()
+
+// Model Data Lagu Meditasi (tetap sama)
+class MeditationTrack {
+  final String id;
+  final String title;
+  final String description;
+  final String audioPath;
+  final String? imagePath;
+
+  MeditationTrack({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.audioPath,
+    this.imagePath,
+  });
+}
 
 class MeditationScreen extends StatefulWidget {
   const MeditationScreen({super.key});
@@ -11,8 +29,8 @@ class MeditationScreen extends StatefulWidget {
 }
 
 class _MeditationScreenState extends State<MeditationScreen> {
-  final AudioPlayer _player = AudioPlayer();
-  bool _isLoading = true;
+  final AudioPlayer _player = AudioPlayer(); // Dari audioplayers
+  bool _isLoading = false;
   bool _isPlaying = false;
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
@@ -20,119 +38,121 @@ class _MeditationScreenState extends State<MeditationScreen> {
   StreamSubscription? _playerStateSubscription;
   StreamSubscription? _durationSubscription;
   StreamSubscription? _positionSubscription;
+  StreamSubscription? _playerCompleteSubscription;
+
+
+  final List<MeditationTrack> _meditationTracks = List.generate(10, (index) {
+    return MeditationTrack(
+      id: 'track_${index + 1}',
+      title: 'Relaksasi Jiwa ${index + 1}', // Nama contoh baru
+      description: 'Musik penenang pikiran #${index + 1}',
+      // --- PASTIKAN PATH AUDIO INI BENAR ---
+      audioPath: 'audio/meditasi_track_${index + 1}.mp3', // Path untuk AssetSource audioplayers
+      // --- PASTIKAN PATH GAMBAR INI BENAR (jika dipakai) ---
+      imagePath: 'images/meditasi_cover_${index + 1}.png',
+    );
+  });
+
+  MeditationTrack? _currentTrack;
 
   @override
   void initState() {
     super.initState();
-    print("[MeditationScreen] initState called"); // Log initState
-    _initAudioPlayer();
+    print("[MeditationScreen audioplayers] initState");
+    _setupPlayerListeners();
   }
 
-  Future<void> _initAudioPlayer() async {
-    print("[MeditationScreen] _initAudioPlayer started...");
-    if (!mounted) return; // Cek jika widget masih mounted
-    setState(() {
-      _isLoading = true;
+  void _setupPlayerListeners() {
+    _playerStateSubscription = _player.onPlayerStateChanged.listen((PlayerState state) {
+      if (!mounted) return;
+      print("[MeditationScreen audioplayers] Player state: $state");
+      setState(() {
+        _isPlaying = (state == PlayerState.playing);
+      });
     });
 
-    // --- PATH AUDIO ANDA ---
-    // --- PASTIKAN INI 100% BENAR SESUAI LOKASI & NAMA FILE ANDA ---
-    const String audioPath = 'assets/audio/meditasi_tenang.mp3';
-    // ------------------------
+    _durationSubscription = _player.onDurationChanged.listen((Duration d) {
+      if (!mounted) return;
+      print("[MeditationScreen audioplayers] Max duration: $d");
+      setState(() { _duration = d; });
+    });
 
-    print("[MeditationScreen] Trying to load asset: '$audioPath'");
+    _positionSubscription = _player.onPositionChanged.listen((Duration p) {
+      if (!mounted) return;
+      setState(() { _position = p; });
+    });
 
-    try {
-      // Coba load aset
-      await _player.setAsset(audioPath);
-      print("[MeditationScreen] setAsset completed successfully.");
-
-      // Setup listeners HANYA JIKA setAsset berhasil
-      _playerStateSubscription = _player.playerStateStream.listen((state) {
-        if (!mounted) return;
-        print(
-            "[MeditationScreen] Player state changed: ${state.processingState}, Playing: ${state.playing}");
+    _playerCompleteSubscription = _player.onPlayerComplete.listen((event) {
+        if(!mounted) return;
+        print("[MeditationScreen audioplayers] Audio Complete");
         setState(() {
-          _isPlaying = state.playing;
-          switch (state.processingState) {
-            case ProcessingState.idle:
-            case ProcessingState.loading:
-            case ProcessingState.buffering:
-              _isLoading = true;
-              break;
-            case ProcessingState.ready:
-            case ProcessingState.completed:
-              _isLoading = false;
-              break;
-          }
+            _isPlaying = false;
+            _position = Duration.zero; // Kembali ke awal untuk UI slider
+            // _currentTrack = null; // Opsional: reset track jika ingin player hilang
         });
-      });
+    });
+  }
 
-      _durationSubscription = _player.durationStream.listen((duration) {
-        if (mounted && duration != null) {
-          print("[MeditationScreen] Duration received: $duration");
-          setState(() {
-            _duration = duration;
-          });
-        }
-      });
+  Future<void> _loadAndPlayTrack(MeditationTrack track) async {
+    if (!mounted) return;
 
-      _positionSubscription = _player.positionStream.listen((position) {
-        if (mounted) {
-          // Log posisi bisa dimatikan jika terlalu ramai
-          // print("[MeditationScreen] Position changed: $position");
-          setState(() {
-            _position = position;
-          });
-        }
-      });
-
-      // Cek state setelah listener (mungkin sudah ready)
-      if (_player.processingState == ProcessingState.ready && mounted) {
-        print("[MeditationScreen] Player already ready after listener setup.");
-        setState(() {
-          _isLoading = false;
-        });
-      } else if (mounted) {
-        print(
-            "[MeditationScreen] Player not immediately ready. Waiting for listener. State: ${_player.processingState}");
+    // Jika track yang sama ditekan
+    if (_currentTrack?.id == track.id) {
+      if (_isPlaying) {
+        print("[MeditationScreen audioplayers] Pausing current track");
+        await _player.pause();
+      } else {
+        print("[MeditationScreen audioplayers] Resuming current track");
+        await _player.resume();
       }
-    } catch (e, s) {
-      // Tangani error spesifik saat setAsset
-      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      print("!!! ERROR loading audio source '$audioPath': $e");
-      print("!!! StackTrace: $s");
-      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        // Di dalam catch(e, s) di _initAudioPlayer
+      return;
+    }
 
+    // Jika track berbeda atau belum ada track
+    setState(() {
+      _currentTrack = track;
+      _isLoading = true;
+      _isPlaying = false;
+      _position = Duration.zero;
+      _duration = Duration.zero;
+    });
+
+    print("[MeditationScreen audioplayers] Trying to load asset: '${track.audioPath}' (for audioplayers, path is relative to assets folder)");
+    try {
+      // audioplayers menggunakan AssetSource dan pathnya relatif dari folder assets
+      // Jadi 'assets/audio/file.mp3' menjadi 'audio/file.mp3'
+      await _player.play(AssetSource(track.audioPath));
+      print("[MeditationScreen audioplayers] play(AssetSource) called for '${track.title}'.");
+      // _isLoading akan dihandle oleh listener PlayerState.loading/buffering
+      // setState(() { _isLoading = false; }); // Dihapus karena listener sudah ada
+    } catch (e, s) {
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      print("!!! ERROR from audioplayers for '${track.audioPath}': $e");
+      print("!!! StackTrace: $s");
+      print("!!! PERIKSA: 1.Path aset di pubspec.yaml. 2.Path di kode (relatif dari assets). 3.File fisik ada. 4.Format MP3 valid?");
+      print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      if (mounted) {
+        setState(() { _isLoading = false; _currentTrack = null; });
         ScaffoldMessenger.of(context).showSnackBar(
-            // Versi BARU (lebih aman):
-            SnackBar(
-                content: Text(
-                    'Gagal memuat audio: ${e.toString()}')) // <-- Tampilkan error lengkap
-            );
+            SnackBar(content: Text('Gagal memuat: ${track.title}. Error: ${e.toString().substring(0, min(e.toString().length, 70))}...'))
+        );
       }
     }
   }
 
   @override
   void dispose() {
-    print("[MeditationScreen] dispose called");
-    // Batalkan listener dan dispose player
+    print("[MeditationScreen audioplayers] dispose called");
     _playerStateSubscription?.cancel();
     _durationSubscription?.cancel();
     _positionSubscription?.cancel();
+    _playerCompleteSubscription?.cancel();
+    _player.release(); // atau _player.dispose(); tergantung versi API
     _player.dispose();
     super.dispose();
   }
 
-  // Fungsi format durasi (tetap sama)
   String _formatDuration(Duration duration) {
-    // ... (kode _formatDuration tetap sama) ...
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60);
@@ -146,101 +166,82 @@ class _MeditationScreenState extends State<MeditationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "[MeditationScreen] build method called. IsLoading: $_isLoading, IsPlaying: $_isPlaying");
+    print("[MeditationScreen audioplayers] build. CurrentTrack: ${_currentTrack?.title}, Loading: $_isLoading, Playing: $_isPlaying");
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meditasi'),
+        title: const Text('Pilih Meditasi (audioplayers)'),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Gambar Meditasi
-              Image.asset(
-                'assets/images/meditation_placeholder.png', // <-- GANTI PATH GAMBAR
-                height: 200,
-                errorBuilder: (context, error, stackTrace) => const SizedBox(
-                    height: 200,
-                    child: Center(
-                        child: Icon(Icons.spa, size: 100, color: Colors.grey))),
-              ),
-              const SizedBox(height: 24),
-              // Judul Track
-              const Text('Meditasi Ketenangan Hati',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center),
-              const SizedBox(height: 8),
-              // Deskripsi Track
-              const Text('Panduan relaksasi untuk memulai hari',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                  textAlign: TextAlign.center),
-              const SizedBox(height: 32),
-              // Slider Progress
-              Slider(
-                min: 0,
-                max: _duration.inSeconds
-                    .toDouble()
-                    .clamp(1.0, double.infinity), // Max minimal 1.0
-                value: _position.inSeconds
-                    .toDouble()
-                    .clamp(0.0, _duration.inSeconds.toDouble()),
-                onChanged: (value) {
-                  final newPosition = Duration(seconds: value.toInt());
-                  print(
-                      "[MeditationScreen] Slider seeking to: $newPosition"); // Log seek
-                  _player.seek(newPosition);
-                },
-                activeColor: Colors.deepPurple.shade300,
-                inactiveColor: Colors.deepPurple.shade100,
-              ),
-              // Tampilan Durasi
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(_formatDuration(_position)),
-                    Text(_formatDuration(_duration))
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Tombol Kontrol Play/Pause
-              _isLoading
-                  ? const CircularProgressIndicator() // Tampilkan loading
-                  : IconButton(
-                      icon: Icon(
-                          _isPlaying
-                              ? Icons.pause_circle_filled
-                              : Icons.play_circle_filled,
-                          size: 64.0,
-                          color: Colors.deepPurple),
-                      onPressed: () {
-                        if (_isPlaying) {
-                          print("[MeditationScreen] Pausing player.");
-                          _player.pause();
-                        } else {
-                          print(
-                              "[MeditationScreen] Playing player. Current state: ${_player.processingState}");
-                          if (_player.processingState ==
-                              ProcessingState.completed) {
-                            print("[MeditationScreen] Re-seeking to zero.");
-                            _player.seek(Duration.zero);
-                            // Mungkin perlu sedikit delay sebelum play jika ada masalah race condition
-                            // Future.delayed(Duration(milliseconds: 100), () => _player.play());
-                          } else {
-                            _player.play();
-                          }
-                        }
-                      },
-                    ),
-            ],
+      body: Column(
+        children: [
+          Expanded(
+            child: _meditationTracks.isEmpty
+              ? const Center(child: Text("Belum ada track meditasi tersedia."))
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  itemCount: _meditationTracks.length,
+                  itemBuilder: (context, index) {
+                    final track = _meditationTracks[index];
+                    bool isCurrentlySelectedTrack = _currentTrack?.id == track.id;
+                    return Card(
+                      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                      elevation: isCurrentlySelectedTrack ? 3 : 1.5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(color: isCurrentlySelectedTrack ? Theme.of(context).primaryColor.withOpacity(0.6) : Colors.transparent, width: 1.5)
+                      ),
+                      child: ListTile(
+                        leading: Icon( Icons.music_note_rounded, color: isCurrentlySelectedTrack ? Theme.of(context).primaryColor : Colors.grey.shade700),
+                        title: Text(track.title, style: TextStyle(fontWeight: isCurrentlySelectedTrack ? FontWeight.bold : FontWeight.normal, color: isCurrentlySelectedTrack ? Theme.of(context).primaryColor : Colors.black87)),
+                        subtitle: Text(track.description, maxLines: 1, overflow: TextOverflow.ellipsis),
+                        trailing: (isCurrentlySelectedTrack && !_isLoading)
+                            ? Icon(_isPlaying ? Icons.pause_circle_filled_rounded : Icons.play_circle_filled_rounded, color: Theme.of(context).primaryColor, size: 28)
+                            : (isCurrentlySelectedTrack && _isLoading)
+                               ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+                               : Icon(Icons.play_arrow_rounded, color: Colors.grey.shade400, size: 28),
+                        onTap: () => _loadAndPlayTrack(track),
+                        selected: isCurrentlySelectedTrack,
+                        selectedTileColor: Theme.of(context).primaryColor.withOpacity(0.08),
+                      ),
+                    );
+                  },
+            ),
           ),
-        ),
+
+          if (_currentTrack != null)
+            Container( /* ... UI Player Kontrol sama seperti sebelumnya (tanpa gambar) ... */
+              padding: const EdgeInsets.symmetric(horizontal:16.0, vertical: 12.0),
+              decoration: BoxDecoration(color: Colors.white, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8, offset: const Offset(0, -2))]),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 8),
+                  Text(_currentTrack!.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold), textAlign: TextAlign.center, maxLines: 1, overflow: TextOverflow.ellipsis,),
+                  const SizedBox(height: 0),
+                  Slider(
+                    min: 0, max: _duration.inMilliseconds.toDouble().clamp(1.0, double.infinity),
+                    value: _position.inMilliseconds.toDouble().clamp(0.0, _duration.inMilliseconds.toDouble()),
+                    onChanged: (value) async { await _player.seek(Duration(milliseconds: value.toInt())); },
+                    activeColor: Colors.deepPurple.shade300, inactiveColor: Colors.deepPurple.shade100,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [Text(_formatDuration(_position), style: const TextStyle(fontSize: 12)), Text(_formatDuration(_duration), style: const TextStyle(fontSize: 12))],
+                    ),
+                  ),
+                  _isLoading
+                      ? const SizedBox(height: 60, child: Center(child: CircularProgressIndicator()))
+                      : IconButton(
+                          icon: Icon(_isPlaying ? Icons.pause_circle_filled_rounded : Icons.play_circle_filled_rounded, size: 56.0, color: Colors.deepPurple),
+                          onPressed: () {
+                            if (_isPlaying) { _player.pause(); }
+                            else { _player.resume(); /* atau player.play(AssetSource(...)) lagi jika perlu */ }
+                          },
+                        ),
+                ],
+              ),
+            ),
+        ],
       ),
     );
   }

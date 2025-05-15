@@ -1,22 +1,8 @@
-// Nama file: rencana_screen.dart
+// Nama file: lib/screen/rencana_screen.dart
 import 'package:flutter/material.dart';
-
-// Model sederhana untuk satu item Rencana Self Care
-class SelfCarePlan {
-  String id;
-  String title;
-  String description; // Deskripsi singkat atau catatan
-  bool isCompleted;
-  TimeOfDay? reminderTime; // Opsional: waktu pengingat
-
-  SelfCarePlan({
-    required this.id,
-    required this.title,
-    this.description = '',
-    this.isCompleted = false,
-    this.reminderTime,
-  });
-}
+// Sesuaikan path import helper dan model Anda
+import '../helpers/database_helper.dart';
+import '../models/self_care_plan.dart';
 
 class RencanaScreen extends StatefulWidget {
   const RencanaScreen({super.key});
@@ -26,103 +12,96 @@ class RencanaScreen extends StatefulWidget {
 }
 
 class _RencanaScreenState extends State<RencanaScreen> {
-  // --- CONTOH DATA RENCANA SELF CARE (Ganti dengan sumber data Anda) ---
-  final List<SelfCarePlan> _selfCarePlans = [
-    SelfCarePlan(
-        id: '1',
-        title: 'Minum Air Putih 2 Liter',
-        description: 'Target harian untuk hidrasi.',
-        isCompleted: true),
-    SelfCarePlan(
-        id: '2',
-        title: 'Jalan Kaki 30 Menit',
-        description: 'Di pagi atau sore hari.',
-        isCompleted: false),
-    SelfCarePlan(
-        id: '3',
-        title: 'Meditasi 10 Menit',
-        description: 'Sebelum tidur untuk relaksasi.',
-        isCompleted: false),
-    SelfCarePlan(
-        id: '4',
-        title: 'Baca Buku 1 Bab',
-        description: 'Buku non-fiksi atau fiksi favorit.',
-        isCompleted: true),
-    SelfCarePlan(
-        id: '5',
-        title: 'Tidur Cukup 7-8 Jam',
-        description: 'Penting untuk pemulihan fisik & mental.'),
-  ];
-  // --------------------------------------------------------------------
+  final dbHelper = DatabaseHelper.instance;
+  List<SelfCarePlan> _selfCarePlans = [];
+  bool _isLoading = true;
 
-  // Fungsi untuk menampilkan dialog tambah/edit rencana (placeholder)
+  @override
+  void initState() {
+    super.initState();
+    _refreshPlanList();
+  }
+
+  Future<void> _refreshPlanList() async {
+    if (!mounted) return;
+    setState(() { _isLoading = true; });
+    try {
+      final data = await dbHelper.getAllPlans();
+      if (!mounted) return;
+      setState(() {
+        _selfCarePlans = data;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print("Error refreshing plan list: $e");
+      if (!mounted) return;
+      setState(() { _isLoading = false; });
+      ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text('Gagal memuat rencana: ${e.toString()}'), backgroundColor: Colors.red)
+      );
+    }
+  }
+
   Future<void> _showAddEditPlanDialog({SelfCarePlan? plan}) async {
-    final _titleController = TextEditingController(text: plan?.title ?? '');
-    final _descriptionController =
-        TextEditingController(text: plan?.description ?? '');
-    bool _isEditing = plan != null;
+    final titleController = TextEditingController(text: plan?.title ?? '');
+    final descriptionController = TextEditingController(text: plan?.description ?? '');
+    bool isEditing = plan != null;
 
-    return showDialog<void>(
+    SelfCarePlan? result = await showDialog<SelfCarePlan>( // Ubah agar bisa return SelfCarePlan
       context: context,
-      barrierDismissible: false, // Pengguna harus menekan tombol
-      builder: (BuildContext context) {
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text(_isEditing ? 'Edit Rencana' : 'Tambah Rencana Baru'),
+          title: Text(isEditing ? 'Edit Rencana' : 'Tambah Rencana Baru'),
+          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 TextField(
-                  controller: _titleController,
-                  decoration: const InputDecoration(hintText: "Judul Rencana"),
+                  controller: titleController,
+                  decoration: const InputDecoration(labelText: "Judul Rencana", border: OutlineInputBorder()),
+                  autofocus: true,
+                  textInputAction: TextInputAction.next,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 16),
                 TextField(
-                  controller: _descriptionController,
-                  decoration:
-                      const InputDecoration(hintText: "Deskripsi (opsional)"),
+                  controller: descriptionController,
+                  decoration: const InputDecoration(labelText: "Deskripsi (opsional)", border: OutlineInputBorder()),
                   maxLines: 3,
+                  textInputAction: TextInputAction.done,
                 ),
-                // TODO: Tambahkan pilihan waktu pengingat jika perlu
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
               child: const Text('Batal'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+              onPressed: () => Navigator.of(dialogContext).pop(null), // Return null jika batal
             ),
-            TextButton(
-              child: Text(_isEditing ? 'Simpan' : 'Tambah'),
+            ElevatedButton(
+              child: Text(isEditing ? 'Simpan' : 'Tambah'),
               onPressed: () {
-                final title = _titleController.text;
-                final description = _descriptionController.text;
+                final title = titleController.text.trim();
+                final description = descriptionController.text.trim();
                 if (title.isNotEmpty) {
-                  setState(() {
-                    if (_isEditing) {
-                      // Logika update rencana
-                      plan.title = title;
-                      plan.description = description;
-                      print('Rencana diperbarui: ${plan.title}');
-                    } else {
-                      // Logika tambah rencana baru
-                      _selfCarePlans.add(SelfCarePlan(
-                        id: DateTime.now().millisecondsSinceEpoch.toString(),
-                        title: title,
-                        description: description,
-                      ));
-                      print('Rencana ditambahkan: $title');
-                    }
-                  });
-                  Navigator.of(context).pop();
+                  SelfCarePlan resultingPlan;
+                  if (isEditing) {
+                    plan!.title = title;
+                    plan.description = description;
+                    // plan.isCompleted tetap, tidak diubah di dialog ini
+                    resultingPlan = plan;
+                  } else {
+                    resultingPlan = SelfCarePlan(
+                      id: DateTime.now().millisecondsSinceEpoch.toString(),
+                      title: title,
+                      description: description,
+                    );
+                  }
+                  Navigator.of(dialogContext).pop(resultingPlan); // Return plan yang akan disimpan/diupdate
                 } else {
-                  // Tampilkan pesan jika judul kosong
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Judul rencana tidak boleh kosong!'),
-                        backgroundColor: Colors.red),
-                  );
+                   ScaffoldMessenger.of(context).showSnackBar(
+                     const SnackBar(content: Text('Judul rencana tidak boleh kosong!'), backgroundColor: Colors.red),
+                   );
                 }
               },
             ),
@@ -130,6 +109,69 @@ class _RencanaScreenState extends State<RencanaScreen> {
         );
       },
     );
+
+    // Proses hasil dari dialog
+    if (result != null) {
+      if (isEditing) {
+        await dbHelper.updatePlan(result);
+        print('Rencana diperbarui: ${result.title}');
+      } else {
+        await dbHelper.insertPlan(result);
+        print('Rencana ditambahkan: ${result.title}');
+      }
+      _refreshPlanList(); // Refresh list setelah simpan/tambah
+    }
+  }
+
+  Future<void> _toggleComplete(SelfCarePlan plan) async {
+    if (!mounted) return;
+    // Optimistic UI update
+    final originalStatus = plan.isCompleted;
+    setState(() { plan.isCompleted = !plan.isCompleted; });
+    
+    try {
+        await dbHelper.updatePlan(plan);
+    } catch (e) {
+        print("Error updating plan status: $e");
+        if(mounted) {
+            // Rollback UI jika update DB gagal
+            setState(() { plan.isCompleted = originalStatus; });
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Gagal update status rencana.'), backgroundColor: Colors.red)
+            );
+        }
+    }
+    // Tidak perlu _refreshPlanList() penuh jika hanya update isCompleted,
+    // kecuali jika urutan list bergantung pada status.
+  }
+
+  Future<void> _deletePlan(SelfCarePlan plan) async {
+    bool? confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Hapus Rencana?"),
+        content: Text("Anda yakin ingin menghapus rencana '${plan.title}'?"),
+        actions: [
+          TextButton(onPressed: (){ Navigator.of(ctx).pop(false); }, child: const Text("Batal")),
+          TextButton(onPressed: (){ Navigator.of(ctx).pop(true); }, child: const Text("Hapus", style: TextStyle(color: Colors.red))),
+        ],
+      )
+    );
+
+    if (confirmDelete == true) {
+      await dbHelper.deletePlan(plan.id);
+      _refreshPlanList();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Rencana "${plan.title}" dihapus'), duration: const Duration(seconds: 2)),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    // Tidak perlu dbHelper.closeConnection() di sini, biarkan koneksi terbuka selama app berjalan
+    super.dispose();
   }
 
   @override
@@ -137,161 +179,81 @@ class _RencanaScreenState extends State<RencanaScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rencana Self Care Saya'),
-        // backgroundColor: Colors.green.shade700, // Contoh warna
-        // foregroundColor: Colors.white,
         actions: [
-          // Tombol tambah di AppBar
           IconButton(
             icon: const Icon(Icons.add_circle_outline),
             tooltip: 'Tambah Rencana Baru',
-            onPressed: () {
-              _showAddEditPlanDialog();
-            },
+            onPressed: () => _showAddEditPlanDialog(),
           )
         ],
       ),
-      body: _selfCarePlans.isEmpty
-          ? const Center(
-              // Tampilan jika tidak ada rencana
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.event_note_outlined, size: 80, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    'Belum ada rencana self care.',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _selfCarePlans.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.event_note_outlined, size: 80, color: Colors.grey.shade400),
+                      const SizedBox(height: 16),
+                      const Text('Belum ada rencana self care.', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                      const SizedBox(height: 8),
+                      const Text('Tekan tombol + untuk menambahkan.', style: TextStyle(fontSize: 14, color: Colors.grey)),
+                    ],
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Tekan tombol + untuk menambahkan.',
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              // Tampilan jika ada rencana
-              padding: const EdgeInsets.all(12.0),
-              itemCount: _selfCarePlans.length,
-              itemBuilder: (context, index) {
-                final plan = _selfCarePlans[index];
-                return Card(
-                  elevation: 2.0,
-                  margin: const EdgeInsets.symmetric(vertical: 6.0),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0)),
-                  child: ListTile(
-                    // Checkbox untuk menandai selesai
-                    leading: Checkbox(
-                      value: plan.isCompleted,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          plan.isCompleted = value ?? false;
-                          // TODO: Simpan status ini ke database
-                        });
-                      },
-                      activeColor: Theme.of(context).primaryColor,
-                    ),
-                    // Judul Rencana
-                    title: Text(
-                      plan.title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        decoration: plan.isCompleted
-                            ? TextDecoration.lineThrough
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0), // Sedikit padding
+                  itemCount: _selfCarePlans.length,
+                  itemBuilder: (context, index) {
+                    final plan = _selfCarePlans[index];
+                    return Card(
+                      elevation: 2.0,
+                      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0), // Margin antar card
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.only(left: 8.0, right: 0.0), // Atur padding ListTile
+                        leading: Checkbox(
+                          value: plan.isCompleted,
+                          onChanged: (bool? value) => _toggleComplete(plan),
+                          activeColor: Theme.of(context).primaryColor,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                        ),
+                        title: Text(
+                          plan.title,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            decoration: plan.isCompleted ? TextDecoration.lineThrough : null,
+                            color: plan.isCompleted ? Colors.grey.shade600 : Colors.black87,
+                          ),
+                        ),
+                        subtitle: plan.description.isNotEmpty
+                            ? Text(plan.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(decoration: plan.isCompleted ? TextDecoration.lineThrough : null, color: plan.isCompleted ? Colors.grey.shade400 : Colors.grey.shade700,))
                             : null,
-                        color: plan.isCompleted ? Colors.grey : Colors.black87,
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit_outlined, color: Colors.blueGrey.shade300, size: 22),
+                              tooltip: 'Edit Rencana',
+                              onPressed: () => _showAddEditPlanDialog(plan: plan),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete_outline_rounded, color: Colors.red.shade400, size: 22),
+                              tooltip: 'Hapus Rencana',
+                              onPressed: () => _deletePlan(plan), // Hapus index jika tidak diperlukan
+                            ),
+                          ],
+                        ),
+                        onTap: () => _toggleComplete(plan),
                       ),
-                    ),
-                    // Deskripsi Rencana (jika ada)
-                    subtitle: plan.description.isNotEmpty
-                        ? Text(plan.description,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              decoration: plan.isCompleted
-                                  ? TextDecoration.lineThrough
-                                  : null,
-                              color: plan.isCompleted
-                                  ? Colors.grey.shade500
-                                  : Colors.grey.shade700,
-                            ))
-                        : null,
-                    // Tombol Edit & Hapus
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.edit_outlined,
-                              color: Colors.blueGrey.shade400, size: 20),
-                          tooltip: 'Edit Rencana',
-                          onPressed: () {
-                            _showAddEditPlanDialog(plan: plan);
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete_outline_rounded,
-                              color: Colors.red.shade300, size: 20),
-                          tooltip: 'Hapus Rencana',
-                          onPressed: () {
-                            // Konfirmasi sebelum hapus
-                            showDialog(
-                                context: context,
-                                builder: (ctx) => AlertDialog(
-                                      title: const Text("Hapus Rencana?"),
-                                      content: Text(
-                                          "Anda yakin ingin menghapus rencana '${plan.title}'?"),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.of(ctx).pop();
-                                            },
-                                            child: const Text("Batal")),
-                                        TextButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                _selfCarePlans.removeAt(index);
-                                                // TODO: Hapus dari database
-                                              });
-                                              Navigator.of(ctx).pop();
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                    content: Text(
-                                                        'Rencana "${plan.title}" dihapus'),
-                                                    duration:
-                                                        Duration(seconds: 1)),
-                                              );
-                                            },
-                                            child: const Text("Hapus",
-                                                style: TextStyle(
-                                                    color: Colors.red))),
-                                      ],
-                                    ));
-                          },
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      // Tandai selesai/belum saat item ditekan
-                      setState(() {
-                        plan.isCompleted = !plan.isCompleted;
-                        // TODO: Simpan status ini ke database
-                      });
-                    },
-                  ),
-                );
-              },
-            ),
+                    );
+                  },
+                ),
       floatingActionButton: FloatingActionButton(
-        // Tombol tambah besar
-        onPressed: () {
-          _showAddEditPlanDialog();
-        },
+        onPressed: () => _showAddEditPlanDialog(),
         tooltip: 'Tambah Rencana Baru',
         child: const Icon(Icons.add),
-        // backgroundColor: Colors.green.shade700, // Sesuaikan warna
       ),
     );
   }

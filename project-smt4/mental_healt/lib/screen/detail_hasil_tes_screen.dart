@@ -62,11 +62,16 @@ class DetailHasilTesScreen extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  PieChart(
-                    PieChartData(
-                      sections: pieData,
-                      centerSpaceRadius: 40,
-                      sectionsSpace: 4,
+                  Container(
+                    width: 250,
+                    height: 250,
+
+                    child: PieChart(
+                      PieChartData(
+                        sections: pieData,
+                        centerSpaceRadius: 40,
+                        sectionsSpace: 4,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
