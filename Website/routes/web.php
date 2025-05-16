@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AdminTambahController;
 use App\Http\Controllers\AuthController;
 
 
+
 // Halaman landing
 Route::get('/', function () {
     // Data untuk seksi "Gangguan Mood" yang akan ditampilkan di landing page
@@ -41,12 +42,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
+    // Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
+
     // Admin routes
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        // Rute untuk Tambah Admin
-        // GET untuk menampilkan form tambah admin
         Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah'); // Ini akan membuat rute bernama 'admin.tambah'
 
         // POST untuk menyimpan data admin baru
@@ -54,6 +56,8 @@ Route::middleware('auth')->group(function () {
 
         // Rute untuk Gejala
         Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
+
+ 
 });
 Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
 });

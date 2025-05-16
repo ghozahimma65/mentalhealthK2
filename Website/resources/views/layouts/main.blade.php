@@ -38,30 +38,40 @@
                 <a href="{{ route('admin.dashboard') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-tachometer-alt"></i> Dashboard
                 </a>
+
+                <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">MANAJEMEN PENGGUNA</span>
+                <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
+                    <i class="mr-2 fas fa-info-circle"></i> Detail Pengguna
+                </a>
                 
-                <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">PENGETAHUAN</span>
+                <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">MANAJEMEN KUESIONER</span>
                 <a href="#" {{-- Ganti # dengan route('admin.diagnosa.index') jika sudah ada --}}
-                   class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
-                    <i class="mr-2 fas fa-stethoscope"></i> Diagnosa
+                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
+                    <i class="mr-2 fas fa-list-ul"></i> Daftar Kuesioner
+                </a>
+                <a href="#" {{-- Ganti # dengan route('admin.diagnosa.index') jika sudah ada --}}
+                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
+                    <i class="mr-2 fas fa-cog"></i> Kelola Kuesioner
                 </a>
                 <a href="#" {{-- Ganti # dengan route('admin.gejala.index') jika sudah ada --}}
                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-notes-medical"></i> Gejala
-                </a>
-                <a href="#" {{-- Ganti # dengan route('admin.depresi.index') jika sudah ada --}}
-                   class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
-                    <i class="mr-2 fas fa-brain"></i> Depresi
                 </a>
                 <a href="#" {{-- Ganti # dengan route('admin.hasil.index') jika sudah ada --}}
                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-poll"></i> Hasil Diagnosa
                 </a>
 
-                <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">PENGATURAN</span>
-                <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
-                    <i class="mr-2 fas fa-user-plus"></i> List User
+                <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">ANALISIS DATA</span>
+               <a href="#" {{-- Ganti # dengan route('admin.hasil.index') jika sudah ada --}}
+                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
+                    <i class="mr-2 fas fa-map-marked-alt"></i> Persebaran Hasil
                 </a>
-                
+                <a href="#" {{-- Ganti # dengan route('admin.hasil.index') jika sudah ada --}}
+                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
+                    <i class="mr-2 fas fa-chart-line"></i> Tren Hasil Klasifikasi
+                </a>
+                                
                 {{-- Tombol Logout bisa juga ada di sini sebagai alternatif atau tambahan dari top bar --}}
                  <form method="POST" action="{{ route('logout') }}" class="pt-4 mt-auto border-t border-gray-200">
                     @csrf
