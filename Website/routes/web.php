@@ -6,21 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminTambahController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController; // Asumsi controller ini sudah ada
-use App\Http\Controllers\ProfileController;   // Asumsi controller ini sudah ada
-use App\Http\Controllers\DiagnosaController;   // Asumsi controller ini sudah ada
-use App\Http\Controllers\GangguanController; // Pastikan controller ini sudah Anda buat
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 
 // Halaman landing
@@ -57,12 +43,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
+    // Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
+
     // Admin routes
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        // Rute untuk Tambah Admin
-        // GET untuk menampilkan form tambah admin
         Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah'); // Ini akan membuat rute bernama 'admin.tambah'
 
         // POST untuk menyimpan data admin baru
@@ -70,11 +57,12 @@ Route::middleware('auth')->group(function () {
 
         // Rute untuk Gejala
         Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
+
+ 
 });
 Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
 });
     // Anda bisa menambahkan route lain yang memerlukan login di sini
-});
 
 // Contoh route untuk admin (sesuaikan dengan kebutuhan Anda)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
