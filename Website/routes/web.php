@@ -10,6 +10,7 @@ use App\Http\Controllers\AuthController;
 
 
 
+
 // Halaman landing
 Route::get('/', function () {
     // Data untuk seksi "Gangguan Mood" yang akan ditampilkan di landing page
