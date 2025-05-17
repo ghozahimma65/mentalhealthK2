@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
@@ -76,6 +77,24 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Tambahkan route admin lainnya di sini
 });
 
+Route::get('/test-mongo', function () {
+    try {
+        // Ambil client MongoDB mentah
+        $mongo = DB::connection('mongodb')->getMongoClient();
+
+        // Akses database dan koleksi
+        $collection = $mongo->diagnosa->test_koneksi; // Sesuaikan dengan nama database & koleksi kamu
+
+        $collection->insertOne([
+            'check' => 'MongoDB Connected',
+            'time' => now(),
+        ]);
+
+        return response()->json(['message' => 'Tersambung ke MongoDB!']);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Gagal konek: ' . $e->getMessage()]);
+    }
+});
 
 // Auth routes dari Laravel Breeze
 
