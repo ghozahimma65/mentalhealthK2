@@ -47,16 +47,9 @@
                 <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">MANAJEMEN KUESIONER</span>
                 <a href="#" {{-- Ganti # dengan route('admin.diagnosa.index') jika sudah ada --}}
                     class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
-                    <i class="mr-2 fas fa-list-ul"></i> Daftar Kuesioner
-                </a>
-                <a href="#" {{-- Ganti # dengan route('admin.diagnosa.index') jika sudah ada --}}
-                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-cog"></i> Kelola Kuesioner
                 </a>
-                <a href="#" {{-- Ganti # dengan route('admin.gejala.index') jika sudah ada --}}
-                   class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
-                    <i class="mr-2 fas fa-notes-medical"></i> Gejala
-                </a>
+               
                 <a href="#" {{-- Ganti # dengan route('admin.hasil.index') jika sudah ada --}}
                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-poll"></i> Hasil Diagnosa
