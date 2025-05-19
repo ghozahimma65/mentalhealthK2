@@ -1,30 +1,14 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminTambahController;
 use App\Http\Controllers\AuthController;
-<<<<<<< HEAD
 
-=======
-use App\Http\Controllers\DashboardController; // Asumsi controller ini sudah ada
-use App\Http\Controllers\ProfileController;   // Asumsi controller ini sudah ada
-use App\Http\Controllers\DiagnosaController;   // Asumsi controller ini sudah ada
-use App\Http\Controllers\GangguanController; // Pastikan controller ini sudah Anda buat
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
->>>>>>> f2f6d6f079a3265064b6494a3d934b03d7a964ac
 
 
 // Halaman landing
@@ -61,12 +45,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-<<<<<<< HEAD
     // Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
     // Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 
-=======
->>>>>>> f2f6d6f079a3265064b6494a3d934b03d7a964ac
     // Admin routes
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
@@ -84,7 +65,6 @@ Route::middleware('auth')->group(function () {
 Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
 });
     // Anda bisa menambahkan route lain yang memerlukan login di sini
-});
 
 // Contoh route untuk admin (sesuaikan dengan kebutuhan Anda)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -98,6 +78,24 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Tambahkan route admin lainnya di sini
 });
 
+Route::get('/test-mongo', function () {
+    try {
+        // Ambil client MongoDB mentah
+        $mongo = DB::connection('mongodb')->getMongoClient();
+
+        // Akses database dan koleksi
+        $collection = $mongo->diagnosa->test_koneksi; // Sesuaikan dengan nama database & koleksi kamu
+
+        $collection->insertOne([
+            'check' => 'MongoDB Connected',
+            'time' => now(),
+        ]);
+
+        return response()->json(['message' => 'Tersambung ke MongoDB!']);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Gagal konek: ' . $e->getMessage()]);
+    }
+});
 
 // Auth routes dari Laravel Breeze
 <<<<<<< HEAD
@@ -106,4 +104,3 @@ require __DIR__.'/auth.php';
 
 // Route tambahan dari Laravel Breeze/Fortify (jika Anda menggunakannya)
 require __DIR__.'/auth.php';
->>>>>>> f2f6d6f079a3265064b6494a3d934b03d7a964ac

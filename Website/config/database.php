@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', 'mongodb'),
 
     /*
     |--------------------------------------------------------------------------
@@ -60,6 +60,18 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+        ],
+
+        'mongodb' => [ // Konfigurasi untuk MongoDB (YANG BENAR)
+            'driver'   => 'mongodb', // Driver untuk MongoDB
+            'host'     => env('DB_MONGO_HOST', '127.0.0.1'), // Mengambil host dari .env (DB_MONGO_HOST)
+            'port'     => env('DB_MONGO_PORT', 27017),      // Mengambil port dari .env (DB_MONGO_PORT), default 27017
+            'database' => env('DB_MONGO_DATABASE', 'diagnosa'), // Mengambil nama DB dari .env (DB_MONGO_DATABASE)
+            'username' => env('DB_MONGO_USERNAME', ''),       // Mengambil username dari .env (DB_MONGO_USERNAME)
+            'password' => env('DB_MONGO_PASSWORD', ''),       // Mengambil password dari .env (DB_MONGO_PASSWORD)
+            'options'  => [
+                'database' => env('DB_MONGO_AUTHENTICATION_DATABASE', 'admin'), // DB untuk autentikasi, ambil dari .env
+            ]
         ],
 
         'mariadb' => [
