@@ -8,9 +8,8 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminTambahController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GangguanController;
-
-
-
+use App\Http\Controllers\DiagnosaController;
+use App\Http\Controllers\KuesionerController; // Pastikan ini ada
 
 Route::get('/gangguan/{id}', [GangguanController::class, 'show']);
 
@@ -36,7 +35,14 @@ Route::get('/', function () {
 // Route untuk halaman detail Gangguan Mood
 // Ini akan ditangani oleh method showMoodDisorder di GangguanController
 Route::get('/gangguan/mood', [GangguanController::class, 'showMoodDisorder'])->name('gangguan.mood');
+
+// Route untuk menampilkan halaman kuesioner
 Route::get('/cek/diagnosa', [DiagnosaController::class, 'showCekDiagnosaPage'])->name('diagnosa.cek');
+
+// Route untuk menyimpan jawaban dari kuesioner (pastikan ini menggunakan KuesionerController)
+Route::post('/simpan-jawaban', [KuesionerController::class, 'simpanJawaban'])->name('simpan-jawaban');
+
+Route::get('/hasil', [DiagnosaController::class, 'tampilkanHasil'])->name('hasil'); // Pastikan ini mengarah ke DiagnosaController jika memang itu tujuannya
 
 // Rute untuk halaman dashboard umum
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -63,9 +69,9 @@ Route::middleware('auth')->group(function () {
         // Rute untuk Gejala
         Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
 
- 
-});
-Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
+
+    });
+    Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
 });
     // Anda bisa menambahkan route lain yang memerlukan login di sini
 

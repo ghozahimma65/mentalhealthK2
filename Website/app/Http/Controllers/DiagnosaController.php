@@ -7,28 +7,20 @@ use Illuminate\Http\Request; // Pastikan use statement ini ada
 class DiagnosaController extends Controller
 {
     /**
-     * Menampilkan halaman untuk memulai proses cek diagnosa.
-     * Mengirimkan data dasar yang mungkin dibutuhkan oleh view atau layout.
+     * Menampilkan halaman kuesioner.
+     *
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function showCekDiagnosaPage()
-    {
-        // Data yang akan dikirim ke view 'diagnosa.cek'
-        $data = [
-            'kode' => 'Diagnosa', // Nilai default atau generik untuk halaman ini
-            'nama_gangguan' => 'Kesehatan Mental', // Nilai default atau generik
-            'kesimpulan' => 'Silakan mulai proses diagnosa Anda untuk mendapatkan pemahaman lebih lanjut.', // Teks kesimpulan default
-            'deskripsi_gangguan' => 'Halaman ini adalah langkah awal untuk memahami kondisi Anda. Jawablah pertanyaan dengan jujur dan seksama.', // Teks deskripsi default
-            // Anda bisa menambahkan variabel lain yang mungkin dibutuhkan oleh view 'diagnosa.cek' di sini
-        ];
-
-        // Me-return view 'diagnosa.cek' dan mengirimkan array $data
-        // Laravel akan mencari file di resources/views/diagnosa/cek.blade.php
-        return view('diagnosa.cek', $data);
-    }
+{
+    return view('diagnosa.cek'); // Kode ini benar, mengarah ke resources/views/diagnosa/cek.blade.php
+}
 
     /**
      * Menampilkan halaman hasil diagnosa.
      * Ini adalah contoh, Anda perlu menyesuaikan pengambilan data hasil diagnosa sebenarnya.
+     *
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function tampilkanHasil()
     {
@@ -66,13 +58,10 @@ class DiagnosaController extends Controller
             ]
         ];
 
-        // Me-return view 'diagnosa.hasil' dan mengirimkan array $dataHasil
-        // Laravel akan mencari file di resources/views/diagnosa/hasil.blade.php
-        return view('diagnosa.hasil', $dataHasil);
+        // Me-return view 'hasil' dan mengirimkan array $dataHasil
+        // Laravel akan mencari file di resources/views/hasil.blade.php
+        return view('hasil', $dataHasil);
     }
 
-    // Anda bisa menambahkan method lain di sini, misalnya untuk:
-    // - Menangani submit form pertanyaan diagnosa
-    // - Melakukan kalkulasi sistem pakar
-    // - Menyimpan hasil diagnosa ke database
+    // Anda bisa menambahkan method lain di sini jika diperlukan
 }

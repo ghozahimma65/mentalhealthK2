@@ -1,290 +1,355 @@
-{{-- Menggunakan master layout dari resources/views/layouts/app.blade.php --}}
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuesioner Kesehatan Mental</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #EDF6F9;
+            color: #2C3E70;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            max-width: 800px;
+            width: 100%;
+        }
+        .form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2C3E70;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #CBD5E0;
+            border-radius: 0.25rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
+            color: #4A5568;
+        }
+        .form-select option {
+            color: #4A5568;
+        }
+        .radio-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .radio-group label {
+            margin-right: 1.5rem;
+            color: #4A5568;
+        }
+        .radio-group input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        .submit-button {
+            background-color: #80CBC4;
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .submit-button:hover {
+            background-color: #009688;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-2xl {
+            font-size: 1.5rem;
+            line-height: 2rem;
+        }
+        .font-bold {
+            font-weight: 700;
+        }
+        .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        .py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .max-w-lg {
+            max-width: 32rem;
+        }
+        .bg-white {
+            background-color: #fff;
+        }
+        .shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .rounded-lg {
+            border-radius: 0.5rem;
+        }
+        .p-6 {
+            padding: 1.5rem;
+        }
+        .block {
+            display: block;
+        }
+        .text-gray-700 {
+            color: #4A5568;
+        }
+        .text-sm {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+        .leading-tight {
+            line-height: 1.5;
+        }
+        .focus:outline-none {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+        .focus:shadow-outline {
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+        }
+        .flex {
+            display: flex;
+        }
+        .items-center {
+            align-items: center;
+        }
+        .space-x-4 > * + * {
+            margin-left: 1rem;
+        }
+        .text-gray-600 {
+            color: #718096;
+        }
+        .text-xs {
+            font-size: 0.75rem;
+            line-height: 1rem;
+        }
+        .italic {
+            font-style: italic;
+        }
+        .justify-between {
+            justify-content: space-between;
+        }
+        .text-[#80CBC4] {
+            color: #80CBC4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-8">
+        <h1 class="text-2xl font-bold mb-6 text-center text-[#80CBC4]">Kuesioner Kesehatan Mental</h1>
 
-{{-- Mengatur judul halaman yang akan muncul di tab browser --}}
-@section('title', 'Hasil Diagnosa Tingkat Depresi')
+        <form action="{{ route('simpan-jawaban') }}" method="POST" class="max-w-lg mx-auto bg-white shadow-md rounded-lg p-6">
+            @csrf
 
-{{-- Konten utama untuk halaman "Hasil Diagnosa" --}}
-@section('content')
-    <div class="container mx-auto px-4 py-8">
-        {{-- Judul Halaman "Hasil" - Disesuaikan dengan warna pada stepper aktif --}}
-        <h1 class="text-3xl font-bold text-[#80CBC4] mb-8">Hasil</h1>
+            <div class="mb-4">
+                <label for="age" class="form-label">1. Berapa usia Anda?</label>
+                <input type="number" id="age" name="age" class="form-input" required>
+            </div>
 
-        {{-- Stepper/Progress Bar --}}
-        <div class="w-full max-w-2xl mx-auto mb-12">
-            <div class="grid grid-cols-3 gap-x-1 items-start relative">
-                {{-- Item Stepper 1: Informasi Tes (Completed) --}}
-                <div class="stepper-item completed">
-                    <div class="stepper-circle">
-                        <i class="fas fa-check stepper-icon"></i>
-                    </div>
-                    <div class="stepper-label">Informasi Tes</div>
+            <div class="mb-4">
+                <label for="gender" class="form-label">2. Apa jenis kelamin Anda?</label>
+                <select id="gender" name="gender" class="form-select">
+                    <option value="Laki-laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">3. Apakah Anda pernah didiagnosis dengan masalah kesehatan mental?</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="diagnosis" value="1"> Ya</label>
+                    <label><input type="radio" name="diagnosis" value="0"> Tidak</label>
                 </div>
-                {{-- Item Stepper 2: Pertanyaan Tes (Completed) --}}
-                <div class="stepper-item completed">
-                    <div class="stepper-circle">
-                        <i class="fas fa-check stepper-icon"></i>
-                    </div>
-                    <div class="stepper-label">Pertanyaan Tes</div>
+            </div>
+
+            <div class="mb-4">
+                <label for="symptom_severity" class="form-label">4. Seberapa parah gejala yang Anda rasakan?</label>
+                <select id="symptom_severity" name="symptom_severity" class="form-select">
+                    <option value="1">1 - Sangat Ringan</option>
+                    <option value="2">2 - Ringan</option>
+                    <option value="3">3 - Sedang</option>
+                    <option value="4">4 - Berat</option>
+                    <option value="5">5 - Sangat Berat</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="mood_score" class="form-label">5. Bagaimana suasana hati Anda dalam seminggu terakhir?</label>
+                <select id="mood_score" name="mood_score" class="form-select">
+                    <option value="1">1 - Sangat Buruk</option>
+                    <option value="2">2 - Buruk</option>
+                    <option value="3">3 - Netral</option>
+                    <option value="4">4 - Baik</option>
+                    <option value="5">5 - Sangat Baik</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="sleep_quality" class="form-label">6. Seberapa baik kualitas tidur Anda?</label>
+                <select id="sleep_quality" name="sleep_quality" class="form-select">
+                    <option value="1">1 - Sangat Buruk</option>
+                    <option value="2">2 - Buruk</option>
+                    <option value="3">3 - Sedang</option>
+                    <option value="4">4 - Baik</option>
+                    <option value="5">5 - Sangat Baik</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="physical_activity" class="form-label">7. Berapa sering Anda melakukan aktivitas fisik (olahraga)?</label>
+                <select id="physical_activity" name="physical_activity" class="form-select">
+                    <option value="0">Tidak Pernah</option>
+                    <option value="1">Kadang-kadang</option>
+                    <option value="2">Rutin</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">8. Apakah Anda sedang menjalani pengobatan (medikasi)?</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="medication" value="1"> Ya</label>
+                    <label><input type="radio" name="medication" value="0"> Tidak</label>
                 </div>
-                {{-- Item Stepper 3: Hasil Anda (Active) --}}
-                <div class="stepper-item active">
-                    <div class="stepper-circle">
-                        {{-- Tidak ada ikon untuk state active, hanya warna --}}
-                    </div>
-                    <div class="stepper-label">Hasil Anda</div>
+            </div>
+
+            <div class="mb-4">
+                <label for="therapy_type" class="form-label">9. Apakah Anda sedang menjalani terapi psikologis?</label>
+                <select id="therapy_type" name="therapy_type" class="form-select">
+                    <option value="Tidak">Tidak</option>
+                    <option value="Terapi Individu">Ya, Terapi Individu</option>
+                    <option value="Terapi Kelompok">Ya, Terapi Kelompok</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="treatment_duration" class="form-label">10. Berapa lama Anda sudah menjalani perawatan kesehatan mental?</label>
+                <input type="number" id="treatment_duration" name="treatment_duration" class="form-input">
+                <p class="text-gray-600 text-xs italic">dalam bulan (jika ada)</p>
+            </div>
+
+            <div class="mb-4">
+                <label for="stress_level" class="form-label">11. Seberapa sering Anda merasa stres?</label>
+                <select id="stress_level" name="stress_level" class="form-select">
+                    <option value="1">1 - Jarang</option>
+                    <option value="2">2 - Kadang-kadang</option>
+                    <option value="3">3 - Sering</option>
+                    <option value="4">4 - Sangat Sering</option>
+                    <option value="5">5 - Hampir Setiap Saat</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">12. Menurut Anda, apakah Anda mengalami kemajuan dalam perawatan Anda?</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="treatment_progress" value="1"> Ya</label>
+                    <label><input type="radio" name="treatment_progress" value="0"> Tidak</label>
                 </div>
             </div>
-        </div>
 
-        {{-- Tabel Ringkasan Hasil --}}
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-10 table-custom">
-            <table class="min-w-full">
-                <thead>
-                    <tr>
-                        <th class="w-1/12 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                        <th class="w-4/12 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diagnosa ID</th> {{-- Adjusted width slightly --}}
-                        <th class="w-4/12 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tingkat Depresi</th> {{-- Adjusted width slightly --}}
-                        <th class="w-3/12 px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Persentase</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">#1</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $diagnosaId ?? '9876543' }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $tingkatDepresi ?? 'P001 | Gangguan Mood' }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-center font-semibold">{{ $persentase ?? '100 %' }}</td>
-                    </tr>
-                    {{-- Tambahkan baris lain jika ada lebih dari satu hasil menggunakan @foreach --}}
-                    {{-- Contoh jika $hasilDiagnosa adalah array of objects/arrays:
-                    @foreach($hasilDiagnosa as $index => $hasil)
-                    <tr>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">#{{ $index + 1 }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $hasil->diagnosaId ?? 'N/A' }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $hasil->tingkatDepresi ?? 'N/A' }}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900 text-center font-semibold">{{ $hasil->persentase ?? '0 %' }}</td>
-                    </tr>
-                    @endforeach
-                    --}}
-                </tbody>
-            </table>
-        </div>
-
-        {{-- Tiga Tabel Perbandingan --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {{-- Tabel Pakar --}}
-            <div class="bg-white shadow-lg rounded-lg overflow-hidden table-custom table-pakar">
-                <h2 class="text-lg font-semibold p-4 bg-gray-100 border-b text-center text-[#2C3E50]">Pakar</h2>
-                <table class="min-w-full text-sm">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gejala</th>
-                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Nilai (MB-MD)</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @php
-                            // Data ini seharusnya datang dari controller
-                            // Variabel $dataPakar dari controller akan menggantikan ini
-                            $dataPakar = $dataPakar ?? [
-                                ['no' => 1, 'gejala' => 'G001 | P001', 'nilai' => 0.4],
-                                ['no' => 2, 'gejala' => 'G002 | P001', 'nilai' => 0.2],
-                                ['no' => 3, 'gejala' => 'G003 | P001', 'nilai' => 1.0],
-                                ['no' => 4, 'gejala' => 'G004 | P001', 'nilai' => 0.2],
-                                ['no' => 5, 'gejala' => 'G005 | P001', 'nilai' => 0.6],
-                                ['no' => 6, 'gejala' => 'G007 | P001', 'nilai' => 0.2],
-                            ];
-                        @endphp
-                        @forelse($dataPakar as $item)
-                        <tr>
-                            <td class="px-3 py-2 whitespace-nowrap text-gray-700">{{ $item['no'] }}</td>
-                            <td class="px-3 py-2 whitespace-nowrap text-gray-700">{{ $item['gejala'] }}</td>
-                            <td class="px-3 py-2 whitespace-nowrap text-gray-700 text-center">{{ number_format((float)($item['nilai'] ?? 0), 1) }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="px-3 py-2 text-center text-gray-500">Data pakar tidak tersedia.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <div class="mb-4">
+                <label for="emotional_state" class="form-label">13. Seberapa sering Anda merasa emosi negatif seperti sedih, marah, atau cemas?</label>
+                <select id="emotional_state" name="emotional_state" class="form-select">
+                    <option value="1">1 - Sangat Jarang</option>
+                    <option value="2">2 - Jarang</option>
+                    <option value="3">3 - Kadang-kadang</option>
+                    <option value="4">4 - Sering</option>
+                    <option value="5">5 - Sangat Sering</option>
+                </select>
             </div>
 
-            {{-- Tabel User --}}
-            <div class="bg-white shadow-lg rounded-lg overflow-hidden table-custom table-user">
-                <h2 class="text-lg font-semibold p-4 bg-gray-100 border-b text-center text-[#2C3E50]">User</h2>
-                <table class="min-w-full text-sm">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gejala</th>
-                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Nilai</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @php
-                            // Data ini seharusnya datang dari controller
-                            $dataUser = $dataUser ?? [
-                                ['gejala' => 'G001', 'nilai' => 0],
-                                ['gejala' => 'G002', 'nilai' => 0],
-                                ['gejala' => 'G003', 'nilai' => 0],
-                                ['gejala' => 'G004', 'nilai' => 0],
-                                ['gejala' => 'G005', 'nilai' => 0],
-                                ['gejala' => 'G007', 'nilai' => 0],
-                            ];
-                        @endphp
-                        @forelse($dataUser as $item)
-                        <tr class="{{ $loop->even ? 'bg-red-50' : '' }}"> {{-- Screenshot menunjukkan baris genap diwarnai --}}
-                            <td class="px-3 py-2 whitespace-nowrap text-gray-700">{{ $item['gejala'] }}</td>
-                            <td class="px-3 py-2 whitespace-nowrap text-gray-700 text-center">{{ $item['nilai'] ?? 0 }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="2" class="px-3 py-2 text-center text-gray-500">Data user tidak tersedia.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <div class="mb-4">
+                <label for="adherence_treatment" class="form-label">14. Seberapa patuh Anda mengikuti rencana perawatan atau pengobatan Anda?</label>
+                <select id="adherence_treatment" name="adherence_treatment" class="form-select">
+                    <option value="1">1 - Tidak Patuh</option>
+                    <option value="2">2 - Kurang Patuh</option>
+                    <option value="3">3 - Cukup Patuh</option>
+                    <option value="4">4 - Patuh</option>
+                    <option value="5">5 - Sangat Patuh</option>
+                </select>
             </div>
 
-            {{-- Tabel Hasil --}}
-            <div class="bg-white shadow-lg rounded-lg overflow-hidden table-custom table-hasil">
-                <h2 class="text-lg font-semibold p-4 bg-gray-100 border-b text-center text-[#2C3E50]">Hasil</h2>
-                <table class="min-w-full text-sm">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Nilai</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @php
-                            // Data ini seharusnya datang dari controller
-                            $dataKalkulasiHasil = $dataKalkulasiHasil ?? [
-                                ['nilai' => 0], ['nilai' => 0], ['nilai' => 0],
-                                ['nilai' => 0], ['nilai' => 0], ['nilai' => 0],
-                            ];
-                        @endphp
-                        @forelse($dataKalkulasiHasil as $item)
-                        <tr class="{{ $loop->even ? 'bg-sky-50' : '' }}"> {{-- Screenshot menunjukkan baris genap diwarnai --}}
-                            <td class="px-3 py-2 whitespace-nowrap text-gray-700 text-center">{{ $item['nilai'] ?? 0 }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td class="px-3 py-2 text-center text-gray-500">Data hasil kalkulasi tidak tersedia.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+            <div class="mb-4">
+                <label for="concentration" class="form-label">15. Apakah Anda mengalami kesulitan untuk berkonsentrasi akhir-akhir ini?</label>
+                <select id="concentration" name="concentration" class="form-select">
+                    <option value="1">1 - Tidak Pernah</option>
+                    <option value="2">2 - Jarang</option>
+                    <option value="3">3 - Kadang-kadang</option>
+                    <option value="4">4 - Sering</option>
+                    <option value="5">5 - Sangat Sering</option>
+                </select>
             </div>
-        </div>
+
+            <div class="mb-4">
+                <label class="form-label">16. Apakah Anda memiliki dukungan sosial (keluarga/teman)?</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="social_support" value="1"> Ya</label>
+                    <label><input type="radio" name="social_support" value="0"> Tidak</label>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="optimism" class="form-label">17. Seberapa optimis Anda merasa tentang masa depan Anda?</label>
+                <select id="optimism" name="optimism" class="form-select">
+                    <option value="1">1 - Sangat Tidak Optimis</option>
+                    <option value="2">2 - Tidak Optimis</option>
+                    <option value="3">3 - Netral</option>
+                    <option value="4">4 - Optimis</option>
+                    <option value="5">5 - Sangat Optimis</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">18. Apakah Anda pernah menghentikan pengobatan atau terapi lebih awal?</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="stopped_treatment" value="1"> Ya</label>
+                    <label><input type="radio" name="stopped_treatment" value="0"> Tidak</label>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">19. Apakah Anda mengalami perubahan pola makan akhir-akhir ini?</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="eating_changes" value="1"> Ya</label>
+                    <label><input type="radio" name="eating_changes" value="0"> Tidak</label>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="meaning_of_life" class="form-label">20. Seberapa besar Anda merasa hidup Anda bermakna saat ini?</label>
+                <select id="meaning_of_life" name="meaning_of_life" class="form-select">
+                    <option value="1">1 - Sangat Tidak Bermakna</option>
+                    <option value="2">2 - Tidak Bermakna</option>
+                    <option value="3">3 - Netral</option>
+                    <option value="4">4 - Bermakna</option>
+                    <option value="5">5 - Sangat Bermakna</option>
+                </select>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <a href="{{ route('landing') }}" class="back-button">Kembali</a>
+                <button type="submit" class="submit-button">Submit Jawaban</button>
+            </div>
+        </form>
     </div>
-@endsection
-
-@push('styles')
-{{-- Style untuk Stepper dan penyesuaian tabel --}}
-<style>
-    .stepper-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        position: relative;
-        flex-grow: 1;
-    }
-    /* Garis antar stepper */
-    .stepper-item:not(:last-child)::after {
-        content: '';
-        position: absolute;
-        top: 12px; /* Setengah tinggi lingkaran */
-        left: calc(50% + 12px); /* Mulai setelah lingkaran */
-        /* Dinamis menghitung lebar garis, dikurangi lebar 2 lingkaran dan sedikit margin jika perlu */
-        width: calc(100% - 24px);
-        height: 2px;
-        background-color: #e0e0e0; /* Warna garis default */
-        z-index: 0;
-    }
-
-    .stepper-circle {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        border: 2px solid #e0e0e0; /* Warna border default */
-        background-color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 8px;
-        z-index: 1; /* Di atas garis */
-        position: relative;
-    }
-    .stepper-label {
-        font-size: 0.875rem; /* 14px */
-        color: #757575; /* Warna abu-abu untuk label */
-        text-align: center;
-    }
-
-    /* Status: Active */
-    .stepper-item.active .stepper-circle {
-        background-color: #80CBC4; /* Teal Muda untuk aktif (sesuai screenshot) */
-        border-color: #80CBC4;
-    }
-    .stepper-item.active .stepper-label {
-        color: #2C3E50; /* Warna biru tua untuk label aktif/completed */
-        font-weight: 600;
-    }
-
-    /* Status: Completed */
-    .stepper-item.completed .stepper-circle {
-        background-color: #2C3E50; /* Warna Biru Tua untuk completed (sesuai screenshot) */
-        border-color: #2C3E50;
-    }
-    .stepper-item.completed .stepper-icon {
-        color: white; /* Ikon centang putih */
-    }
-    .stepper-item.completed .stepper-label {
-        color: #2C3E50;
-        font-weight: 600;
-    }
-    .stepper-item.completed:not(:last-child)::after {
-        background-color: #2C3E50; /* Warna garis setelah item completed */
-    }
-
-    /* Penyesuaian Tabel agar lebih mirip gambar */
-    .table-custom th, .table-custom td {
-        padding: 0.6rem 0.75rem; /* Sedikit penyesuaian padding */
-    }
-    .table-custom thead th {
-        background-color: #f3f4f6; /* gray-100, lebih cocok dengan screenshot */
-        color: #374151; /* gray-700 */
-        font-weight: 600;
-    }
-
-    .table-pakar td:nth-child(3), /* Kolom nilai di tabel pakar */
-    .table-user td:nth-child(2),  /* Kolom nilai di tabel user */
-    .table-hasil td:nth-child(1) { /* Kolom nilai di tabel hasil */
-        text-align: center;
-    }
-    .table-pakar th:nth-child(3),
-    .table-user th:nth-child(2),
-    .table-hasil th:nth-child(1) {
-        text-align: center;
-    }
-    /* Menghilangkan border bawah pada baris terakhir agar tidak double dengan border card */
-    .table-custom tbody tr:last-child td {
-        border-bottom-width: 0;
-    }
-
-    /* Agar garis stepper tidak melebihi batas grid */
-    .grid.grid-cols-3.gap-x-1 {
-        /* Jika masih ada masalah, bisa tambahkan padding pada container stepper atau atur width secara lebih spesifik */
-    }
-</style>
-@endpush
-
-@push('scripts')
-{{-- Font Awesome jika belum ada di layout utama --}}
-{{-- <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script> --}}
-<script>
-    // console.log('Halaman Hasil Diagnosa dimuat.');
-    // Anda dapat menambahkan JavaScript di sini jika diperlukan
-</script>
-@endpush
+</body>
+</html>
