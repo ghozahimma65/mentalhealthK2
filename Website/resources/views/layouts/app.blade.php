@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> f2f6d6f079a3265064b6494a3d934b03d7a964ac
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,9 +16,36 @@
     </style>
 </head>
 <body class="bg-[#EDF6F9] text-[#2C3E70] min-h-screen">
+<<<<<<< HEAD
 
     {{-- HEADER --}}
     @include('layouts.main')
+=======
+
+    {{-- HEADER --}}
+    @include('layouts.main')
+
+    <main class="flex min-h-[calc(100vh-56px)]">
+        
+        {{-- SIDEBAR: Tampil jika @section('sidebar') tidak dihapus --}}
+        @hasSection('sidebar')
+            @yield('sidebar')
+        @endif
+
+        {{-- KONTEN --}}
+        <section class="flex-grow p-8">
+            @yield('content')
+        </section>
+    </main>
+
+</body>
+</html>
+{{-- Menggunakan master layout resources/views/layouts/app.blade.php --}}
+@extends('layouts.app')
+
+{{-- Mengatur judul halaman yang akan muncul di tab browser --}}
+@section('title', $kode . ' | ' . $nama_gangguan . ' - Informasi Gangguan')
+>>>>>>> f2f6d6f079a3265064b6494a3d934b03d7a964ac
 
     <main class="flex min-h-[calc(100vh-56px)]">
         

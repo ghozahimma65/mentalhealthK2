@@ -1,6 +1,6 @@
-// Nama file: quotes_screen.dart
+// Nama file: lib/screen/quotes_screen.dart
 import 'package:flutter/material.dart';
-import 'dart:math'; // Untuk mengambil kutipan acak (contoh)
+import 'dart:math'; // Untuk mengambil kutipan acak (opsional)
 
 // Model sederhana untuk data kutipan
 class Quote {
@@ -8,7 +8,7 @@ class Quote {
   final String author; // Opsional
   bool isFavorite; // Untuk fitur 'Suka'
 
-  Quote({required this.text, this.author = "Anonim", this.isFavorite = false});
+  Quote({required this.text, this.author = "Pengingat Diri", this.isFavorite = false});
 }
 
 class QuotesScreen extends StatefulWidget {
@@ -19,33 +19,73 @@ class QuotesScreen extends StatefulWidget {
 }
 
 class _QuotesScreenState extends State<QuotesScreen> {
-  // --- CONTOH DATA KUTIPAN (Ganti dengan sumber data Anda) ---
+  // --- DATA KUTIPAN PENYEMANGAT KESEHATAN MENTAL ---
   final List<Quote> _quotes = [
-  Quote(text: "Kamu tidak sendirian dalam perjuangan ini. Ada harapan dan bantuan tersedia.", author: "Pengingat"),
-  Quote(text: "Setiap hari adalah kesempatan baru untuk merawat dirimu. Kamu berharga.", author: "Afirmasi Diri"),
-  Quote(text: "Tidak apa-apa untuk tidak baik-baik saja. Izinkan dirimu merasakan, lalu bangkit perlahan.", author: "Kekuatan Batin"),
-  Quote(text: "Kekuatan terbesarmu bukan pada tidak pernah jatuh, tapi pada kemampuan untuk bangkit setiap kali jatuh.", author: "Anonim"),
-  Quote(text: "Kamu lebih kuat dari yang kamu bayangkan. Badai ini akan berlalu.", author: "Harapan"),
-  Quote(text: "Merawat diri bukanlah tindakan egois, itu adalah kebutuhan esensial.", author: "Self-Care"),
-  Quote(text: "Luka batinmu tidak mendefinisikan siapa dirimu. Kamu adalah pejuang.", author: "Semangat"),
-  Quote(text: "Setiap langkah kecil menuju pemulihan adalah kemenangan besar.", author: "Proses Pemulihan"),
-  Quote(text: "Bicaralah pada dirimu dengan kebaikan, seperti kamu berbicara pada sahabatmu.", author: "Kasih Sayang Diri"),
-  Quote(text: "Kamu layak mendapatkan kedamaian dan kebahagiaan. Teruslah berjuang.", author: "Dukungan"),
-  Quote(text: "Tidak ada kata terlambat untuk mencari bantuan dan memulai lembaran baru.", author: "Kesempatan Baru"),
-  Quote(text: "Meski hari ini berat, ingatlah bahwa ada kekuatan dalam dirimu untuk melewatinya."),
-  Quote(text: "Menerima diri sendiri adalah langkah awal menuju penyembuhan."),
-  Quote(text: "Kamu sedang dalam proses. Bersabarlah dengan dirimu sendiri."),
-  Quote(text: "Setiap emosi yang kamu rasakan valid. Jangan menyangkalnya, tapi kelola dengan baik."),
+    Quote(text: "Kamu tidak sendirian. Banyak yang peduli padamu.", author: "Dukungan"),
+    Quote(text: "Setiap hari adalah awal yang baru. Lepaskan kemarin, sambut hari ini.", author: "Harapan"),
+    Quote(text: "Tidak apa-apa untuk merasa tidak baik-baik saja. Itu manusiawi.", author: "Validasi Emosi"),
+    Quote(text: "Kekuatan sejati adalah berani meminta bantuan saat kamu membutuhkannya.", author: "Keberanian"),
+    Quote(text: "Kamu lebih kuat dari yang kamu pikirkan, dan kamu sudah melewati banyak hal.", author: "Kekuatan Batin"),
+    Quote(text: "Merawat diri adalah produktivitas, bukan kemalasan.", author: "Self-Care"),
+    Quote(text: "Setiap napas adalah kesempatan baru untuk memulai lagi.", author: "Kesadaran"),
+    Quote(text: "Jangan bandingkan perjalananmu dengan orang lain. Setiap bunga mekar pada waktunya sendiri."),
+    Quote(text: "Kamu berharga, apa pun yang pikiranmu katakan saat ini."),
+    Quote(text: "Fokus pada satu langkah kecil ke depan, bukan seluruh tangga."),
+    Quote(text: "Istirahat bukanlah menyerah, itu adalah bagian dari proses penyembuhan."),
+    Quote(text: "Bicaralah pada dirimu dengan kelembutan yang sama seperti kamu berbicara pada sahabatmu."),
+    Quote(text: "Pikiran negatif hanyalah awan, biarkan ia berlalu. Matahari masih ada di baliknya."),
+    Quote(text: "Kamu sedang bertumbuh, bahkan di saat-saat tersulit sekalipun."),
+    Quote(text: "Tidak ada yang salah denganmu karena merasa apa yang kamu rasakan."),
+    Quote(text: "Memaafkan diri sendiri adalah langkah penting menuju kedamaian."),
+    Quote(text: "Kamu diizinkan untuk menetapkan batasan demi kesehatan mentalmu."),
+    Quote(text: "Kebaikan kecil yang kamu lakukan hari ini bisa mengubah duniamu dan dunia orang lain."),
+    Quote(text: "Fokus pada apa yang bisa kamu kontrol, lepaskan sisanya."),
+    Quote(text: "Menangis itu sehat. Itu adalah cara tubuhmu melepaskan beban."),
+    Quote(text: "Tidak semua hari akan baik, tapi ada sesuatu yang baik di setiap hari."),
+    Quote(text: "Kamu adalah karya seni yang sedang dalam proses. Nikmati perjalanannya."),
+    Quote(text: "Jangan ragu untuk berkata 'tidak' demi menjaga energimu."),
+    Quote(text: "Penyembuhan bukanlah garis lurus. Ada naik turun, dan itu normal."),
+    Quote(text: "Cintai dirimu bahkan di hari-hari ketika kamu merasa sulit untuk melakukannya."),
+    Quote(text: "Satu langkah kecil setiap hari bisa membawamu ke tempat yang luar biasa."),
+    Quote(text: "Perasaanmu penting. Jangan pernah meremehkannya."),
+    Quote(text: "Kamu memiliki ketahanan yang luar biasa. Kamu sudah membuktikannya berkali-kali."),
+    Quote(text: "Berikan dirimu jeda. Kamu tidak harus selalu produktif."),
+    Quote(text: "Cahaya selalu menemukan jalannya, bahkan di tempat tergelap sekalipun."),
+    Quote(text: "Kamu berhak mendapatkan cinta dan kebahagiaan, sama seperti orang lain."),
+    Quote(text: "Waktu akan menyembuhkan, tapi kamu juga perlu berusaha untuk sembuh."),
+    Quote(text: "Setiap napas adalah pengingat bahwa kamu masih hidup dan punya kesempatan."),
+    Quote(text: "Fokus pada hal-hal kecil yang membuatmu tersenyum hari ini."),
+    Quote(text: "Jangan biarkan masa lalu mendikte masa depanmu. Kamu punya kendali."),
+    Quote(text: "Kamu adalah arsitek dari kehidupanmu sendiri. Bangunlah sesuatu yang indah."),
+    Quote(text: "Meminta bantuan adalah tanda kekuatan, bukan kelemahan."),
+    Quote(text: "Progresmu mungkin lambat, tapi itu tetap progres. Hargai itu."),
+    Quote(text: "Kamu tidak harus sempurna untuk menjadi luar biasa."),
+    Quote(text: "Kegagalan adalah bagian dari pembelajaran menuju kesuksesan."),
+    Quote(text: "Cintai dirimu apa adanya, dengan segala kelebihan dan kekuranganmu."),
+    Quote(text: "Kamu adalah prioritas. Jaga dirimu baik-baik."),
+    Quote(text: "Setiap tantangan adalah kesempatan untuk tumbuh lebih kuat."),
+    Quote(text: "Jangan biarkan suara negatif orang lain meredupkan cahayamu."),
+    Quote(text: "Hari ini mungkin sulit, tapi kamu lebih tangguh dari kesulitan itu."),
+    Quote(text: "Kamu punya tujuan dan potensi yang unik di dunia ini."),
+    Quote(text: "Tidak apa-apa untuk memulai dari awal, sebanyak apapun yang kamu butuhkan."),
+    Quote(text: "Kelilingi dirimu dengan orang-orang yang mendukung dan mengangkatmu."),
+    Quote(text: "Pikiranmu adalah taman, tanamlah bunga, bukan rumput liar."),
+    Quote(text: "Kamu tidak harus selalu kuat. Kadang, mengakui kerapuhan adalah kekuatan."),
+    Quote(text: "Setiap matahari terbit adalah janji hari baru yang penuh kemungkinan."),
+    Quote(text: "Kamu adalah keajaiban. Jangan pernah lupakan itu."),
+    Quote(text: "Teruslah berjalan, bahkan jika langkahmu terasa berat. Kamu akan sampai."),
+    Quote(text: "Kesehatan mentalmu sama pentingnya dengan kesehatan fisikmu. Rawat keduanya."),
+    Quote(text: "Kamu dicintai, bahkan ketika kamu merasa tidak demikian."),
   ];
   // -------------------------------------------------------------
 
-  // Untuk menampilkan satu kutipan acak di bagian atas (opsional)
+  // Untuk menampilkan satu kutipan acak di bagian atas (opsional, bisa dihapus jika tidak mau)
   Quote? _featuredQuote;
 
   @override
   void initState() {
     super.initState();
-    // Ambil satu kutipan acak saat halaman dibuka
+    // Ambil satu kutipan acak saat halaman dibuka jika list tidak kosong
     if (_quotes.isNotEmpty) {
       _featuredQuote = _quotes[Random().nextInt(_quotes.length)];
     }
@@ -54,64 +94,63 @@ class _QuotesScreenState extends State<QuotesScreen> {
   // Helper untuk membangun satu kartu kutipan
   Widget _buildQuoteCard(BuildContext context, Quote quote, int index) {
     return Card(
-      elevation: 3.0,
+      elevation: 2.5, // Sedikit shadow
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+      color: Colors.white, // Latar kartu
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.format_quote_rounded, size: 30, color: Theme.of(context).primaryColor.withOpacity(0.7)),
+            Icon(Icons.format_quote_rounded, size: 30, color: Theme.of(context).primaryColor.withOpacity(0.8)),
             const SizedBox(height: 10),
             Text(
               quote.text,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontStyle: FontStyle.italic,
-                    height: 1.4, // Jarak antar baris
+                    height: 1.45, // Jarak antar baris
+                    color: Colors.black.withOpacity(0.75), // Warna teks kutipan
                   ),
             ),
-            if (quote.author != "Anonim") ...[
-              const SizedBox(height: 10),
+            if (quote.author.isNotEmpty && quote.author != "Anonim") ...[ // Tampilkan author jika ada dan bukan "Anonim"
+              const SizedBox(height: 12),
               Align(
                 alignment: Alignment.centerRight,
                 child: Text(
                   "- ${quote.author}",
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).primaryColor.withOpacity(0.9),
+                      ),
                 ),
               ),
             ],
             const SizedBox(height: 10),
-            Row( // Tombol aksi
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    quote.isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                    color: quote.isFavorite ? Colors.redAccent : Colors.grey,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      // Toggle status favorit
-                      _quotes[index].isFavorite = !_quotes[index].isFavorite;
-                      // TODO: Simpan status favorit ini ke database/shared_preferences
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(quote.isFavorite ? 'Ditambahkan ke favorit!' : 'Dihapus dari favorit.'), duration: Duration(seconds: 1)),
-                    );
-                  },
+            // Hanya tombol favorit
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                icon: Icon(
+                  quote.isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  color: quote.isFavorite ? Colors.redAccent.shade200 : Colors.grey.shade400,
+                  size: 26,
                 ),
-                IconButton(
-                  icon: const Icon(Icons.share_rounded, color: Colors.grey),
-                  onPressed: () {
-                    // TODO: Implementasi fitur bagikan
-                    print("Bagikan: ${quote.text}");
-                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Fitur bagikan belum diimplementasikan.'), duration: Duration(seconds: 1)),
-                    );
-                  },
-                ),
-              ],
+                tooltip: quote.isFavorite ? 'Hapus dari favorit' : 'Tambah ke favorit',
+                onPressed: () {
+                  setState(() {
+                    _quotes[index].isFavorite = !_quotes[index].isFavorite;
+                    // TODO: Simpan status favorit ini ke database/shared_preferences
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(quote.isFavorite ? 'Ditambahkan ke favorit!' : 'Dihapus dari favorit.'),
+                      duration: const Duration(seconds: 1),
+                      behavior: SnackBarBehavior.floating, // Agar lebih modern
+                    ),
+                  );
+                },
+              ),
             )
           ],
         ),
@@ -123,54 +162,44 @@ class _QuotesScreenState extends State<QuotesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quotes & Affirmation'),
-        // backgroundColor: Colors.teal, // Contoh warna
+        title: const Text('Kutipan & Afirmasi'),
+        // backgroundColor: Theme.of(context).primaryColor, // Contoh warna AppBar
         // foregroundColor: Colors.white,
       ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16.0),
-        itemCount: _quotes.length, // Jumlah kutipan
-        itemBuilder: (context, index) {
-          // Jika ini item pertama dan ada featuredQuote, tampilkan dulu (opsional)
-          if (index == 0 && _featuredQuote != null && _quotes.length > 1) { // Hanya jika ada >1 quote
-            return Column(
-              children: [
-                // Bagian Featured Quote (Contoh)
-                // Card(
-                //   color: Theme.of(context).primaryColor.withOpacity(0.1),
-                //   elevation: 0,
-                //   margin: const EdgeInsets.only(bottom: 20),
-                //   child: Padding(
-                //     padding: const EdgeInsets.all(20.0),
-                //     child: Column(
-                //       children: [
-                //         Text("Kutipan Hari Ini:", style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Theme.of(context).primaryColor)),
-                //         SizedBox(height: 8),
-                //         Text(_featuredQuote!.text, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic), textAlign: TextAlign.center),
-                //         if(_featuredQuote!.author != "Anonim") SizedBox(height: 8),
-                //         if(_featuredQuote!.author != "Anonim") Text("- ${_featuredQuote!.author}", style: Theme.of(context).textTheme.bodySmall, textAlign: TextAlign.center),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-                _buildQuoteCard(context, _quotes[index], index), // Tampilkan kartu pertama dari list
-              ],
-            );
-          }
-          return _buildQuoteCard(context, _quotes[index], index); // Tampilkan sisa kartu
-        },
-      ),
-      // Opsional: Tombol untuk menambah kutipan baru atau refresh
+      body: _quotes.isEmpty
+          ? const Center(child: Text("Belum ada kutipan tersedia."))
+          : ListView.builder(
+              padding: const EdgeInsets.all(16.0),
+              itemCount: _quotes.length,
+              itemBuilder: (context, index) {
+                // Logika untuk featured quote bisa dihilangkan jika hanya ingin list biasa
+                // if (index == 0 && _featuredQuote != null && _quotes.length > 1) {
+                //   return Column(
+                //     children: [
+                //       _buildQuoteCard(context, _featuredQuote!, -1), // -1 untuk index featured
+                //       _buildQuoteCard(context, _quotes[index], index),
+                //     ],
+                //   );
+                // }
+                return _buildQuoteCard(context, _quotes[index], index);
+              },
+            ),
+      // FloatingActionButton untuk refresh (opsional)
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () {
-      //     // TODO: Aksi refresh kutipan atau tambah baru
       //     setState(() {
       //        if (_quotes.isNotEmpty) {
       //          _featuredQuote = _quotes[Random().nextInt(_quotes.length)];
+      //          // Jika Anda ingin listnya juga diacak:
+      //          // _quotes.shuffle();
       //        }
       //     });
+      //      ScaffoldMessenger.of(context).showSnackBar(
+      //       const SnackBar(content: Text('Kutipan disegarkan!'), duration: Duration(seconds: 1)),
+      //     );
       //   },
-      //   child: const Icon(Icons.refresh),
+      //   tooltip: 'Segarkan Kutipan',
+      //   child: const Icon(Icons.refresh_rounded),
       // ),
     );
   }
