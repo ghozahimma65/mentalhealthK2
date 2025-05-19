@@ -7,9 +7,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminTambahController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GangguanController;
 
 
 
+
+Route::get('/gangguan/{id}', [GangguanController::class, 'show']);
 
 // Halaman landing
 Route::get('/', function () {
