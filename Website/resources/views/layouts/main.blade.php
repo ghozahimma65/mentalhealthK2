@@ -69,6 +69,15 @@
                     <i class="fas fa-poll mr-2"></i> Hasil Diagnosa
                 </a>
 
+                   {{-- ===== MENU PREDIKSI BARU ===== --}}
+                <span class="block px-4 mt-6 mb-1 text-xs font-semibold text-gray-400">PREDIKSI</span>
+                <a href="{{ route('predictions.create') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('prediksi.index') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
+                    <i class="fas fa-robot mr-2"></i> Prediksi
+                </a>
+                <a href="{{ route('predictions.history') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('prediksi.history') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
+                    <i class="fas fa-history mr-2"></i> Riwayat Prediksi
+                </a>
+
                 <span class="text-gray-400 font-semibold text-xs mt-4 mb-1 block px-4">PENGATURAN</span>
                 <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="fas fa-user-plus mr-2"></i> Admin

@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminTambahController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GangguanController;
+use App\Http\Controllers\DiagnosaController;   
+use App\Http\Controllers\PredictionController; 
 
 
 
@@ -79,6 +81,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         return view('tambah_admin'); // Pastikan view tambah_admin.blade.php ada
     })->name('tambah');
     // Tambahkan route admin lainnya di sini
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/predictions/create', [PredictionController::class, 'showCreateForm'])->name('predictions.create');
+    Route::post('/predict', [PredictionController::class, 'predict'])->name('predictions.predict');
+    Route::get('/predictions/history', [PredictionController::class, 'showHistory'])->name('predictions.history');
 });
 
 Route::get('/test-mongo', function () {
