@@ -11,11 +11,6 @@
     <style>body { font-family: "Poppins", sans-serif; }</style>
 </head>
 <body class="bg-[#EDF6F9] text-[#2C3E70] min-h-screen">
-<<<<<<< HEAD
-
-    {{-- HEADER --}}
-    @include('layouts.main')
-=======
 
     {{-- HEADER --}}
     @include('layouts.main')

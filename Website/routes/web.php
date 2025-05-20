@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminTambahController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GangguanController;
+use App\Http\Controllers\DiagnosaController;
 
 
 
@@ -63,7 +64,7 @@ Route::middleware('auth')->group(function () {
         // Rute untuk Gejala
         Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
 
- 
+
 });
 Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
 });
@@ -100,10 +101,9 @@ Route::get('/test-mongo', function () {
     }
 });
 
-// Auth routes dari Laravel Breeze
-<<<<<<< HEAD
+
 require __DIR__.'/auth.php';
-=======
+
 
 // Route tambahan dari Laravel Breeze/Fortify (jika Anda menggunakannya)
 require __DIR__.'/auth.php';

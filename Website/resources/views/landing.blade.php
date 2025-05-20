@@ -59,180 +59,171 @@
     </header>
     <main class="max-w-[1200px] mx-auto px-6 mt-6 md:mt-12">
         <section
-            class="flex flex-col items-center justify-between gap-6 md:flex-row md:items-start"
+            class="flex flex-col items-center justify-between gap-8 md:flex-row md:items-center"
         >
-            <div class="max-w-xl md:max-w-lg">
+            <div class="max-w-xl text-center md:max-w-lg md:text-left">
                 <h1
-                    class="text-[#0A1A4F] font-extrabold text-3xl md:text-4xl leading-[44px] mb-4 select-none"
+                    class="text-[#0A1A4F] font-extrabold text-4xl md:text-5xl leading-tight mb-6 select-none"
                 >
                     Diagnosa Dini untuk<br />Kesehatan Mental Anda
                 </h1>
                 <p
-                    class="text-[#0A1A4F] font-semibold text-xs leading-5 mb-6 select-none max-w-[400px]"
+                    class="text-[#0A1A4F] font-semibold text-lg leading-relaxed mb-8 select-none max-w-[450px] mx-auto md:mx-0"
                 >
                     Khawatir dengan kondisi kesehatan mental Anda? Alat bantu terpercaya
                     kami memudahkan Anda untuk mengenali gejala, memahami kondisi
                     emosional, dan mendapatkan dukungan kapan saja, di mana saja.
                 </p>
-                <div class="flex flex-wrap gap-4">
+                <div class="flex flex-wrap justify-center gap-4 md:justify-start">
                     <a
                         href="{{ route('diagnosa.cek') }}"
-                        class="bg-[#7A9CC6] text-white text-xs font-semibold px-4 py-2 rounded-md flex items-center space-x-2 select-none"
+                        class="bg-[#7A9CC6] text-white text-lg font-semibold px-6 py-3 rounded-md flex items-center space-x-3 select-none hover:bg-opacity-80 transition duration-300"
                     >
                         <span>Mulai Cek Kesehatan Mental</span>
                         <i class="fas fa-arrow-right"></i>
                     </a>
                     <button
                         type="button"
-                        class="border border-[#0A1A4F] text-[#0A1A4F] text-xs font-semibold px-4 py-2 rounded-md select-none"
+                        class="border border-[#0A1A4F] text-[#0A1A4F] text-lg font-semibold px-6 py-3 rounded-md select-none hover:bg-[#E0E7FF] transition duration-300"
                     >
                         Unduh Aplikasi Diagnosa
                     </button>
                 </div>
             </div>
-            <div class="flex-shrink-0">
+            <div class="flex-shrink-0 w-full max-w-md md:max-w-lg">
                 <img
                     src="{{ asset('assets/ilustrasions.png') }}"
                     alt="Illustration"
-                    width="400"
-                    height="280"
-                    class="w-full max-w-[400px] h-auto select-none"
+                    class="w-full h-auto rounded-lg shadow-xl select-none"
                     draggable="false"
                 />
             </div>
         </section>
-    </main>
 
-    {{-- Home Section (SISTEM PAKAR) --}}
-    <section id="home" class="px-4 py-8 text-center bg-white">
-        <h2 class="font-bold text-base md:text-lg max-w-md mx-auto text-[#0A1A4F]">
-            SISTEM PAKAR
-        </h2>
-    </section>
-
-    {{-- Dashboard Section (Kutipan) --}}
-    <section id="dashboard" class="px-6 py-12 text-white bg-black">
-        <div class="max-w-4xl mx-auto">
-            <p class="max-w-3xl mx-auto text-lg font-bold leading-snug text-center md:text-xl">
-                “Kami membuat Aplikasi Diagnosa sebagai proyek akhir Tahun untuk membantu teman-teman kami yang mungkin mengalami depresi untuk mengetahui tingkat depresi mereka dan menemukan solusi yang sesuai”
-            </p>
-        </div>
-    </section>
-
-    <main class="max-w-4xl px-6 py-16 mx-auto">
-        <h1 class="text-center text-[#000c3b] text-lg font-normal mb-10">
-            Pertanyaan Yang Sering Diajukan - FAQ
-        </h1>
-        <section class="space-y-6">
-            <div class="bg-[#f0f7fa] px-6 py-6 text-xs text-[#000c3b] rounded-md shadow">
-                Apa itu Diagnosa?
-            </div>
-            <div class="bg-[#f0f7fa] px-6 py-6 text-xs text-[#000c3b] rounded-md shadow">
-                Siapa yang bisa mengakses Diagnosa?
-            </div>
-            <div class="bg-[#f0f7fa] px-6 py-6 text-xs text-[#000c3b] rounded-md shadow">
-                Apakah hasil dari Diagnosa dapat diandalkan?
+        {{-- Dashboard Section (Kutipan) --}}
+        <section id="dashboard" class="py-12 mt-12 text-white bg-black rounded-lg shadow-md">
+            <div class="max-w-4xl px-6 mx-auto text-center">
+                <p class="text-xl font-bold leading-relaxed md:text-2xl">
+                    “Kami membuat Aplikasi Diagnosa sebagai proyek akhir Tahun untuk membantu teman-teman kami yang mungkin mengalami depresi untuk mengetahui tingkat depresi mereka dan menemukan solusi yang sesuai”
+                </p>
             </div>
         </section>
-    </main>
 
-    {{-- Seksi Unggulan Gangguan Mood --}}
-    @if(isset($featuredDisorder))
-    <section class="py-12 md:py-16 bg-slate-50">
-        <div class="container px-4 mx-auto md:px-6">
-            <div class="mb-8 text-center md:mb-12">
-                <h2 class="text-2xl md:text-3xl font-semibold text-[#0A1A4F]">Pelajari Lebih Lanjut Tentang</h2>
-                <p class="mt-2 text-slate-600">Informasi singkat mengenai salah satu kondisi yang kami tangani.</p>
+        <section class="max-w-4xl px-6 py-16 mx-auto">
+            <h1 class="text-center text-[#000c3b] text-2xl font-semibold mb-10">
+                Pertanyaan Yang Sering Diajukan - FAQ
+            </h1>
+            <div class="space-y-6">
+                <div class="bg-[#f0f7fa] px-6 py-6 text-base text-[#000c3b] rounded-md shadow">
+                    Apa itu Diagnosa?
+                </div>
+                <div class="bg-[#f0f7fa] px-6 py-6 text-base text-[#000c3b] rounded-md shadow">
+                    Siapa yang bisa mengakses Diagnosa?
+                </div>
+                <div class="bg-[#f0f7fa] px-6 py-6 text-base text-[#000c3b] rounded-md shadow">
+                    Apakah hasil dari Diagnosa dapat diandalkan?
+                </div>
             </div>
+        </section>
 
-            <div class="max-w-4xl mx-auto">
-                {{-- Bagian Header Informasi Gangguan --}}
-                <div class="p-4 bg-gray-100 rounded-t-lg shadow-md md:p-6">
-                    <h3 class="text-lg md:text-xl font-semibold text-[#0A1A4F]">
-                        {{ $featuredDisorder['kode'] ?? 'PXXX' }} | {{ $featuredDisorder['nama_gangguan'] ?? 'Nama Gangguan Tidak Tersedia' }}
-                    </h3>
-                    @if(isset($featuredDisorder['kesimpulan']) && !empty($featuredDisorder['kesimpulan']))
-                    <p class="mt-1 text-xs italic text-gray-700 md:text-sm">
-                        {{ $featuredDisorder['kesimpulan'] }}
-                    </p>
-                    @endif
+        {{-- Seksi Unggulan Gangguan Mood --}}
+        @if(isset($featuredDisorder))
+        <section class="py-16 mt-12 rounded-lg shadow-md bg-slate-50">
+            <div class="container px-4 mx-auto md:px-6">
+                <div class="mb-10 text-center md:mb-14">
+                    <h2 class="text-3xl md:text-4xl font-semibold text-[#0A1A4F]">Pelajari Lebih Lanjut Tentang</h2>
+                    <p class="mt-3 text-lg text-slate-600">Informasi singkat mengenai salah satu kondisi yang kami tangani.</p>
                 </div>
 
-                {{-- Kartu Konten Utama (Gambar dan Deskripsi Detail) --}}
-                <div class="p-6 bg-white rounded-b-lg shadow-md md:p-8">
-                    <div class="text-gray-700">
-                        <h4 class="text-xl md:text-2xl font-semibold text-[#0A1A4F] mb-4 text-center">
-                            {{ $featuredDisorder['nama_gangguan'] ?? 'Detail Gangguan' }}
-                        </h4>
-
-                        {{-- Gambar Ilustrasi --}}
-                        @if(isset($featuredDisorder['path_gambar']) && file_exists(public_path($featuredDisorder['path_gambar'])))
-                            <img src="{{ asset($featuredDisorder['path_gambar']) }}" alt="Ilustrasi {{ $featuredDisorder['nama_gangguan'] ?? 'Gangguan' }}" class="w-full h-auto max-w-sm mx-auto mb-6 border border-gray-200 rounded-lg shadow">
-                        @else
-                            <div class="p-3 my-4 text-center text-red-500 bg-red-100 rounded-md">
-                                <i class="mr-2 fas fa-image"></i>Gambar ilustrasi tidak ditemukan.
-                            </div>
+                <div class="max-w-4xl mx-auto">
+                    {{-- Bagian Header Informasi Gangguan --}}
+                    <div class="p-5 bg-gray-100 rounded-t-lg shadow-inner md:p-7">
+                        <h3 class="text-xl md:text-2xl font-semibold text-[#0A1A4F]">
+                            {{ $featuredDisorder['kode'] ?? 'PXXX' }} | {{ $featuredDisorder['nama_gangguan'] ?? 'Nama Gangguan Tidak Tersedia' }}
+                        </h3>
+                        @if(isset($featuredDisorder['kesimpulan']) && !empty($featuredDisorder['kesimpulan']))
+                        <p class="mt-1 text-sm italic text-gray-700 md:text-base">
+                            {{ $featuredDisorder['kesimpulan'] }}
+                        </p>
                         @endif
+                    </div>
 
-                        {{-- Deskripsi Gangguan --}}
-                        <div class="prose max-w-none"> {{-- Kelas 'prose' dari Tailwind untuk styling teks dasar --}}
-                            @if(isset($featuredDisorder['deskripsi_gangguan_intro']) && !empty($featuredDisorder['deskripsi_gangguan_intro']))
-                            <p class="mb-3 text-base leading-relaxed">
-                                {{ $featuredDisorder['deskripsi_gangguan_intro'] }}
-                            </p>
+                    {{-- Kartu Konten Utama (Gambar dan Deskripsi Detail) --}}
+                    <div class="p-8 bg-white rounded-b-lg shadow-md md:p-10">
+                        <div class="text-gray-700">
+                            <h4 class="text-2xl md:text-3xl font-semibold text-[#0A1A4F] mb-5 text-center">
+                                {{ $featuredDisorder['nama_gangguan'] ?? 'Detail Gangguan' }}
+                            </h4>
+
+                            {{-- Gambar Ilustrasi --}}
+                            @if(isset($featuredDisorder['path_gambar']) && file_exists(public_path($featuredDisorder['path_gambar'])))
+                                <img src="{{ asset($featuredDisorder['path_gambar']) }}" alt="Ilustrasi {{ $featuredDisorder['nama_gangguan'] ?? 'Gangguan' }}" class="w-full h-auto max-w-md mx-auto mb-8 border border-gray-200 rounded-lg shadow-sm">
+                            @else
+                                <div class="p-4 my-6 text-center text-red-500 bg-red-100 rounded-md">
+                                    <i class="mr-2 fas fa-image"></i>Gambar ilustrasi tidak ditemukan.
+                                </div>
                             @endif
 
-                            @if(!empty($featuredDisorder['poin_utama_deskripsi']))
-                                <ul class="pl-5 space-y-1 list-disc">
-                                    @foreach($featuredDisorder['poin_utama_deskripsi'] as $poin)
-                                        <li class="text-base leading-relaxed">
-                                            @if(is_string($poin) && str_contains($poin, ':'))
-                                                <strong>{{ Illuminate\Support\Str::before($poin, ':') }}:</strong> {{ Illuminate\Support\Str::after($poin, ':') }}
-                                            @else
-                                                {{ $poin }}
-                                            @endif
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @endif
-                        </div>
+                            {{-- Deskripsi Gangguan --}}
+                            <div class="text-lg prose max-w-none"> {{-- Kelas 'prose' dari Tailwind untuk styling teks dasar --}}
+                                @if(isset($featuredDisorder['deskripsi_gangguan_intro']) && !empty($featuredDisorder['deskripsi_gangguan_intro']))
+                                <p class="mb-4 leading-relaxed">
+                                    {{ $featuredDisorder['deskripsi_gangguan_intro'] }}
+                                </p>
+                                @endif
 
-                        {{-- Tombol Baca Selengkapnya --}}
-                        <div class="mt-6 text-center">
-                            <a href="{{ $featuredDisorder['link_detail'] ?? '#' }}"
-                               class="inline-block bg-[#7A9CC6] text-white text-sm font-semibold px-5 py-3 rounded-lg flex items-center justify-center gap-2 select-none hover:bg-opacity-80 transition duration-300">
-                               <span>Baca Selengkapnya</span>
-                               <i class="fas fa-arrow-right"></i>
-                            </a>
+                                @if(!empty($featuredDisorder['poin_utama_deskripsi']))
+                                    <ul class="pl-6 space-y-2 list-disc">
+                                        @foreach($featuredDisorder['poin_utama_deskripsi'] as $poin)
+                                            <li class="leading-relaxed">
+                                                @if(is_string($poin) && str_contains($poin, ':'))
+                                                    <strong>{{ Illuminate\Support\Str::before($poin, ':') }}:</strong> {{ Illuminate\Support\Str::after($poin, ':') }}
+                                                @else
+                                                    {{ $poin }}
+                                                @endif
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </div>
+
+                            {{-- Tombol Baca Selengkapnya --}}
+                            <div class="mt-8 text-center">
+                                <a href="{{ $featuredDisorder['link_detail'] ?? '#' }}"
+                                   class="inline-block bg-[#7A9CC6] text-white text-lg font-semibold px-6 py-3 rounded-lg flex items-center justify-center gap-3 select-none hover:bg-opacity-80 transition duration-300">
+                                    <span>Baca Selengkapnya</span>
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-    @endif
+        </section>
+        @endif
 
-    {{-- FAQ Section --}}
-    <section class="max-w-4xl px-6 py-16 mx-auto" id="faq">
-        <h2 class="text-center text-[#000c3b] text-lg font-normal mb-10">
-            Pertanyaan Yang Sering Diajukan - FAQ
-        </h2>
-        <div class="space-y-6">
-            <div class="bg-[#f0f7fa] px-6 py-6 text-xs text-[#000c3b] rounded-md shadow">
-                Apa itu Diagnosa?
+        {{-- FAQ Section --}}
+        <section class="max-w-4xl px-6 py-16 mx-auto" id="faq">
+            <h2 class="text-center text-[#000c3b] text-2xl font-semibold mb-10">
+                Pertanyaan Yang Sering Diajukan - FAQ
+            </h2>
+            <div class="space-y-6">
+                <div class="bg-[#f0f7fa] px-6 py-6 text-base text-[#000c3b] rounded-md shadow">
+                    Apa itu Diagnosa?
+                </div>
+                <div class="bg-[#f0f7fa] px-6 py-6 text-base text-[#000c3b] rounded-md shadow">
+                    Siapa yang bisa mengakses Diagnosa?
+                </div>
+                <div class="bg-[#f0f7fa] px-6 py-6 text-base text-[#000c3b] rounded-md shadow">
+                    Apakah hasil dari Diagnosa dapat diandalkan?
+                </div>
             </div>
-            <div class="bg-[#f0f7fa] px-6 py-6 text-xs text-[#000c3b] rounded-md shadow">
-                Siapa yang bisa mengakses Diagnosa?
-            </div>
-            <div class="bg-[#f0f7fa] px-6 py-6 text-xs text-[#000c3b] rounded-md shadow">
-                Apakah hasil dari Diagnosa dapat diandalkan?
-            </div>
-        </div>
->>>>>>> f2f6d6f079a3265064b6494a3d934b03d7a964ac
-    </section>
+
+        </section>
+    </main>
 
     <script>
-<<<<<<< HEAD
+
         // Pastikan tidak ada ID stickyMenu ganda jika file ini digabung atau di-include
         // Jika ada, pastikan script ini hanya dieksekusi sekali atau gunakan ID yang unik
         const stickyMenu = document.getElementById('stickyMenu'); // Jika ada elemen dengan ID ini
@@ -250,16 +241,6 @@
             }
         }
     </script>
-=======
-        document.querySelectorAll('a[href^="#"]').forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                const target = document.querySelector(link.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
     </script>
 
 </body>
