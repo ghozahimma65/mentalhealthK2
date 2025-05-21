@@ -63,17 +63,21 @@ class _PertanyaanScreenState extends State<PertanyaanScreen> {
           testType == 'mental_health' ||
           testType == 'Umum') {
         _questions = [
-          "Apakah Anda sering merasa sedih, murung, atau tidak bersemangat dalam satu minggu terakhir?",
-          "Apakah Anda merasa kehilangan minat atau kesenangan dalam melakukan hal-hal yang biasanya Anda nikmati?",
-          "Apakah Anda mengalami kesulitan tidur atau tidur berlebihan akhir-akhir ini?",
-          "Apakah Anda merasa cemas, khawatir berlebihan, atau sulit menenangkan pikiran Anda?",
-          "Apakah Anda merasa lelah, tidak bertenaga, atau kehabisan energi meskipun tidak melakukan aktivitas berat?",
-          "Apakah Anda merasa kesulitan berkonsentrasi saat membaca, bekerja, atau menonton sesuatu?",
-          "Apakah Anda merasa tidak berguna, bersalah, atau menyalahkan diri sendiri secara berlebihan?",
-          "Apakah Anda menjauh dari orang-orang atau enggan bersosialisasi seperti biasanya?",
-          "Apakah Anda mengalami perubahan nafsu makan (menurun atau meningkat drastis)?",
-          "Apakah Anda merasa hidup tidak berarti atau muncul pikiran untuk menyakiti diri sendiri?"
-        ];
+          "Berapa usia Anda?",
+          "Apa jenis kelamin Anda?",
+          "Apakah Anda pernah didiagnosis dengan masalah kesehatan mental?",
+          "Seberapa parah gejala yang Anda rasakan?",
+          "Bagaimana suasana hati Anda dalam seminggu terakhir?",
+          "Seberapa baik kualitas tidur Anda?",
+          "Berapa sering Anda melakukan aktivitas fisik (olahraga)?",
+          "Apakah Anda sedang menjalani pengobatan (medikasi)?",     
+          "Apakah Anda sedang menjalani terapi psikologis?",
+          "Berapa lama Anda sudah menjalani perawatan kesehatan mental?",
+          "Seberapa sering Anda merasa stres?",
+          "Menurut Anda, apakah Anda mengalami kemajuan dalam perawatan Anda?",
+          "Seberapa sering Anda merasa emosi negatif seperti sedih, marah, atau cemas?",
+          "Seberapa patuh Anda mengikuti rencana perawatan atau pengobatan Anda?"
+            ];
       } else if (testType.toLowerCase().contains('anxiety')) {
         _questions = [
           "Apakah Anda sering merasa gugup, cemas, atau tegang?",

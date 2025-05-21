@@ -1,145 +1,159 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:pie_chart/pie_chart.dart';
 
-class HasilTesScreen extends StatelessWidget {
-  final Map<String, double> data; // e.g. {'Depresi Ringan': 30, 'Depresi Sedang': 40, 'Depresi Berat': 30}
-  final String message; // e.g. "Kecenderungan depresi sedang..."
-  
-  const HasilTesScreen({
-    super.key,
-    required this.data,
-    required this.message,
-  });
+// Ganti ini dengan import halaman home kamu
+import 'home_page.dart'; // Pastikan HomePage() tersedia
+
+class HasilTesPage extends StatelessWidget {
+  const HasilTesPage({super.key}); 
 
   @override
   Widget build(BuildContext context) {
-    final List<Color> sectionColors = [
-      Colors.lightBlueAccent,
-      Colors.orangeAccent,
-      Colors.redAccent,
-    ];
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hasil Tes Depresi'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      extendBodyBehindAppBar: true,
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(
+        height: MediaQuery.of(context).size.height, // full screen
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.purple.shade50, Colors.purple.shade200],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            colors: [Color(0xFF8E2DE2), Color(0xFFFF416C)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
         ),
-        child: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 40),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
+              const Text(
+                "Hasil Tes Depresi Kamu",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
 
-              // Kartu Chart
+              const SizedBox(height: 30),
+
+              // CONTOH PIE CHART (ganti dengan pie chart kamu sendiri)
+              // PIE CHART DALAM CONTAINER
+              Container(
+              height: 250,
+              width: 250,
+              decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white24,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: PieChart(
+                  dataMap: {
+                    "Depresi Sedang": 40,
+                    "Depresi Ringan": 30,
+                    "Depresi Berat": 30,
+                    },
+                    animationDuration: const Duration(milliseconds: 800),
+                    chartType: ChartType.disc,
+                    baseChartColor: Colors.transparent,
+                    colorList: const [Colors.red, Colors.green, Colors.blue],
+                    chartValuesOptions: const ChartValuesOptions(
+                      showChartValuesInPercentage: true,
+                      showChartValueBackground: false,
+                      showChartValues: true,
+                      decimalPlaces: 0,
+                      ),
+                      legendOptions: const LegendOptions(
+                        showLegends: false, // legenda kita pindah ke luar container
+                        ),
+                        ),
+                        ),
+                        ),
+            
+              const SizedBox(height: 30),
+
+              // LEGEND DI LUAR CONTAINER
+              Wrap(
+              spacing: 18,
+              alignment: WrapAlignment.center,
+              children: const [
+                LegendItem(color: Colors.red, text: 'Bipolar Disorder'),
+                LegendItem(color: Colors.blue, text: 'Major Depressive Disorder'),
+                LegendItem(color: Colors.green, text: 'Generalized Anxiety Disorder'),
+                LegendItem(color: Colors.yellow, text: 'Panic Disorder'),
+                ],
+                ),
+
+                const SizedBox(height: 35),
+
+              // CARD HASIL DIAGNOSA
               Card(
-                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                elevation: 6,
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                elevation: 8,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
-                    children: [
-                      const Text(
-                        'Distribusi Skor',
+                    children: const [
+                      Text(
+                        'Kecenderungan kamu saat ini :',
                         style: TextStyle(
-                          fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      SizedBox(
-                        height: 200,
-                        child: PieChart(
-                          PieChartData(
-                            sectionsSpace: 4,
-                            centerSpaceRadius: 40,
-                            startDegreeOffset: -90,
-                            sections: List.generate(data.length, (i) {
-                              final entry = data.entries.elementAt(i);
-                              return PieChartSectionData(
-                                value: entry.value,
-                                title: '${entry.value.toStringAsFixed(1)}%',
-                                color: sectionColors[i % sectionColors.length],
-                                radius: 80,
-                                titleStyle: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              );
-                            }),
-                          ),
-                          swapAnimationDuration: const Duration(milliseconds: 800),
-                          swapAnimationCurve: Curves.easeInOut,
+                      SizedBox(height: 8),
+                      Text(
+                        'Depresi sedang',
+                        style: TextStyle(
+                          color: Colors.deepPurple,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          fontFamily: "Bahnschrift SemiBold",
+                          letterSpacing: 2,
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      // Legend
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 8,
-                        alignment: WrapAlignment.center,
-                        children: List.generate(data.length, (i) {
-                          final entry = data.entries.elementAt(i);
-                          return _LegendItem(
-                            color: sectionColors[i % sectionColors.length],
-                            text: entry.key,
-                          );
-                        }),
+                      SizedBox(height: 4),
+                      Text(
+                        'Konsultasikan ke profesional bila perlu.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                          fontFamily: 'Cascadia Code',
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
 
-              // Kartu Pesan
-              Card(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                color: Colors.white,
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Text(
-                    message,
-                    style: const TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center,
+              // TOMBOL SIMPAN
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                },
+                icon: const Icon(Icons.save),
+                label: const Text('Simpan Hasil'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.deepPurple,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
+                  elevation: 4,
                 ),
               ),
 
-              const Spacer(),
-
-              // Tombol Selesai
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                    ),
-                    child: const Text(
-                      'Selesai',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
-                ),
-              ),
+              const SizedBox(height: 40),
             ],
           ),
         ),
@@ -148,19 +162,30 @@ class HasilTesScreen extends StatelessWidget {
   }
 }
 
-class _LegendItem extends StatelessWidget {
+class LegendItem extends StatelessWidget {
   final Color color;
   final String text;
-  const _LegendItem({required this.color, required this.text});
+
+  const LegendItem({super.key, required this.color, required this.text});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(width: 16, height: 16, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
         const SizedBox(width: 6),
-        Text(text),
+        Text(
+          text,
+          style: const TextStyle(color: Colors.white),
+        ),
       ],
     );
   }

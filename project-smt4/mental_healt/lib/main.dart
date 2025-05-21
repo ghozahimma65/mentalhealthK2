@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
         '/kuis': (context) => const KuisScreen(),
         '/pertanyaan': (context) => const PertanyaanScreen(),
         '/hasil': (context) => const RiwayatHasilTesScreen(),
-        '/detailhasil': (context) => const DetailHasilTesScreen(),
+        '/detailhasil': (context) => const HasilTesPage(),
         '/homepage': (context) => HomePage(),
         '/profile': (context) => const ProfileScreen(),
         '/meditasi': (context) => const MeditationScreen(),
