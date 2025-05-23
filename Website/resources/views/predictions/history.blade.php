@@ -28,7 +28,7 @@
             </tbody>
         </table>
     @else
-        <p>Tidak ada riwayat prediksi ditemukan.</p>
+        <p>Tidak ada riwayat prediksi yang ditemukan.</p>
     @endif
 </div>
 @endsection
