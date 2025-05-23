@@ -157,8 +157,18 @@
     <div class="container py-8">
         <h1 class="text-2xl font-bold mb-6 text-center text-[#80CBC4]">Kuesioner Kesehatan Mental</h1>
 
-        <form action="{{ route('simpan-jawaban') }}" method="POST" class="max-w-lg p-6 mx-auto bg-white rounded-lg shadow-md">
+        <form action="{{ route('diagnosis.submit') }}" method="POST" class="max-w-lg p-6 mx-auto bg-white rounded-lg shadow-md">
             @csrf
+        <body class="flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-2xl p-8 bg-white border border-gray-200 rounded-lg shadow-xl">
+        <h1 class="mb-6 text-3xl font-bold text-center text-gray-800">Kuesioner Diagnosis Kesehatan Mental</h1>
+        <p class="mb-8 text-center text-gray-600">
+            Silakan isi informasi di bawah ini untuk mendapatkan diagnosis awal. Data Anda akan dijaga kerahasiaannya.
+        </p>
+            {{-- <div class="mb-4">
+    <label for="name" class="form-label">Nama Lengkap</label>
+    <input type="text" id="name" name="name" class="form-input" required>
+</div> --}}
 
             <div class="mb-4">
                 <label for="age" class="form-label">1. Berapa usia Anda?</label>
