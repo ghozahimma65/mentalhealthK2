@@ -165,11 +165,6 @@
         <p class="mb-8 text-center text-gray-600">
             Silakan isi informasi di bawah ini untuk mendapatkan diagnosis awal. Data Anda akan dijaga kerahasiaannya.
         </p>
-            {{-- <div class="mb-4">
-    <label for="name" class="form-label">Nama Lengkap</label>
-    <input type="text" id="name" name="name" class="form-input" required>
-</div> --}}
-
             <div class="mb-4">
                 <label for="age" class="form-label">1. Berapa usia Anda?</label>
                 <input type="number" id="age" name="age" class="form-input" required>

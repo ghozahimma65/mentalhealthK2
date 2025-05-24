@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 // --- RUTE PUBLIK / UMUM ---
 
+// -------KALAU MAU NAMBAHIN ROUTE SESUAIKAN TEMPATNYA YA(ROUTE UNTUK ADMIN DAN USER-------)
 // Halaman landing
 Route::get('/', function () {
     return view('landing');
@@ -66,7 +67,6 @@ Route::middleware('auth')->group(function () {
 
 
 // --- RUTE KHUSUS ADMIN ---
-// Semua rute di dalam grup ini memerlukan autentikasi DAN peran 'admin'
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard Admin
@@ -80,11 +80,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/outcome', [OutcomeController::class, 'showOutcomeForm'])->name('outcome.form');
     Route::post('/outcome', [OutcomeController::class, 'predictOutcome'])->name('outcome.predict');
 
-    // Tambahkan rute admin lainnya di sini
 });
 
 
-// --- RUTE AUTENTIKASI BAWAAN LARAVEL BREEZE/FORTIFY ---
-// Ini akan mencakup /login, /register, /forgot-password, dll.
-// JANGAN HAPUS BARIS INI jika Anda menggunakan Laravel Breeze/Fortify.
+
 require __DIR__.'/auth.php';

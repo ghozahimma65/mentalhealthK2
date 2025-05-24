@@ -38,7 +38,6 @@
         <nav
             class="hidden md:flex items-center space-x-8 text-[#0A1A4F] font-semibold text-sm leading-5 select-none"
         >
-            <a href="#" class="hover:underline">Dashboard</a>
             <a href="#" class="hover:underline">Menu</a>
             <a href="{{ route('diagnosis.form') }}" class="hover:underline">Cek Diagnosa</a>
             <div class="relative cursor-pointer group">
