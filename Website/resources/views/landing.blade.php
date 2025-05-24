@@ -1,61 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Diagnosa</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-        rel="stylesheet"
-    />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
-</head>
-<body class="bg-[#F5F9FF]">
-    <header
-        class="flex items-center justify-between px-6 py-4 max-w-[1200px] mx-auto"
-    >
-        <div class="flex items-center space-x-2">
-            <div class="bg-[#7A9CC6] rounded-lg p-2">
-                <img
-                    src="{{ asset('assets/logo.png') }}"
-                    alt="Gambar logo Diagnosa"
-                    width="32"
-                    height="32"
-                    class="block"
-                />
-            </div>
-            <span
-                class="text-[#2F4F7C] font-semibold text-xl leading-6 select-none drop-shadow-[1px_1px_1px_rgba(0,0,0,0.25)]"
-                >Diagnosa</span
-            >
-        </div>
-        <nav
-            class="hidden md:flex items-center space-x-8 text-[#0A1A4F] font-semibold text-sm leading-5 select-none"
-        >
-            <a href="#" class="hover:underline">Menu</a>
-            <a href="{{ route('diagnosis.form') }}" class="hover:underline">Cek Diagnosa</a>
-            <div class="relative cursor-pointer group">
-                <button class="flex items-center space-x-1 hover:underline">
-                    <span>Kontak</span>
-                    <i class="text-xs fas fa-chevron-down"></i>
-                </button>
-                {{-- Anda bisa menambahkan dropdown kontak di sini --}}
-            </div>
-            <button
-                type="button"
-                class="bg-[#7A9CC6] text-white text-sm font-semibold px-4 py-2 rounded-md select-none"
-                onclick="window.location.href='{{ route('login') }}'"
-            >
-                Login
-            </button>
-        </nav>
-    </header>
+@extends('layouts.main') {{-- Menggunakan layout utama Anda --}}
+
+@section('title', 'Diagnosa Dini untuk Kesehatan Mental Anda') {{-- Judul halaman --}}
+
+@push('styles')
+<style>
+    /* Styling for body (background-color, color, display, justify-content, align-items, min-height, margin)
+       should ideally be handled by layouts.main's body or a wrapper div */
+    /* Contoh: body { background-color: #EDF6F9; color: #2C3E70; } */
+
+    /* Tailwind CSS sudah dimuat, jadi kelas-kelas seperti text-2xl, font-bold, mb-6, text-center, bg-white, shadow-md, rounded-lg, p-6, mx-auto, max-w-lg
+       sudah bisa langsung digunakan. */
+
+    /* Anda bisa menaruh CSS kustom lainnya di sini atau di app.css */
+    .form-label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #2C3E70;
+    }
+    .form-input, .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #CBD5E0;
+        border-radius: 0.25rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        margin-bottom: 1rem;
+        color: #4A5568;
+    }
+    .form-select option {
+        color: #4A5568;
+    }
+    .radio-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+    .radio-group label {
+        margin-right: 1.5rem;
+        color: #4A5568;
+    }
+    .radio-group input[type="radio"] {
+        margin-right: 0.5rem;
+    }
+    .submit-button {
+        background-color: #80CBC4;
+        color: white;
+        font-weight: bold;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+    }
+    .submit-button:hover {
+        background-color: #009688;
+    }
+    .back-button {
+        background-color: #6B7280;
+        color: white;
+        font-weight: bold;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .back-button:hover {
+        background-color: #4B5563;
+    }
+    /* Mengubah .text-[#80CBC4] menjadi kelas Tailwind */
+    .text-teal-400 { /* Contoh warna Teal-400 */
+        color: #80CBC4;
+    }
+</style>
+@endpush
+
+@section('content') {{-- Memulai bagian konten utama halaman --}}
     <main class="max-w-[1200px] mx-auto px-6 mt-6 md:mt-12">
         <section
             class="flex flex-col items-center justify-between gap-8 md:flex-row md:items-center"
@@ -73,23 +93,21 @@
                     kami memudahkan Anda untuk mengenali gejala, memahami kondisi
                     emosional, dan mendapatkan dukungan kapan saja, di mana saja.
                 </p>
-              <div class="flex flex-wrap justify-center gap-4 md:justify-start">
-    <a
-        href="{{ route('diagnosis.form') }}" {{-- DISESUAIKAN: Mengarahkan ke route form diagnosis --}}
-        class="bg-[#7A9CC6] text-white text-lg font-semibold px-6 py-3 rounded-md flex items-center space-x-3 select-none hover:bg-opacity-80 transition duration-300"
-    >
-        <span>Mulai Cek Kesehatan Mental</span>
-        <i class="fas fa-arrow-right"></i>
-    </a>
-</div>
-
+                <div class="flex flex-wrap justify-center gap-4 md:justify-start">
+                    <a
+                        href="{{ route('diagnosis.form') }}" {{-- DISESUAIKAN: Mengarahkan ke route form diagnosis --}}
+                        class="bg-[#7A9CC6] text-white text-lg font-semibold px-6 py-3 rounded-md flex items-center space-x-3 select-none hover:bg-opacity-80 transition duration-300"
+                    >
+                        <span>Mulai Cek Kesehatan Mental</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
                     <button
                         type="button"
                         class="border border-[#0A1A4F] text-[#0A1A4F] text-lg font-semibold px-6 py-3 rounded-md select-none hover:bg-[#E0E7FF] transition duration-300"
                     >
                         Unduh Aplikasi Diagnosa
                     </button>
-                </div>
+                </div> {{-- DIV INI SEBELUMNYA TIDAK TERTUTUP --}}
             </div>
             <div class="flex-shrink-0 w-full max-w-md md:max-w-lg">
                 <img
@@ -128,9 +146,10 @@
         </section>
 
     </main>
+@endsection {{-- Mengakhiri bagian konten utama halaman --}}
 
+@push('scripts')
     <script>
-
         // Pastikan tidak ada ID stickyMenu ganda jika file ini digabung atau di-include
         // Jika ada, pastikan script ini hanya dieksekusi sekali atau gunakan ID yang unik
         const stickyMenu = document.getElementById('stickyMenu'); // Jika ada elemen dengan ID ini
@@ -148,7 +167,4 @@
             }
         }
     </script>
-    </script>
-
-</body>
-</html>
+@endpush

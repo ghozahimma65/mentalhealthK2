@@ -98,7 +98,8 @@
     <main>
         @yield('content')
     </main>
-
+     @include('layouts.footer')
+     
     @stack('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {

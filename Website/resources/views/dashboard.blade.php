@@ -178,3 +178,4 @@
         // new Chart(ctx, { ... });
     </script>
 @endpush
+
