@@ -11,26 +11,14 @@ class KuesionerController extends Controller
     {
         // Validasi data yang masuk dari formulir
         $request->validate([
-            'age' => 'required|integer|min:0',
-            'gender' => 'required|string|max:255',
-            'diagnosis' => 'nullable|boolean',
-            'symptom_severity' => 'required|integer|min:1|max:5',
-            'mood_score' => 'required|integer|min:1|max:5',
-            'sleep_quality' => 'required|integer|min:1|max:5',
-            'physical_activity' => 'required|integer|min:0|max:2',
-            'medication' => 'nullable|boolean',
-            'therapy_type' => 'nullable|string|max:255',
-            'treatment_duration' => 'nullable|integer|min:0',
-            'stress_level' => 'required|integer|min:1|max:5',
-            'treatment_progress' => 'nullable|boolean',
-            'emotional_state' => 'required|integer|min:1|max:5',
-            'adherence_treatment' => 'required|integer|min:1|max:5',
-            'concentration' => 'required|integer|min:1|max:5',
-            'social_support' => 'nullable|boolean',
-            'optimism' => 'required|integer|min:1|max:5',
-            'stopped_treatment' => 'nullable|boolean',
-            'eating_changes' => 'nullable|boolean',
-            'meaning_of_life' => 'required|integer|min:1|max:5',
+        'age' => 'required|integer|min:0',
+        'gender' => 'required|integer|min:0|max:1', // Sudah sesuai dengan Pria (0) dan Wanita (1)
+        'symptom_severity' => 'required|integer|min:1|max:10',
+        'mood_score' => 'required|integer|min:1|max:10',
+        'sleep_quality' => 'required|integer|min:1|max:10',
+        'physical_activity' => 'required|integer|min:0',
+        'stress_level' => 'required|integer|min:1|max:10',
+        'ai_detected_emotional_state' => 'required|integer|min:0|max:5',// Menyesuaikan dengan 'AI Detected Emotional State'
         ]);
 
         try {

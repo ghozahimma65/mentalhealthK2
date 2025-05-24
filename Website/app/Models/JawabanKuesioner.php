@@ -12,24 +12,12 @@ class JawabanKuesioner extends Model
     protected $fillable = [
         'age',
         'gender',
-        'diagnosis',
         'symptom_severity',
         'mood_score',
         'sleep_quality',
         'physical_activity',
-        'medication',
-        'therapy_type',
-        'treatment_duration',
         'stress_level',
-        'treatment_progress',
-        'emotional_state',
-        'adherence_treatment',
-        'concentration',
-        'social_support',
-        'optimism',
-        'stopped_treatment',
-        'eating_changes',
-        'meaning_of_life',
+        'ai_detected_emotional_state'
     ];
 
     // Jika ada relasi, definisikan di sini

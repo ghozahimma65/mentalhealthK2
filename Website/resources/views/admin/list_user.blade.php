@@ -11,88 +11,79 @@
     {{-- karena sudah disediakan oleh layouts.main.blade.php --}}
 
     {{-- Breadcrumb --}}
-    <div class="flex items-center space-x-1 mb-6 text-sm">
-        <a href="{{ route('admin.dashboard') }}" class="text-blue-500 hover:underline">Admin</a>
-        <span class="text-gray-500">/</span>
-        <span class="text-gray-700 font-semibold">Tambah Admin Baru</span>
+<div class="flex items-center mb-6 space-x-1 text-sm">
+    <a href="{{ route('admin.dashboard') }}" class="text-blue-500 hover:underline">Admin</a>
+    <span class="text-gray-500">/</span>
+    <span class="font-semibold text-gray-700">Daftar Admin</span>
+</div>
+
+<div class="p-6 bg-white rounded-lg shadow md:p-8">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 md:text-2xl">Daftar Admin</h2>
+        <a href="{{ route('admin.tambah') }}" class="px-4 py-2 text-sm font-semibold text-white transition duration-300 bg-green-500 rounded-md hover:bg-green-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-5 h-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Tambah Admin
+        </a>
     </div>
 
-    <div class="bg-white p-6 md:p-8 rounded-lg shadow">
-        <h2 class="text-xl md:text-2xl font-semibold text-gray-800 mb-6">Tambah Admin</h2>
+    @if (session('success'))
+        <div class="p-3 mb-4 text-sm text-green-700 bg-green-100 border border-green-300 rounded-md">
+            {{ session('success') }}
+        </div>
+    @endif
 
-        {{-- Jika ada error validasi, bisa ditampilkan di sini --}}
-        {{-- @if ($errors->any())
-            <div class="mb-4 p-3 bg-red-100 text-red-700 border border-red-300 rounded-md text-xs">
-                <ul class="list-disc list-inside">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif --}}
+    @if (session('error'))
+        <div class="p-3 mb-4 text-sm text-red-700 bg-red-100 border border-red-300 rounded-md">
+            {{ session('error') }}
+        </div>
+    @endif
 
-        {{-- Pastikan action form mengarah ke rute yang benar untuk menyimpan admin baru --}}
-        <form method="POST" action="{{ route('admin.tambah.store') }}" autocomplete="off" class="max-w-3xl space-y-6">
-          @csrf {{-- Jangan lupa CSRF token --}}
-          {{-- ... sisa field form Anda ... --}}
-      </form>
-            @csrf
-            <div class="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
-                <label class="w-full md:w-48 font-semibold text-[#2C3E70] text-sm select-none flex-shrink-0" for="name">
-                    Nama Lengkap :
-                </label>
-                <input class="flex-grow bg-gray-50 border border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md px-4 py-2 text-[#2C3E70] text-base" 
-                       id="name" 
-                       name="name" {{-- Tambahkan atribut name --}}
-                       type="text"
-                       value="{{ old('name') }}" {{-- Untuk mempertahankan input jika ada error --}}
-                       required />
-            </div>
-
-            <div class="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
-                <label class="w-full md:w-48 font-semibold text-[#2C3E70] text-sm select-none flex-shrink-0" for="email">
-                    Alamat Email :
-                </label>
-                <input class="flex-grow bg-gray-50 border border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md px-4 py-2 text-[#2C3E70] text-base" 
-                       id="email" 
-                       name="email" {{-- Tambahkan atribut name --}}
-                       type="email"
-                       value="{{ old('email') }}"
-                       required />
-            </div>
-
-            <div class="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
-                <label class="w-full md:w-48 font-semibold text-[#2C3E70] text-sm select-none flex-shrink-0" for="password">
-                    Password :
-                </label>
-                <input class="flex-grow bg-gray-50 border border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md px-4 py-2 text-[#2C3E70] text-base" 
-                       id="password" 
-                       name="password" {{-- Tambahkan atribut name --}}
-                       type="password"
-                       required />
-            </div>
-
-            <div class="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
-                <label class="w-full md:w-48 font-semibold text-[#2C3E70] text-sm select-none flex-shrink-0" for="password_confirmation">
-                    Konfirmasi Password :
-                </label>
-                <input class="flex-grow bg-gray-50 border border-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md px-4 py-2 text-[#2C3E70] text-base" 
-                       id="password_confirmation" 
-                       name="password_confirmation" {{-- Tambahkan atribut name --}}
-                       type="password"
-                       required />
-            </div>
-
-            <div class="flex md:items-center md:space-x-4 pt-4 md:pl-48">
-                {{-- Label "Frame" dihilangkan karena sepertinya tidak relevan --}}
-                <button class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-md px-6 py-2.5 transition duration-300" type="submit">
-                    Simpan Admin Baru
-                </button>
-                <a href="{{ route('admin.dashboard') }}" {{-- Atau ke halaman daftar admin jika ada --}}
-                   class="ml-4 text-gray-600 hover:text-gray-800 font-medium text-sm py-2.5">
-                   Batal
-                </a>
-            </div>
-        </form>
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                        Nama
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
+                        Email
+                    </th>
+                    <th scope="col" class="relative px-6 py-3">
+                        <span class="sr-only">Aksi</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                @forelse ($admins as $admin)
+                    <tr>
+                        <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+                            {{ $admin->name }}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                            {{ $admin->email }}
+                        </td>
+                        <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <a href="{{ route('admin.edit', $admin->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                            <form action="{{ route('admin.hapus', $admin->id) }}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="ml-2 text-red-600 hover:text-red-900" onclick="return confirm('Apakah Anda yakin ingin menghapus admin ini?')">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td class="px-6 py-4 text-sm text-center text-gray-500 whitespace-nowrap" colspan="3">
+                            Tidak ada data admin.
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
+
+    {{ $admins->links() }}
+</div>
 @endsection
