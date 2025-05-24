@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <title>Diagnosa Admin Login</title>
+    <title>Diagnosa Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
@@ -38,7 +38,7 @@
                     <img alt="Diagnosa Logo Small" class="w-6 h-6" height="24" src="{{ asset('assets/logo.png') }}" width="24"/>
                 </div>
                 <h1 class="text-[#1a2a5a] font-semibold text-xl select-none">
-                    Admin Login
+                    Halaman Login
                 </h1>
             </div>
 
