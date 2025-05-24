@@ -43,19 +43,17 @@
                 <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-info-circle"></i> Detail Pengguna
                 </a>
-                   {{-- ===== MENU PREDIKSI BARU ===== --}}
-                <span class="block px-4 mt-6 mb-1 text-xs font-semibold text-gray-400">PREDIKSI</span>
-                {{-- <a href="{{ route('predictions.create') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('prediksi.index') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}"> --}}
-                    <i class="mr-2 fas fa-robot"></i> Prediksi
-                </a>
-                {{-- <a href="{{ route('predictions.history') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('prediksi.history') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}"> --}}
-                    <i class="mr-2 fas fa-history"></i> Riwayat Prediksi
-                </a>
                 <a href="#" {{-- Ganti # dengan route('admin.hasil.index') jika sudah ada --}}
                     class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-chart-line"></i> Tren Hasil Klasifikasi
                 </a>
-
+                 <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">DATA MASTER</span>
+                 <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
+                    <i class="mr-2 fas fa-leaf"></i> Meditasi
+                </a> 
+                 <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
+                    <i class="mr-2 fas fa-quote-left"></i> Quotes & Affirmation
+                </a> 
                 <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">PENGATURAN</span>
                 <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-user-plus"></i> Admin
@@ -147,5 +145,3 @@
     </script>
 </body>
 </html>
-
-
