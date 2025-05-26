@@ -53,8 +53,8 @@
         <nav
             class="hidden md:flex items-center space-x-8 text-[#0A1A4F] font-semibold text-sm leading-5 select-none"
         >
-            <a href="{{ url('/') }}" class="hover:underline">Beranda</a> 
-            <a href="{{ route('diagnosis.form') }}" class="hover:underline">Cek Diagnosa</a>
+            <a href="{{ url('dashboard') }}" class="hover:underline">Beranda</a> 
+            <a href="{{ route('diagnosis.form') }}" class="hover:underline">Cek Diagnosis</a>
             
             <div class="relative cursor-pointer group">
                 <button class="flex items-center space-x-1 hover:underline">
@@ -89,8 +89,8 @@
                     </div>
                 </div>
             @else
-                <a href="{{ route('login') }}" class="px-3 py-2 text-sm font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600 sm:px-4 whitespace-nowrap">Login</a>
-                <a href="{{ route('register') }}" class="px-3 py-2 text-sm font-semibold text-blue-500 border border-blue-500 rounded-md hover:bg-blue-50 sm:px-4 whitespace-nowrap">Register</a>
+                <a href="{{ route('login') }}" class="px-3 py-2 text-sm font-semibold text-white bg-[#7A9CC6] rounded-md hover:bg-[#638cb6] sm:px-4 whitespace-nowrap">Login</a>
+               <a href="{{ route('register') }}" class="px-3 py-2 text-sm font-semibold text-[#7A9CC6] border border-[#7A9CC6] rounded-md hover:bg-[#E0E7FF] sm:px-4 whitespace-nowrap">Register</a>
             @endguest
         </nav>
     </header>

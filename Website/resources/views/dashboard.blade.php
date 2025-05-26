@@ -15,7 +15,7 @@
             {{-- Kartu Jumlah Diagnosa --}}
             <div class="flex flex-col items-start justify-between p-6 bg-white rounded-lg shadow-md">
                 <div>
-                    <h2 class="mb-2 text-xl font-semibold text-gray-700">Total Diagnosa</h2>
+                    <h2 class="mb-2 text-xl font-semibold text-gray-700">Total Diagnosis</h2>
                     <p class="text-5xl font-bold text-blue-600">
                         {{-- Contoh: Ambil dari database --}}
                         {{ $diagnosesCount ?? '0' }}
@@ -27,7 +27,7 @@
             {{-- Kartu Hasil Diagnosa Terakhir --}}
             <div class="flex flex-col items-start justify-between p-6 bg-white rounded-lg shadow-md">
                 <div>
-                    <h2 class="mb-2 text-xl font-semibold text-gray-700">Diagnosa Terakhir</h2>
+                    <h2 class="mb-2 text-xl font-semibold text-gray-700">Diagnosis Terakhir</h2>
                     @if(isset($latestDiagnosis))
                         <p class="text-3xl font-bold {{ $latestDiagnosis->result_class ?? 'text-gray-800' }}">
                             {{ $latestDiagnosis->result_name ?? 'Tidak Diketahui' }}
@@ -37,7 +37,7 @@
                             Terus jaga kesehatan Anda! 💪
                         </p>
                     @else
-                        <p class="text-lg text-gray-600">Belum ada diagnosa dilakukan. Mulai yang pertama sekarang!</p>
+                        <p class="text-lg text-gray-600">Belum ada diagnosis dilakukan. Mulai yang pertama sekarang!</p>
                     @endif
                 </div>
                 <a href="{{ route('predictions.history') }}" class="mt-4 text-sm font-medium text-blue-600 hover:underline">Lihat Riwayat Lengkap <i class="ml-1 text-xs fas fa-arrow-right"></i></a>
@@ -66,37 +66,41 @@
             </div>
         </div>
 
-        {{-- Area Akses Cepat --}}
-        <div class="p-6 mb-8 bg-white rounded-lg shadow-md">
-            <h2 class="mb-4 text-xl font-semibold text-gray-700">Akses Cepat</h2>
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <a href="{{ route('diagnosis.form') }}" class="flex items-center p-4 space-x-3 transition duration-200 rounded-md bg-blue-50 hover:bg-blue-100">
-                    <i class="text-2xl text-blue-600 fas fa-robot"></i>
-                    <div>
-                        <h3 class="font-medium text-gray-800">Mulai Prediksi Diagnosis Baru</h3>
-                        <p class="text-sm text-gray-600">Dapatkan prediksi kondisi kesehatan terbaru Anda.</p>
-                    </div>
-                </a>
-                <a href="#" class="flex items-center p-4 space-x-3 transition duration-200 rounded-md bg-purple-50 hover:bg-purple-100">
-                    <i class="text-2xl text-purple-600 fas fa-chart-line"></i>
-                    <div>
-                        <h3 class="font-medium text-gray-800">Perkembangan Pengobatan</h3>
-                        <p class="text-sm text-gray-600">Pantau progres pengobatan atau pemulihan Anda.</p>
-                    </div>
-                </a>
-                <a href="{{ route('predictions.history') }}" class="flex items-center p-4 space-x-3 transition duration-200 rounded-md bg-green-50 hover:bg-green-100">
-                    <i class="text-2xl text-green-600 fas fa-history"></i>
-                    <div>
-                        <h3 class="font-medium text-gray-800">Lihat Riwayat Diagnosis</h3>
-                        <p class="text-sm text-gray-600">Tinjau semua riwayat prediksi diagnosis Anda.</p>
-                    </div>
-                </a>
+       {{-- Area Akses Cepat --}}
+<div class="p-6 mb-8 bg-white rounded-lg shadow-md">
+    <h2 class="mb-4 text-xl font-semibold text-gray-700">Akses Cepat</h2>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {{-- Kartu: Mulai Prediksi Diagnosis Baru --}}
+        <a href="{{ route('diagnosis.form') }}" class="flex items-center p-4 space-x-3 transition duration-200 rounded-md bg-blue-50 hover:bg-blue-100">
+            <i class="text-2xl text-blue-600 fas fa-robot"></i>
+            <div>
+                <h3 class="font-medium text-gray-800">Mulai Prediksi Diagnosis Baru</h3>
+                <p class="text-sm text-gray-600">Dapatkan prediksi kondisi kesehatan terbaru Anda.</p>
             </div>
-            <p class="mt-6 text-sm text-center text-gray-500">
-                Kami siap membantu Anda setiap langkah! 😊
-            </p>
-        </div>
+        </a>
 
+        {{-- Kartu Baru: Perkembangan & Riwayat Pengobatan --}}
+        <a href="{{ route('outcome.progress') }}" class="flex items-center p-4 space-x-3 transition duration-200 rounded-md bg-purple-50 hover:bg-purple-100">
+            <i class="text-2xl text-purple-600 fas fa-chart-line"></i> {{-- Ikon untuk tren/perkembangan --}}
+            <div>
+                <h3 class="font-medium text-gray-800">Perkembangan & Riwayat Pengobatan</h3>
+                <p class="text-sm text-gray-600">Pantau progres pengobatan atau pemulihan Anda.</p>
+            </div>
+        </a>
+
+        {{-- Kartu: Mulai Prediksi Outcome Baru (Ini tetap ada, karena fungsinya berbeda dengan melihat riwayat) --}}
+        <a href="{{ route('outcome.create') }}" class="flex items-center p-4 space-x-3 transition duration-200 rounded-md bg-yellow-50 hover:bg-yellow-100">
+            <i class="text-2xl text-yellow-600 fas fa-notes-medical"></i>
+            <div>
+                <h3 class="font-medium text-gray-800">Catat Perkembangan Baru</h3>
+                <p class="text-sm text-gray-600">Isi kuesioner untuk prediksi perkembangan terbaru.</p>
+            </div>
+        </a>
+    </div>
+    <p class="mt-6 text-sm text-center text-gray-500">
+        Kami siap membantu Anda setiap langkah! 😊
+    </p>
+</div>
         {{-- Area Grafik Tren (Opsional) --}}
         <div class="p-6 mb-8 bg-white rounded-lg shadow-md">
             <h2 class="mb-4 text-xl font-semibold text-gray-700">Tren Kondisi Kesehatan Anda</h2>
@@ -106,7 +110,7 @@
                 <p>Area untuk grafik tren kondisi (membutuhkan library seperti Chart.js atau sejenisnya)</p>
             </div>
             <p class="mt-4 text-sm text-gray-500">
-                Data tren akan menjadi lebih akurat seiring dengan bertambahnya riwayat diagnosa Anda. Terus semangat! ✨
+                Data tren akan menjadi lebih akurat seiring dengan bertambahnya riwayat diagnosis Anda. Terus semangat! ✨
             </p>
         </div>
 

@@ -15,10 +15,9 @@
         <div class="col-span-1 text-center md:col-span-1 md:text-left">
             <h3 class="mb-4 text-lg font-semibold text-white">Navigasi Cepat</h3>
             <ul class="space-y-2 text-sm text-gray-400">
-                <li><a href="#" class="transition duration-200 hover:text-blue-300">Beranda</a></li>
+                <li><a href="{{ route('dashboard') }}" class="transition duration-200 hover:text-blue-300">Beranda</a></li>
                 <li><a href="{{ route('diagnosis.form') }}" class="transition duration-200 hover:text-blue-300">Mulai Diagnosis</a></li>
                 @auth
-                    <li><a href="{{ route('dashboard') }}" class="transition duration-200 hover:text-blue-300">Dashboard</a></li>
                     <li><a href="{{ route('predictions.history') }}" class="transition duration-200 hover:text-blue-300">Riwayat Saya</a></li>
                     {{-- Asumsi Anda memiliki rute untuk profil --}}
                     <li><a href="#" class="transition duration-200 hover:text-blue-300">Profil Saya</a></li>

@@ -84,7 +84,7 @@
                 <h1
                     class="text-[#0A1A4F] font-extrabold text-4xl md:text-5xl leading-tight mb-6 select-none"
                 >
-                    Diagnosa Dini untuk<br />Kesehatan Mental Anda
+                    Diagnosis Dini untuk<br />Kesehatan Mental Anda
                 </h1>
                 <p
                     class="text-[#0A1A4F] font-semibold text-lg leading-relaxed mb-8 select-none max-w-[450px] mx-auto md:mx-0"
@@ -123,7 +123,7 @@
         <section id="dashboard" class="py-12 mt-12 text-white bg-black rounded-lg shadow-md">
             <div class="max-w-4xl px-6 mx-auto text-center">
                 <p class="text-xl font-bold leading-relaxed md:text-2xl">
-                    “Kami membuat Aplikasi Diagnosa sebagai proyek akhir Tahun untuk membantu teman-teman kami yang mungkin mengalami depresi untuk mengetahui tingkat depresi mereka dan menemukan solusi yang sesuai”
+                    “Kami membuat Aplikasi Diagnosis sebagai Proyek Akhir Semester untuk membantu teman-teman kami yang mungkin mengalami depresi untuk mengetahui tingkat depresi mereka dan menemukan solusi yang sesuai”
                 </p>
             </div>
         </section>

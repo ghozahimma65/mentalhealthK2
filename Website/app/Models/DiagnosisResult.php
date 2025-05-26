@@ -2,17 +2,29 @@
 
 namespace App\Models;
 
-use MongoDB\Laravel\Eloquent\Model; // Import model dari package MongoDB
+use MongoDB\Laravel\Eloquent\Model; // <-- PASTIKAN INI!
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+// use App\Models\User; // Jika relasi dibutuhkan
+
 class DiagnosisResult extends Model
 {
-    protected $connection = 'mongodb'; // Pastikan koneksi ke MongoDB
-    protected $collection = 'diagnosis_results'; // Nama koleksi di MongoDB
+    use HasFactory;
 
-     protected $fillable = [
-        'user_id',          // Bisa null
-        'input_data',       // Array/Object dari input
-        'predicted_diagnosis', // Hasil prediksi
-        'timestamp',        // Waktu
+    protected $connection = 'mongodb';
+    protected $collection = 'diagnosis_results';
+    protected $primaryKey = '_id';
+
+    protected $fillable = [
+        'user_id',          // Pastikan user_id ada dan tipe datanya sesuai dengan ID di Auth::id()
+        'input_data',
+        'predicted_diagnosis',
+        'timestamp',        // Pastikan ini ada di fillable
     ];
+
+    protected $casts = [
+        'input_data' => 'array',
+        'timestamp' => 'datetime',
+    ];
+
+    public $timestamps = false;
 }

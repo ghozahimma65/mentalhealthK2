@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminTambahController;
 use App\Http\Controllers\PredictionController;
 use App\Http\Controllers\DiagnosisController;
-use App\Http\Controllers\Admin\OutcomeController;
+use App\Http\Controllers\OutcomeController;
 use Illuminate\Support\Facades\Auth; 
 
 // --- RUTE PUBLIK / UMUM ---
@@ -63,6 +63,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/predict', [PredictionController::class, 'showCreateForm'])->name('predictions.create');
     Route::post('/predict', [PredictionController::class, 'predict'])->name('predictions.predict');
     Route::get('/history', [PredictionController::class, 'showHistory'])->name('predictions.history');
+
+    Route::get('/outcome/create', [OutcomeController::class, 'create'])->name('outcome.create');
+    Route::post('/outcome', [OutcomeController::class, 'store'])->name('outcome.store');
+    
+    Route::get('/outcome/progress', [OutcomeController::class, 'progress'])->name('outcome.progress');
+    
+    Route::get('/outcome/{outcome}', [OutcomeController::class, 'show'])->name('outcome.show');
 });
 
 
@@ -72,14 +79,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Dashboard Admin
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-    // Rute untuk menambah data (misal: tambah user, tambah gejala, dll.)
+    // Rute untuk menambah data 
     Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah');
     Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store');
 
-    // Rute untuk manajemen Outcome (misal: prediksi hasil, dll.)
-    Route::get('/outcome', [OutcomeController::class, 'showOutcomeForm'])->name('outcome.form');
-    Route::post('/outcome', [OutcomeController::class, 'predictOutcome'])->name('outcome.predict');
-
+    Route::get('/outcomes/all', [OutcomeController::class, 'progress'])->name('outcomes.all');
 });
 
 
