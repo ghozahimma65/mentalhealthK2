@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
-    <title>Diagnosa Admin Login</title>
+    <title>Diagnosa Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
@@ -21,8 +21,8 @@
             src="{{ asset('assets/ilustrasions.png') }}"
         />
     </div>
-    
-    <div class="flex items-center space-x-4 ml-6 mt-6 z-10">
+
+    <div class="z-10 flex items-center mt-6 ml-6 space-x-4">
         <div class="w-20 h-20 rounded-xl bg-[#4a86c5] flex items-center justify-center shadow-md">
             <img alt="Diagnosa Logo" class="w-12 h-12" height="48" src="{{ asset('assets/logo.png') }}" width="48"/>
         </div>
@@ -31,20 +31,20 @@
         </span>
     </div>
 
-    <div class="flex-1 flex justify-end items-center mt-12 px-4 z-10">
-        <div class="relative bg-[#d9f0f3] rounded-2xl p-8 max-w-md w-full shadow-lg mr-10 md:mr-20" style="backdrop-filter: saturate(180%) blur(20px)">  
+    <div class="z-10 flex items-center justify-end flex-1 px-4 mt-12">
+        <div class="relative bg-[#d9f0f3] rounded-2xl p-8 max-w-md w-full shadow-lg mr-10 md:mr-20" style="backdrop-filter: saturate(180%) blur(20px)">
             <div class="flex flex-col items-center mb-6">
                 <div class="w-10 h-10 rounded-md bg-[#4a86c5] flex items-center justify-center mb-2">
                     <img alt="Diagnosa Logo Small" class="w-6 h-6" height="24" src="{{ asset('assets/logo.png') }}" width="24"/>
                 </div>
                 <h1 class="text-[#1a2a5a] font-semibold text-xl select-none">
-                    Admin Login
+                    Halaman Login
                 </h1>
             </div>
 
             {{-- Menampilkan error validasi umum atau error login --}}
             @if ($errors->any())
-                <div class="mb-4 p-3 bg-red-100 text-red-700 border border-red-300 rounded-md text-xs">
+                <div class="p-3 mb-4 text-xs text-red-700 bg-red-100 border border-red-300 rounded-md">
                     <ul>
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -53,15 +53,13 @@
                 </div>
             @endif
 
-            {{-- Ganti <form class="space-y-4"> dengan ini: --}}
             <form method="POST" action="{{ route('login') }}" class="space-y-4">
-                @csrf  {{-- Token CSRF untuk keamanan --}}
+                @csrf {{-- Token CSRF untuk keamanan --}}
 
                 <div>
                     <label class="block text-[#1a2a5a] font-semibold text-xs mb-1 select-none" for="email">
                         Email
                     </label>
-                    {{-- Tambahkan name="email", value="{{ old('email') }}", dan tampilkan error spesifik --}}
                     <input class="w-full rounded-full px-4 py-2 text-xs border focus:border-[#4a86c5] focus:ring focus:ring-[#4a86c5]/50 focus:outline-none @error('email') border-red-500 @enderror"
                            id="email"
                            style="background-color: #ffffff"
@@ -71,7 +69,7 @@
                            required
                            autofocus />
                     @error('email')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
@@ -79,7 +77,6 @@
                     <label class="block text-[#1a2a5a] font-semibold text-xs mb-1 select-none" for="password">
                         Password
                     </label>
-                    {{-- Tambahkan name="password" dan tampilkan error spesifik --}}
                     <input class="w-full rounded-full px-4 py-2 text-xs border focus:border-[#4a86c5] focus:ring focus:ring-[#4a86c5]/50 focus:outline-none @error('password') border-red-500 @enderror"
                            id="password"
                            style="background-color: #ffffff"
@@ -87,26 +84,34 @@
                            name="password" {{-- Nama input untuk backend --}}
                            required />
                     @error('password')
-                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div class="flex items-center space-x-2">
-                    {{-- Tambahkan name="remember" --}}
-                    <input class="w-4 h-4 rounded border-gray-300 text-[#4a86c5] focus:ring-[#4a86c5]"
-                           id="remember"
-                           type="checkbox"
-                           name="remember" /> {{-- Nama input untuk backend --}}
-                    <label class="text-[#1a2a5a] font-semibold text-xs select-none" for="remember">
-                        Remember Me
-                    </label>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <input class="w-4 h-4 rounded border-gray-300 text-[#4a86c5] focus:ring-[#4a86c5]"
+                               id="remember"
+                               type="checkbox"
+                               name="remember" /> {{-- Nama input untuk backend --}}
+                        <label class="text-[#1a2a5a] font-semibold text-xs select-none" for="remember">
+                            Remember Me
+                        </label>
+                    </div>
+                    <a href="#" class="text-[#4a86c5] text-xs hover:underline focus:outline-none">Forgot Password?</a>
                 </div>
 
                 <button class="w-full bg-[#4a86c5] text-white font-semibold text-sm rounded-full py-2 mt-2 hover:bg-[#3a6db3] transition-colors" type="submit">
                     Login
                 </button>
-                {{-- HAPUS SCRIPT YANG ADA DI BAWAH TOMBOL LOGIN INI --}}
             </form>
+
+            <div class="mt-4 text-center">
+                <p class="text-[#1a2a5a] text-xs select-none">
+                    Don't have an account?
+                    <a href="{{ route('register') }}" class="text-[#4a86c5] hover:underline focus:outline-none">Register here</a>
+                </p>
+            </div>
         </div>
     </div>
 </body>
