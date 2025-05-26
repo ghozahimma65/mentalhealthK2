@@ -1,154 +1,124 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Admin Panel - Aplikasi Diagnosa')</title>
+    <title>@yield('title', 'Diagnosa')</title>
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script> 
+    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+        rel="stylesheet"
+    />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    
+    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style untuk dropdown (opsional, Tailwind mungkin sudah cukup) */
+        .dropdown-menu {
+            display: none;
+        }
+        .dropdown-menu.active {
+            display: block;
+        }
+    </style>
     @stack('styles')
 </head>
-<body class="font-sans antialiased bg-gray-100">
-    {{-- Kontainer utama dengan flex untuk sidebar dan area konten --}}
-    <div id="admin-app-layout" class="flex h-screen overflow-hidden">
-
-        {{-- =============================================== --}}
-        {{-- ========== SIDEBAR ADMIN (BAGIAN TETAP DARI LAYOUT INI) ============== --}}
-        {{-- =============================================== --}}
-        <aside id="admin-layout-sidebar"
-               class="bg-white w-64 flex-shrink-0 flex flex-col border-r border-gray-200
-                      transform -translate-x-full md:translate-x-0
-                      transition-transform duration-300 ease-in-out
-                      fixed md:static h-full z-30 overflow-y-auto">
+<body class="bg-[#F5F9FF]">
+    <header
+        class="flex items-center justify-between px-6 py-4 max-w-[1200px] mx-auto"
+    >
+        <div class="flex items-center space-x-2">
+            <div class="bg-[#7A9CC6] rounded-lg p-2">
+                <img
+                    src="{{ asset('assets/logo.png') }}"
+                    alt="Gambar logo Diagnosa"
+                    width="32"
+                    height="32"
+                    class="block"
+                />
+            </div>
+            <span
+                class="text-[#2F4F7C] font-semibold text-xl leading-6 select-none drop-shadow-[1px_1px_1px_rgba(0,0,0,0.25)]"
+                >Diagnosa</span
+            >
+        </div>
+        <nav
+            class="hidden md:flex items-center space-x-8 text-[#0A1A4F] font-semibold text-sm leading-5 select-none"
+        >
+            <a href="{{ url('dashboard') }}" class="hover:underline">Beranda</a> 
+            <a href="{{ route('diagnosis.form') }}" class="hover:underline">Cek Diagnosis</a>
             
-            {{-- Logo/Branding di Sidebar --}}
-            <div class="flex items-center justify-center border-b border-gray-200 p-4 h-20 flex-shrink-0">
-                <div class="w-auto h-auto flex flex-col items-center justify-center text-blue-600 text-xs font-semibold">
-                    <img src="{{ asset('assets/logo.png') }}" width="35" height="29" class="mb-1" alt="Logo">
-                    Diagnosa Panel
-                </div>
+            <div class="relative cursor-pointer group">
+                <button class="flex items-center space-x-1 hover:underline">
+                    <span>Kontak</span>
+                    <i class="text-xs fas fa-chevron-down"></i>
+                </button>
             </div>
 
-            {{-- Navigasi Sidebar --}}
-            <nav class="flex-1 flex flex-col mt-4 px-4 space-y-1 text-sm overflow-y-auto pb-4">
-                <a href="{{ route('admin.dashboard') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
-                    <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
-                </a>
-                
-                <span class="text-gray-400 font-semibold text-xs mt-4 mb-1 block px-4">PENGETAHUAN</span>
-                <a href="#" {{-- Ganti # dengan route('admin.diagnosa.index') jika sudah ada --}}
-                   class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
-                    <i class="fas fa-stethoscope mr-2"></i> Diagnosa
-                </a>
-                <a href="#" {{-- Ganti # dengan route('admin.gejala.index') jika sudah ada --}}
-                   class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
-                    <i class="fas fa-notes-medical mr-2"></i> Gejala
-                </a>
-                <a href="#" {{-- Ganti # dengan route('admin.depresi.index') jika sudah ada --}}
-                   class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
-                    <i class="fas fa-brain mr-2"></i> Depresi
-                </a>
-                <a href="#" {{-- Ganti # dengan route('admin.hasil.index') jika sudah ada --}}
-                   class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
-                    <i class="fas fa-poll mr-2"></i> Hasil Diagnosa
-                </a>
-
-                <span class="text-gray-400 font-semibold text-xs mt-4 mb-1 block px-4">PENGATURAN</span>
-                <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
-                    <i class="fas fa-user-plus mr-2"></i> Admin
-                </a>
-                
-                {{-- Tombol Logout bisa juga ada di sini sebagai alternatif atau tambahan dari top bar --}}
-                 <form method="POST" action="{{ route('logout') }}" class="mt-auto pt-4 border-t border-gray-200">
-                    @csrf
-                    <a href="{{ route('logout') }}"
-                       onclick="event.preventDefault(); this.closest('form').submit();"
-                       class="block py-2.5 px-4 rounded transition duration-200 text-red-600 hover:bg-red-50 font-medium">
-                       <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                    </a>
-                </form>
-            </nav>
-        </aside>
-
-        {{-- Kontainer untuk Top Bar dan Konten Utama (sebelah kanan Sidebar) --}}
-        <div class="flex-1 flex flex-col overflow-hidden">
-            {{-- ==================================================================== --}}
-            {{-- ===== TOP BAR ADMIN (BAGIAN TETAP DARI LAYOUT INI) ===== --}}
-            {{-- ==================================================================== --}}
-            <header class="flex items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6 py-4 h-20 shadow-sm sticky top-0 z-20 flex-shrink-0">
-                {{-- Sisi Kiri Top Bar: Tombol Toggle Sidebar untuk Mobile & Judul Halaman --}}
-                <div class="flex items-center">
-                    <button id="admin-layout-sidebar-toggle" class="text-gray-600 focus:outline-none md:hidden mr-3">
-                        <i class="fas fa-bars text-xl"></i>
+            @auth
+                {{-- Dropdown Profil Pengguna --}}
+                <div class="relative inline-block text-left">
+                    <button type="button" id="user-menu-button" class="flex items-center space-x-2 focus:outline-none" aria-expanded="true" aria-haspopup="true">
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'User') }}&background=0D8ABC&color=fff&size=32&rounded=true" alt="Profile" class="object-cover w-8 h-8 rounded-full">
+                        <span class="hidden text-sm font-semibold text-gray-700 lowercase sm:inline">{{ Auth::user()->name ?? 'User' }}</span>
+                        <i class="text-xs text-gray-500 fas fa-chevron-down"></i>
                     </button>
-                    <h1 class="text-xl font-semibold text-gray-700 hidden md:block">@yield('header_title', 'Admin Panel')</h1>
-                </div>
 
-                {{-- Sisi Tengah Top Bar: Search (Opsional) --}}
-                <div class="flex-1 flex justify-center px-2 sm:px-6 lg:px-8">
-                    @auth
-                    <form class="relative w-full max-w-md hidden md:block" method="GET" action="#">
-                        <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 w-full rounded-lg text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-search"></i></span>
-                    </form>
-                    @endauth
-                </div>
-
-                {{-- Sisi Kanan Top Bar: Notifikasi, Profil, dll. --}}
-                <div class="flex items-center space-x-2 sm:space-x-4">
-                    @auth
-                    <button class="relative text-gray-600 hover:text-blue-600 focus:outline-none text-xl"><i class="fas fa-bell"></i><span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-semibold">1</span></button>
-                    <button class="text-gray-600 hover:text-blue-600 focus:outline-none text-xl"><i class="fas fa-comment-dots"></i></button>
-                    <div class="flex items-center space-x-2">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'User') }}&background=0D8ABC&color=fff&size=32&rounded=true" alt="Profile" class="w-8 h-8 rounded-full object-cover">
-                        <span class="hidden sm:inline text-sm font-semibold text-gray-700 lowercase">{{ Auth::user()->name ?? 'User' }}</span>
+                    {{-- Dropdown menu --}}
+                    <div id="user-dropdown-menu" class="absolute right-0 z-50 w-48 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dropdown-menu" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                        <div class="py-1" role="none">
+                            {{-- Item-item dropdown lainnya bisa ditambahkan di sini, contoh: --}}
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">Pengaturan Profil</a>
+                            {{-- <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-1">Item Lain</a> --}}
+                            
+                            <form method="POST" action="{{ route('logout') }}" role="none">
+                                @csrf
+                                <button type="submit" class="block w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-red-50" role="menuitem" tabindex="-1" id="user-menu-item-2">
+                                    <i class="mr-2 fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    {{-- Tombol logout di Top Bar bisa dihilangkan jika sudah ada di sidebar --}}
-                    {{-- <form method="POST" action="{{ route('logout') }}" class="inline"> @csrf <button type="submit" class="text-gray-600 hover:text-blue-600 focus:outline-none text-xl" title="Logout"><i class="fas fa-sign-out-alt"></i></button></form> --}}
-                    @else
-                        <a href="{{ route('login') }}" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-3 py-2 sm:px-4 rounded-md text-sm whitespace-nowrap">Login</a>
-                    @endguest
                 </div>
-            </header>
+            @else
+                <a href="{{ route('login') }}" class="px-3 py-2 text-sm font-semibold text-white bg-[#7A9CC6] rounded-md hover:bg-[#638cb6] sm:px-4 whitespace-nowrap">Login</a>
+               <a href="{{ route('register') }}" class="px-3 py-2 text-sm font-semibold text-[#7A9CC6] border border-[#7A9CC6] rounded-md hover:bg-[#E0E7FF] sm:px-4 whitespace-nowrap">Register</a>
+            @endguest
+        </nav>
+    </header>
 
-            {{-- Konten Utama Halaman Admin (akan diisi oleh @section('content') dari child view) --}}
-            <main class="flex-1 overflow-y-auto p-6">
-                @yield('content')
-            </main>
-        </div>
-    </div>
-
+    <main>
+        @yield('content')
+    </main>
+     @include('layouts.footer')
+     
     @stack('scripts')
     <script>
-        // Script untuk toggle sidebar, sekarang menjadi bagian dari layouts.main
-        const adminSidebarToggleBtn = document.getElementById('admin-layout-sidebar-toggle');
-        const adminLayoutSidebarEl = document.getElementById('admin-layout-sidebar');
+        document.addEventListener('DOMContentLoaded', function () {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdownMenu = document.getElementById('user-dropdown-menu');
 
-        if (adminSidebarToggleBtn && adminLayoutSidebarEl) {
-            adminSidebarToggleBtn.addEventListener('click', () => {
-                adminLayoutSidebarEl.classList.toggle('-translate-x-full');
-                adminLayoutSidebarEl.classList.toggle('translate-x-0');
-            });
-        }
+            if (userMenuButton && userDropdownMenu) {
+                userMenuButton.addEventListener('click', function () {
+                    userDropdownMenu.classList.toggle('active');
+                });
 
-        // Opsional: Tutup sidebar di mobile saat link navigasi di sidebar diklik
-        if (adminLayoutSidebarEl) {
-            adminLayoutSidebarEl.querySelectorAll('nav a').forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth < 768 && !adminLayoutSidebarEl.classList.contains('-translate-x-full')) { // md breakpoint
-                       adminLayoutSidebarEl.classList.add('-translate-x-full');
-                       adminLayoutSidebarEl.classList.remove('translate-x-0');
+                // Tutup dropdown jika klik di luar area dropdown
+                document.addEventListener('click', function (event) {
+                    if (!userMenuButton.contains(event.target) && !userDropdownMenu.contains(event.target)) {
+                        userDropdownMenu.classList.remove('active');
                     }
                 });
-            });
-        }
+            }
+        });
     </script>
 </body>
 </html>
