@@ -38,7 +38,7 @@
                     <img alt="Diagnosa Logo Small" class="w-6 h-6" height="24" src="{{ asset('assets/logo.png') }}" width="24"/>
                 </div>
                 <h1 class="text-[#1a2a5a] font-semibold text-xl select-none">
-                    Admin Register
+                    Halaman Register
                 </h1>
             </div>
 

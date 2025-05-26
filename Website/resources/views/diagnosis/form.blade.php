@@ -90,103 +90,103 @@
                     <input type="number" id="age" name="age" class="form-input" required>
                 </div>
 
-                <div class="mb-4">
-                    <label for="gender" class="form-label">2. Apa jenis kelamin Anda?</label>
-                    <select id="gender" name="gender" class="form-select">
-                        <option value="0">Pria 👨</option>
-                        <option value="1">Wanita 👩</option>
-                    </select>
-                </div>
+            <div class="mb-4">
+                <label for="gender" class="form-label">2. Apa jenis kelamin Anda?</label>
+                <select id="gender" name="gender" class="form-select">
+                    <option value="0">Pria 👨</option>
+                    <option value="1">Wanita 👩</option>
+                </select>
+            </div>
 
-                <div class="mb-4">
-                    <label for="symptom_severity" class="form-label">3. Seberapa parah gejala yang Anda rasakan?</label>
-                    <select id="symptom_severity" name="symptom_severity" class="form-select">
-                        <option value="1">Sangat Ringan</option>
-                        <option value="2">Ringan</option>
-                        <option value="3">Sedang</option>
-                        <option value="4">Agak Berat</option>
-                        <option value="5">Berat</option>
-                        <option value="6">Sangat Berat</option>
-                        <option value="7">Ekstrem</option>
-                        <option value="8">Kritis</option>
-                        <option value="9">Sangat Kritis</option>
-                        <option value="10">Maksimal</option>
-                    </select>
-                </div>
+            <div class="mb-4">
+                <label for="symptom_severity" class="form-label">3. Seberapa parah gejala yang Anda rasakan?</label>
+                <select id="symptom_severity" name="symptom_severity" class="form-select">
+                    <option value="" disabled selected>Pilih Tingkat Keparahan Gejala</option> <option value="1">1-Sangat Ringan</option>
+                    <option value="2">2-Ringan</option>
+                    <option value="3">3-Sedang</option>
+                    <option value="4">4-Agak Berat</option>
+                    <option value="5">5-Berat</option>
+                    <option value="6">6-Sangat Berat</option>
+                    <option value="7">7-Ekstrem</option>
+                    <option value="8">8-Kritis</option>
+                    <option value="9">9-Sangat Kritis</option>
+                    <option value="10">10-Maksimal</option>
+                </select>
+            </div>
 
-                <div class="mb-4">
-                    <label for="mood_score" class="form-label">4. Bagaimana suasana hati Anda dalam seminggu terakhir?</label>
-                    <select id="mood_score" name="mood_score" class="form-select">
-                        <option value="1">Sangat Buruk (Depresi/Sedih)</option>
-                        <option value="2">Buruk (Cemas/Resah)</option>
-                        <option value="3">Agak Buruk (Kurang Bersemangat)</option>
-                        <option value="4">Cukup Netral (Biasa Saja)</option>
-                        <option value="5">Netral (Stabil)</option>
-                        <option value="6">Agak Baik (Cukup Bersemangat)</option>
-                        <option value="7">Baik (Senang)</option>
-                        <option value="8">Sangat Baik (Gembira/Optimis)</option>
-                        <option value="9">Luar Biasa (Bahagia/Antusias)</option>
-                        <option value="10">Maksimal (Euforia/Penuh Energi)</option>
-                    </select>
-                </div>
+            <div class="mb-4">
+                <label for="mood_score" class="form-label">4. Bagaimana suasana hati Anda dalam seminggu terakhir?</label>
+                <select id="mood_score" name="mood_score" class="form-select">
+                    <option value="" disabled selected>Pilih Suasana Hati Anda</option> <option value="1">1-Sangat Buruk (Depresi/Sedih)</option>
+<option value="2">2-Buruk (Cemas/Resah)</option>
+<option value="3">3-Agak Buruk (Kurang Bersemangat)</option>
+<option value="4">4-Cukup Netral (Biasa Saja)</option>
+<option value="5">5-Netral (Stabil)</option>
+<option value="6">6-Agak Baik (Cukup Bersemangat)</option>
+<option value="7">7-Baik (Senang)</option>
+<option value="8">8-Sangat Baik (Gembira/Optimis)</option>
+<option value="9">9-Luar Biasa (Bahagia/Antusias)</option>
+<option value="10">10-Maksimal (Euforia/Penuh Energi)</option>
+                </select>
+            </div>
 
-                <div class="mb-4">
-                    <label for="sleep_quality" class="form-label">5. Seberapa baik kualitas tidur Anda?</label>
-                    <select id="sleep_quality" name="sleep_quality" class="form-select">
-                        <option value="1">Sangat Buruk (Tidak Tidur Sama Sekali)</option>
-                        <option value="2">Buruk (Tidur Sangat Gelisah)</option>
-                        <option value="3">Agak Buruk (Sulit Tidur Nyenyak)</option>
-                        <option value="4">Cukup Buruk (Terbangun Berkali-kali)</option>
-                        <option value="5">Sedang (Tidur Biasa Saja)</option>
-                        <option value="6">Cukup Baik (Tidur Cukup Nyenyak)</option>
-                        <option value="7">Agak Baik (Tidur Pulas)</option>
-                        <option value="8">Baik (Tidur Sangat Nyenyak)</option>
-                        <option value="9">Sangat Baik (Tidur Berkualitas Tinggi)</option>
-                        <option value="10">Sangat Optimal (Tidur Sempurna dan Segar)</option>
-                    </select>
-                </div>
+            <div class="mb-4">
+                <label for="sleep_quality" class="form-label">5. Seberapa baik kualitas tidur Anda?</label>
+                <select id="sleep_quality" name="sleep_quality" class="form-select">
+                    <option value="" disabled selected>Pilih Kualitas Tidur Anda</option> <option value="1">1-Sangat Buruk (Tidak Tidur Sama Sekali)</option>
+<option value="2">2-Buruk (Tidur Sangat Gelisah)</option>
+<option value="3">3-Agak Buruk (Sulit Tidur Nyenyak)</option>
+<option value="4">4-Cukup Buruk (Terbangun Berkali-kali)</option>
+<option value="5">5-Sedang (Tidur Biasa Saja)</option>
+<option value="6">6-Cukup Baik (Tidur Cukup Nyenyak)</option>
+<option value="7">7-Agak Baik (Tidur Pulas)</option>
+<option value="8">8-Baik (Tidur Sangat Nyenyak)</option>
+<option value="9">9-Sangat Baik (Tidur Berkualitas Tinggi)</option>
+<option value="10">10-Sangat Optimal (Tidur Sempurna dan Segar)</option>
+                </select>
+            </div>
 
-                <div class="mb-4">
-                    <label for="physical_activity" class="form-label">6. Berapa sering Anda melakukan aktivitas fisik (olahraga)?</label>
-                    <select id="physical_activity" name="physical_activity" class="form-select">
-                        <option value="1">Sangat Jarang (Tidak Aktif)</option>
-                        <option value="2">Jarang (Sangat Sedikit Aktivitas)</option>
-                        <option value="3">Cukup (Aktivitas Ringan-Sedang)</option>
-                        <option value="4">Sering (Aktivitas Sedang-Tinggi)</option>
-                        <option value="5">Sangat Sering (Sangat Aktif)</option>
-                        <option value="6">Teratur (Aktivitas Terorganisir)</option>
-                        <option value="7">Aktif (Sering Berolahraga)</option>
-                        <option value="8">Sangat Aktif (Intensitas Tinggi)</option>
-                        <option value="9">Profesional (Latihan Ekstrem)</option>
-                        <option value="10">Atlet Elit (Aktivitas Maksimal)</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label for="stress_level" class="form-label">7. Seberapa sering Anda merasa stres?</label>
-                    <select id="stress_level" name="stress_level" class="form-select">
-                        <option value="1">😌 Sangat Rendah (Tidak Stres)</option>
-                        <option value="2">😊 Rendah</option>
-                        <option value="3">😐 Sedang</option>
-                        <option value="4">😟 Cukup Tinggi</option>
-                        <option value="5">😰 Tinggi</option>
-                        <option value="6">😥 Sangat Tinggi</option>
-                        <option value="7">😩 Berlebihan</option>
-                        <option value="8">🤯 Kritis</option>
-                        <option value="9">😵 Parah</option>
-                        <option value="10">💀 Sangat Parah (Tidak Terkendali)</option>
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label for="ai_detected_emotional_state" class="form-label">8. Bagaimana Suasana Hati Anda Saat ini?</label>
-                    <select id="ai_detected_emotional_state" name="ai_detected_emotional_state" class="form-select">
-                        <option value="0">😟 Anxious (Cemas)</option>
-                        <option value="1">😔 Depressed (Sedih)</option>
-                        <option value="2">🤩 Excited (Gembira)</option>
-                        <option value="3">😊 Happy (Senang)</option>
-                        <option value="4">😐 Neutral (Netral)</option>
-                        <option value="5">😥 Stressed (Stres)</option>
-                    </select>
-                </div>
+            <div class="mb-4">
+                <label for="physical_activity" class="form-label">6. Berapa sering Anda melakukan aktivitas fisik (olahraga)?</label>
+                <select id="physical_activity" name="physical_activity" class="form-select">
+                    <option value="" disabled selected>Pilih Frekuensi Aktivitas Fisik Anda</option> <option value="1">1-Sangat Jarang (Tidak Aktif)</option>
+<option value="2">2-Jarang (Sangat Sedikit Aktivitas)</option>
+<option value="3">3-Cukup (Aktivitas Ringan-Sedang)</option>
+<option value="4">4-Sering (Aktivitas Sedang-Tinggi)</option>
+<option value="5">5-Sangat Sering (Sangat Aktif)</option>
+<option value="6">6-Teratur (Aktivitas Terorganisir)</option>
+<option value="7">7-Aktif (Sering Berolahraga)</option>
+<option value="8">8-Sangat Aktif (Intensitas Tinggi)</option>
+<option value="9">9-Profesional (Latihan Ekstrem)</option>
+<option value="10">10-Atlet Elit (Aktivitas Maksimal)</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="stress_level" class="form-label">7. Seberapa sering Anda merasa stres?</label>
+                <select id="stress_level" name="stress_level" class="form-select">
+                    <option value="" disabled selected>Pilih Tingkat Stres Anda</option> <option value="1">1-Sangat Rendah (Tidak Stres)</option>
+                    <option value="2">2-Rendah</option>
+                    <option value="3">3-Sedang</option>
+                    <option value="4">4-Cukup Tinggi</option>
+                    <option value="5">5-Tinggi</option>
+                    <option value="6">6-Sangat Tinggi</option>
+                    <option value="7">7-Berlebihan</option>
+                    <option value="8">8-Kritis</option>
+                    <option value="9">9-Parah</option>
+                    <option value="10">10-Sangat Parah (Tidak Terkendali)</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="ai_detected_emotional_state" class="form-label">8. Bagaimana Suasana Hati Anda Saat ini?</label>
+                <select id="ai_detected_emotional_state" name="ai_detected_emotional_state" class="form-select">
+                    <option value="" disabled selected>Pilih Suasana Hati Saat Ini</option> <option value="0">😟 Anxious (Cemas)</option>
+<option value="1">😔 Depressed (Sedih)</option>
+<option value="2">🤩 Excited (Gembira)</option>
+<option value="3">😊 Happy (Senang)</option>
+<option value="4">😐 Neutral (Netral)</option>
+<option value="5">😥 Stressed (Stres)</option>
+                </select>
+            </div>
 
                 <div class="flex items-center justify-between">
                     <a href="{{ route('landing') }}" class="back-button">Kembali</a>

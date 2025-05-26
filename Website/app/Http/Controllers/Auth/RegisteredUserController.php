@@ -39,12 +39,16 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => 'user', // <<<--- PENTING: Tambahkan ini untuk mengatur role default
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Menggunakan redirect()->intended() adalah praktik yang lebih baik
+        // karena akan mengarahkan user ke URL yang mereka coba akses sebelum login,
+        // atau ke dashboard jika tidak ada intended URL.
+        return redirect()->intended(route('dashboard', absolute: false));
     }
 }

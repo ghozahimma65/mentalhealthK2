@@ -2,80 +2,35 @@
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\AdminTambahController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\GangguanController;  
-use App\Http\Controllers\PredictionController; 
-use App\Http\Controllers\DiagnosisController;
-use App\Http\Controllers\Admin\OutcomeController;
+use App\Http\Controllers\PredictionController; // Ini mungkin controller untuk user biasa?
+use App\Http\Controllers\DiagnosisController; // Controller untuk kuesioner pasien
+use App\Http\Controllers\Admin\OutcomeController; // Kemungkinan tidak terpakai
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\DetailPenggunaController;
+use App\Http\Controllers\Admin\AdminDiagnosisController;
+use App\Http\Controllers\RiwayatDiagnosisController;
+use App\Http\Controllers\Admin\MeditationController;
+use App\Http\Controllers\Admin\QuoteController;
 
-Route::get('/gangguan/{id}', [GangguanController::class, 'show']);
+
+// --- RUTE PUBLIK / UMUM ---
 
 // Halaman landing
 Route::get('/', function () {
     return view('landing');
-})->name('landing'); 
+})->name('landing');
 
-// Route untuk halaman detail Gangguan Mood
-Route::get('/gangguan/{id}', [GangguanController::class, 'show']); // Pastikan ini benar
-Route::get('/gangguan/mood', [GangguanController::class, 'showMoodDisorder'])->name('gangguan.mood');
-
-// Rute untuk halaman dashboard umum (bukan admin dashboard)
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
-// ========================================================================================
-// ROUTE ADMIN: DIKELUARKAN DARI MIDDLEWARE 'auth' SEMENTARA UNTUK PENGEMBANGAN/TESTING
-// ========================================================================================
-Route::prefix('admin')->name('admin.')->group(function () {
-    // Route Dashboard Admin yang benar
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-
-    // Route untuk Admin Tambah
-    Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah'); // Contoh: admin.tambah (untuk menampilkan form)
-    Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store'); // Contoh: admin.tambah.store (untuk menyimpan data)
-
-    // Penting: Anda memiliki dua route POST ke '/tambah' yang sama.
-    // Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
-    // Jika Anda ingin route ini memiliki nama 'admin.tambah.store', cukup satu baris ini saja.
-    // Jika ada route lain seperti users.index, meditasi.index, tambahkan di sini:
-    // Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-    // Route::get('/meditasi', [\App\Http\Controllers\Admin\MeditasiController::class, 'index'])->name('meditasi.index');
-    // dll.
-});
-
-// ========================================================================================
-// ROUTE YANG MEMERLUKAN AUTENTIKASI: TETAPKAN ATAU TAMBAHKAN SESUAI KEBUTUHAN APLIKASI UTAMA
-// ========================================================================================
-Route::middleware('auth')->group(function () {
-    // Profile routes (Laravel Breeze/Fortify)
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Route untuk admin (outcome) -- Jika ini hanya bisa diakses admin setelah login
-    Route::prefix('admin')->middleware('can:access-admin-panel')->group(function () { 
-        // Pastikan 'can:access-admin-panel' sudah didefinisikan di AuthServiceProvider (Gates/Policies)
-        // Jika belum, untuk testing, Anda bisa hapus middleware ini sementara atau ganti dengan middleware role sederhana.
-        // use App\Http\Controllers\Admin\OutcomeController; // Impor ini jika digunakan
-        // Route::get('/outcome', [OutcomeController::class, 'showOutcomeForm'])->name('admin.outcome.form');
-        // Route::post('/outcome', [OutcomeController::class, 'predictOutcome'])->name('admin.outcome.predict');
-    });
-
-    // Tambahkan route lain yang memerlukan autentikasi di sini
-});
-
-// Rute untuk pengguna tanpa login (diagnosis)
+// Rute untuk halaman diagnosis (bisa diakses tanpa login) - Untuk Pasien/User Biasa
 Route::get('/diagnosis', [DiagnosisController::class, 'showDiagnosisForm'])->name('diagnosis.form');
 Route::post('/diagnosis', [DiagnosisController::class, 'submitDiagnosis'])->name('diagnosis.submit');
 
-// Route Test MongoDB - pastikan koneksi MongoDB diatur di config/database.php
+// Rute untuk pengujian koneksi MongoDB
 Route::get('/test-mongo', function () {
     try {
         $mongo = DB::connection('mongodb')->getMongoClient();
-        $collection = $mongo->diagnosa->test_koneksi; 
+        $collection = $mongo->diagnosa->test_koneksi;
         $collection->insertOne([
             'check' => 'MongoDB Connected',
             'time' => now(),
@@ -84,9 +39,68 @@ Route::get('/test-mongo', function () {
     } catch (\Exception $e) {
         return response()->json(['message' => 'Gagal konek: ' . $e->getMessage()]);
     }
+})->name('test.mongo');
+
+
+// --- RUTE YANG MEMERLUKAN AUTENTIKASI (PENGGUNA BIASA) ---
+Route::middleware('auth')->group(function () {
+    // Rute untuk dashboard umum (akan mengarahkan ke dashboard admin jika user adalah admin)
+    Route::get('/dashboard', function () {
+        if (Auth::user()->isAdmin()) { // Pastikan method isAdmin() ada di model User Anda
+            return redirect()->route('admin.dashboard');
+        }
+        return view('dashboard'); // View untuk pengguna biasa
+    })->name('dashboard');
+
+    // Rute untuk fitur prediksi (jika ini untuk pengguna biasa)
+    Route::get('/predict', [PredictionController::class, 'showCreateForm'])->name('predictions.create');
+    Route::post('/predict', [PredictionController::class, 'predict'])->name('predictions.predict');
+    Route::get('/history', [PredictionController::class, 'showHistory'])->name('predictions.history');
+
+    // Rute untuk profile
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Ini kemungkinan adalah route autentikasi dari Laravel Breeze/Fortify
-require __DIR__.'/auth.php';
 
-// Route tambahan dari Laravel Breeze/Fortify (jika Anda menggunakannya)
+// --- RUTE KHUSUS ADMIN ---
+// Semua rute di dalam grup ini memerlukan autentikasi DAN peran 'admin'
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+
+    // Dashboard Admin
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // --- Rute untuk Manajemen Pengguna (DetailPenggunaController) ---
+    // Rute utama untuk menampilkan daftar pengguna
+    Route::get('/detail-pengguna', [DetailPenggunaController::class, 'index'])->name('detailpengguna'); // Nama rute sekarang 'admin.detailpengguna'
+    Route::get('/detail-pengguna/{id}/edit', [DetailPenggunaController::class, 'edit'])->name('detailpengguna.edit');
+    Route::put('/detail-pengguna/{id}', [DetailPenggunaController::class, 'update'])->name('detailpengguna.update');
+    Route::delete('/detail-pengguna/{id}', [DetailPenggunaController::class, 'destroy'])->name('detailpengguna.destroy');
+
+
+    // --- Rute untuk Daftar Diagnosis yang Menunggu Prediksi Admin (AdminDiagnosisController) ---
+    // Ini yang akan menampilkan view admindiagnosis.blade.php
+    Route::get('/diagnosis-pending', [AdminDiagnosisController::class, 'listForPrediction'])->name('diagnosis.pending');
+    // Proses prediksi oleh admin
+    Route::post('/diagnosis-predict/{id}', [AdminDiagnosisController::class, 'prediksi'])->name('diagnosis.prediksi');
+
+
+    // --- Rute untuk Riwayat Diagnosis (RiwayatDiagnosisController) ---
+    // Ini menampilkan semua riwayat diagnosis, termasuk yang sudah diproses admin/user.
+    Route::get('/riwayat-diagnosis', [RiwayatDiagnosisController::class, 'index'])->name('riwayatdiagnosis.index');
+
+    // Rute untuk Manajemen Meditasi
+    Route::get('/meditations', [MeditationController::class, 'index'])->name('meditations.index');
+    Route::post('/meditations', [MeditationController::class, 'store'])->name('meditations.store');
+    Route::delete('/meditations/{meditation}', [MeditationController::class, 'destroy'])->name('meditations.destroy');
+
+    // Rute untuk Manajemen Quotes & Affirmation
+    Route::get('/quotes', [QuoteController::class, 'index'])->name('quotes.index');
+    Route::post('/quotes', [QuoteController::class, 'store'])->name('quotes.store');
+    Route::delete('/quotes/{quote}', [QuoteController::class, 'destroy'])->name('quotes.destroy');
+});
+
+
+// --- RUTE AUTENTIKASI BAWAAN LARAVEL BREEZE/FORTIFY ---
+require __DIR__.'/auth.php';
