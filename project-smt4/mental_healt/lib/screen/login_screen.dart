@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_project/controller/login_controller.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -20,14 +21,16 @@ class LoginScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 40),
-                const TextField(
+                TextField(
+                  controller: LoginController.emailController,
                   decoration: InputDecoration(
                     labelText: 'Email Address',
                     border: OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 20),
-                const TextField(
+                TextField(
+                  controller: LoginController.passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -45,8 +48,9 @@ class LoginScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 ElevatedButton(
                   onPressed: () {
-                    // ⬇ Langsung navigasi ke halaman Tes Diagnosa
-                    Navigator.pushReplacementNamed(context, '/homepage');
+                    LoginController().auth();
+                    LoginController.emailController.text = "";
+                    LoginController.passwordController.text = "";
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,

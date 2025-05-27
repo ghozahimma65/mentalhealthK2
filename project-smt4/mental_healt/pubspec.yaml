@@ -12,7 +12,7 @@ dependencies:
   smooth_page_indicator: ^1.0.0 # Mungkin perlu ^1.1.0 jika ada null safety issue
   lucide_icons: ^0.257.0 # Mungkin perlu versi terbaru jika ada isu
   cupertino_icons: ^1.0.8
-  fl_chart: ^0.68.0 # Saya sarankan update ke versi terbaru
+  pie_chart: ^5.1.0
   flutter_native_splash: ^2.4.0 # Versi stabil sebelumnya, atau cek terbaru
   just_audio: ^0.9.36
   audioplayers: ^6.0.0
@@ -20,6 +20,9 @@ dependencies:
   sqflite: ^2.3.3 # Atau versi terbaru
   path_provider: ^2.1.3 # Atau versi terbaru
   path: ^1.9.0 # Biasanya otomatis terinstal dengan sqflite
+  get: ^4.6.5
+  sp_util: ^2.0.3
+  flutter_easyloading: ^3.0.5
 
 dev_dependencies:
   flutter_test:

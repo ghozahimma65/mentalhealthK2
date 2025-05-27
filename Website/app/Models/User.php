@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use MongoDB\Laravel\Eloquent\Model as Eloquent;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Auth\Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Notifications\Notifiable;
-use MongoDB\Laravel\Auth\User as Authenticatable; // Menggunakan Authenticatable dari package MongoDB Laravel
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class User extends Authenticatable
+class User extends Eloquent implements AuthenticatableContract, CanResetPasswordContract
 {
-    use HasFactory, Notifiable;
+   use HasApiTokens, Authenticatable, CanResetPassword, Notifiable;
 
     /**
      * Tentukan koneksi database yang digunakan oleh model.
