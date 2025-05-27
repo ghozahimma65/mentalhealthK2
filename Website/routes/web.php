@@ -7,38 +7,22 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminTambahController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\GangguanController;
-use App\Http\Controllers\DiagnosaController;   
+use App\Http\Controllers\GangguanController;  
 use App\Http\Controllers\PredictionController; 
-
-
-
+use App\Http\Controllers\DiagnosisController;
+use App\Http\Controllers\Admin\OutcomeController;
 
 Route::get('/gangguan/{id}', [GangguanController::class, 'show']);
 
 // Halaman landing
 Route::get('/', function () {
-    // Data untuk seksi "Gangguan Mood" yang akan ditampilkan di landing page
-    $featuredDisorder = [
-        'kode' => 'P001',
-        'nama_gangguan' => 'Gangguan Mood',
-        'kesimpulan' => 'Jadi dapat disimpulkan bahwa pasien mengalami tingkat depresi yaitu Depresi ringan kepastian yaitu 0%',
-        'path_gambar' => 'images/gangguan_mood_illustration.png', // GANTI DENGAN PATH GAMBAR ANDA YANG BENAR (relatif terhadap folder public)
-        'deskripsi_gangguan_intro' => 'Gangguan mood terjadi karena berbagai faktor yang bisa berasal dari aspek biologis, psikologis, maupun lingkungan. Berikut beberapa penyebab umum gangguan mood:',
-        'poin_utama_deskripsi' => [
-            'Ketidakseimbangan Kimia Otak: Neurotransmitter seperti serotonin, dopamin, dan norepinefrin berperan penting dalam mengatur suasana hati. Ketidakseimbangan zat-zat kimia ini dapat memicu gangguan mood seperti depresi atau bipolar.'
-            // Anda bisa menambahkan poin ringkasan lain jika ada
-        ],
-        'link_detail' => route('gangguan.mood') // Menggunakan nama route untuk halaman detail
-    ];
-    // Mengirimkan data $featuredDisorder ke view 'landing'
-    return view('landing', compact('featuredDisorder'));
-})->name('landing'); // Memberi nama pada route landing page
+    
+    return view('landing');
+})->name('landing'); 
 
 // Route untuk halaman detail Gangguan Mood
 // Ini akan ditangani oleh method showMoodDisorder di GangguanController
 Route::get('/gangguan/mood', [GangguanController::class, 'showMoodDisorder'])->name('gangguan.mood');
-Route::get('/cek/diagnosa', [DiagnosaController::class, 'showCekDiagnosaPage'])->name('diagnosa.cek');
 
 // Rute untuk halaman dashboard umum
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -60,16 +44,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah'); // Ini akan membuat rute bernama 'admin.tambah'
 
         // POST untuk menyimpan data admin baru
-        Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store'); // Ini akan membuat rute bernama 'admin.tambah.store'
-
+        Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store'); 
         // Rute untuk Gejala
         Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
-
- 
+    });
+    Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
 });
-Route::post('/tambah', [AdminTambahController::class, 'store'])->name('admin.tambah.store');
-});
-    // Anda bisa menambahkan route lain yang memerlukan login di sini
 
 // Contoh route untuk admin (sesuaikan dengan kebutuhan Anda)
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -83,11 +63,21 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Tambahkan route admin lainnya di sini
 });
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/predictions/create', [PredictionController::class, 'showCreateForm'])->name('predictions.create');
-    Route::post('/predict', [PredictionController::class, 'predict'])->name('predictions.predict');
-    Route::get('/predictions/history', [PredictionController::class, 'showHistory'])->name('predictions.history');
+// Rute untuk pengguna tanpa login (diagnosis)
+Route::get('/diagnosis', [DiagnosisController::class, 'showDiagnosisForm'])->name('diagnosis.form');
+Route::post('/diagnosis', [DiagnosisController::class, 'submitDiagnosis'])->name('diagnosis.submit');
+
+// Rute untuk admin (outcome)
+Route::prefix('admin')->middleware(['auth', 'can:access-admin-panel'])->group(function () { // Sesuaikan middleware admin Anda
+    Route::get('/outcome', [OutcomeController::class, 'showOutcomeForm'])->name('admin.outcome.form');
+    Route::post('/outcome', [OutcomeController::class, 'predictOutcome'])->name('admin.outcome.predict');
 });
+// web.php
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/predict', [PredictionController::class, 'showCreateForm'])->name('predictions.create');
+//     Route::post('/predict', [PredictionController::class, 'predict'])->name('predictions.predict');
+//     Route::get('/history', [PredictionController::class, 'showHistory'])->name('predictions.history');
+// });
 
 Route::get('/test-mongo', function () {
     try {
@@ -108,7 +98,8 @@ Route::get('/test-mongo', function () {
     }
 });
 
-// Auth routes dari Laravel Breeze
+
+require __DIR__.'/auth.php';
+
 
 // Route tambahan dari Laravel Breeze/Fortify (jika Anda menggunakannya)
-require __DIR__.'/auth.php';

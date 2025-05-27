@@ -1,85 +1,151 @@
+# ml_api_flask/app.py
 from flask import Flask, request, jsonify
-import joblib
-import os
-from pymongo import MongoClient
-from datetime import datetime
+import numpy as np
+import joblib # Atau library lain yang Anda gunakan untuk menyimpan model (misal: tensorflow, pytorch)
+import os # Untuk memeriksa keberadaan file model
 
 app = Flask(__name__)
 
+# Path ke model diagnosis Anda
+# Pastikan ini sesuai dengan lokasi model Anda
+MODEL_DIAGNOSIS_PATH = 'models/model_svm_Diagnosis31%.pkl'
+diagnosis_model = None
 
-# === Load model ===
-model_path = os.path.join('public', 'python', 'model_Logistic_Regresion32%.pkl')
-with open(model_path, 'rb') as f:
-    model = joblib.load(f)
+# Path ke model outcome Anda
+MODEL_OUTCOME_PATH = 'models/model_OutcomeRF38%.pkl'
+outcome_model = None
 
-# === Connect to MongoDB ===
-mongo_client = MongoClient('mongodb://localhost:27017/')
-db = mongo_client['mental_health_db']
-collection = db['predictions']
+# Fungsi untuk memuat model saat aplikasi pertama kali dijalankan
+def load_models():
+    """
+    Memuat model diagnosis dan outcome ke dalam memori aplikasi.
+    Jika ada model yang gagal dimuat, aplikasi akan tetap berjalan,
+    tetapi endpoint yang terkait dengan model tersebut akan mengembalikan error 500.
+    """
+    global diagnosis_model, outcome_model
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    data = request.json
+    # Memuat model diagnosis
+    if os.path.exists(MODEL_DIAGNOSIS_PATH):
+        try:
+            diagnosis_model = joblib.load(MODEL_DIAGNOSIS_PATH)
+            print(f"Model Diagnosis berhasil dimuat dari {MODEL_DIAGNOSIS_PATH}!")
+        except Exception as e:
+            print(f"Gagal memuat model Diagnosis dari {MODEL_DIAGNOSIS_PATH}: {e}")
+            diagnosis_model = None # Pastikan model disetel ke None jika gagal
+    else:
+        print(f"File model Diagnosis tidak ditemukan di: {MODEL_DIAGNOSIS_PATH}")
+        diagnosis_model = None
 
-    # Ambil fitur dari body
-    features = [
-        data['Age'],
-        1 if data['Gender'].lower() == 'male' else 0,
-        data['Symptom_Severity'],
-        data['Mood_Score'],
-        data['Sleep_Quality'],
-        data['Physical_Activity'],
-        data['Medication'],
-        data['Therapy_Type'],  # bisa ganti encoding sesuai training
-        data['Treatment_Duration'],
-        data['Stress_Level'],
-        data['Outcome'],
-        data['Treatment_Progress'],
-        data['AI_Detected_Emotional_State'],
-        data['Adherence_to_Treatment'],
+    # Memuat model outcome
+    if os.path.exists(MODEL_OUTCOME_PATH):
+        try:
+            outcome_model = joblib.load(MODEL_OUTCOME_PATH)
+            print(f"Model Outcome berhasil dimuat dari {MODEL_OUTCOME_PATH}!")
+        except Exception as e:
+            print(f"Gagal memuat model Outcome dari {MODEL_OUTCOME_PATH}: {e}")
+            outcome_model = None # Pastikan model disetel ke None jika gagal
+    else:
+        print(f"File model Outcome tidak ditemukan di: {MODEL_OUTCOME_PATH}")
+        outcome_model = None
+
+@app.route('/predict_diagnosis', methods=['POST'])
+def predict_diagnosis():
+    """
+    Endpoint untuk memprediksi diagnosis kesehatan mental bagi pengguna tanpa login.
+    Menerima data input dalam format JSON dan mengembalikan hasil diagnosis.
+    """
+    if not diagnosis_model:
+        return jsonify({'error': 'Model diagnosis belum dimuat atau gagal dimuat.'}), 500
+
+    data = request.get_json(force=True) # force=True akan mencoba parsing JSON meskipun Content-Type bukan application/json
+
+    required_columns = [
+        'Age', 'Gender', 'Symptom Severity (1-10)', 'Mood Score (1-10)',
+        'Sleep Quality (1-10)', 'Physical Activity (hrs/week)',
+        'Stress Level (1-10)', 'AI-Detected Emotional State'
     ]
 
-    # Lakukan prediksi
-    prediction = model.predict([features])[0]
+    # Validasi input: pastikan semua kolom yang diperlukan ada
+    for col in required_columns:
+        if col not in data:
+            return jsonify({'error': f'Kolom input yang diperlukan tidak ditemukan: {col}'}), 400
 
-    # Simpan ke MongoDB
-    entry = {
-        "admin_id": data['admin_id'],
-        "features": {
-            "Age": data['Age'],
-            "Gender": data['Gender'],
-            "Symptom_Severity": data['Symptom_Severity'],
-            "Mood_Score": data['Mood_Score'],
-            "Sleep_Quality": data['Sleep_Quality'],
-            "Physical_Activity": data['Physical_Activity'],
-            "Medication": data['Medication'],
-            "Therapy_Type": data['Therapy_Type'],
-            "Treatment_Duration": data['Treatment_Duration'],
-            "Stress_Level": data['Stress_Level'],
-            "Outcome": data['Outcome'],
-            "Treatment_Progress": data['Treatment_Progress'],
-            "AI_Detected_Emotional_State": data['AI_Detected_Emotional_State'],
-            "Adherence_to_Treatment": data['Adherence_to_Treatment'],
-        },
-        "prediction": prediction,
-        "created_at": datetime.utcnow()
-    }
+    # Pastikan urutan fitur sesuai dengan yang digunakan saat melatih model
+    # Penting: Urutan ini harus sama persis dengan urutan fitur yang digunakan saat melatih model Anda.
+    features = [
+        data['Age'],
+        data['Gender'],
+        data['Symptom Severity (1-10)'],
+        data['Mood Score (1-10)'],
+        data['Sleep Quality (1-10)'],
+        data['Physical Activity (hrs/week)'],
+        data['Stress Level (1-10)'],
+        data['AI-Detected Emotional State']
+    ]
 
-    collection.insert_one(entry)
+    # Konversi list fitur menjadi numpy array dan reshape untuk prediksi
+    # .reshape(1, -1) mengubah array 1D menjadi 2D (1 sampel, N fitur)
+    input_data = np.array(features).reshape(1, -1)
 
-    return jsonify({"status": "success", "diagnosis": prediction})
+    try:
+        prediction = diagnosis_model.predict(input_data)
+        # Asumsi model Anda mengembalikan diagnosis langsung (misal: 0, 1, 2, ...)
+        # Mengembalikan nilai pertama dari array prediksi sebagai integer
+        return jsonify({'diagnosis': int(prediction[0])})
+    except Exception as e:
+        # Tangani error yang terjadi selama proses prediksi
+        return jsonify({'error': f'Terjadi kesalahan saat melakukan prediksi diagnosis: {e}'}), 500
 
+@app.route('/predict_outcome', methods=['POST'])
+def predict_outcome():
+    """
+    Endpoint untuk memprediksi outcome perawatan kesehatan mental bagi admin.
+    Menerima data input dalam format JSON dan mengembalikan hasil prediksi outcome.
+    """
+    if not outcome_model:
+        return jsonify({'error': 'Model outcome belum dimuat atau gagal dimuat.'}), 500
 
-@app.route('/history/<admin_id>', methods=['GET'])
-def history(admin_id):
-    result = collection.find({"admin_id": admin_id})
-    history = []
-    for item in result:
-        item['_id'] = str(item['_id'])  # convert ObjectId
-        history.append(item)
+    data = request.get_json(force=True)
 
-    return jsonify(history)
+    required_columns = [
+        'Diagnosis', 'Symptom Severity (1-10)', 'Mood Score (1-10)',
+        'Physical Activity (hrs/week)', 'Medication', 'Therapy Type',
+        'Treatment Duration (weeks)', 'Stress Level (1-10)'
+    ]
 
+    # Validasi input: pastikan semua kolom yang diperlukan ada
+    for col in required_columns:
+        if col not in data:
+            return jsonify({'error': f'Kolom input yang diperlukan tidak ditemukan: {col}'}), 400
+
+    # Pastikan urutan fitur sesuai dengan yang digunakan saat melatih model
+    # Penting: Urutan ini harus sama persis dengan urutan fitur yang digunakan saat melatih model Anda.
+    features = [
+        data['Diagnosis'],
+        data['Symptom Severity (1-10)'],
+        data['Mood Score (1-10)'],
+        data['Physical Activity (hrs/week)'],
+        data['Medication'],
+        data['Therapy Type'],
+        data['Treatment Duration (weeks)'],
+        data['Stress Level (1-10)']
+    ]
+
+    # Konversi list fitur menjadi numpy array dan reshape untuk prediksi
+    input_data = np.array(features).reshape(1, -1)
+
+    try:
+        prediction = outcome_model.predict(input_data)
+        # Asumsi model Anda mengembalikan prediksi outcome langsung
+        # Mengembalikan nilai pertama dari array prediksi sebagai integer
+        return jsonify({'outcome_prediction': int(prediction[0])})
+    except Exception as e:
+        # Tangani error yang terjadi selama proses prediksi
+        return jsonify({'error': f'Terjadi kesalahan saat melakukan prediksi outcome: {e}'}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Panggil fungsi load_models saat aplikasi dimulai
+    load_models()
+    # Jalankan Flask aplikasi di semua interface yang tersedia (0.0.0.0) pada port 5000
+    # debug=True akan memberikan informasi error yang lebih detail selama pengembangan
+    app.run(debug=True, host='0.0.0.0', port=5000)
