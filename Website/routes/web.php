@@ -66,9 +66,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/outcome/create', [OutcomeController::class, 'create'])->name('outcome.create');
     Route::post('/outcome', [OutcomeController::class, 'store'])->name('outcome.store');
-    
     Route::get('/outcome/progress', [OutcomeController::class, 'progress'])->name('outcome.progress');
-    
     Route::get('/outcome/{outcome}', [OutcomeController::class, 'show'])->name('outcome.show');
 });
 
