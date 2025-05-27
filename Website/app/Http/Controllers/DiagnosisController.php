@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\FlaskApiService; // Import service Flask API
-use App\Models\DiagnosisResult; // Import model DiagnosisResult
-use Illuminate\Support\Facades\Log; // Tambahkan ini untuk logging error
+use App\Models\DiagnosisResult; // Import model DiagnosisResult (untuk menyimpan hasil ke MongoDB)
+use Illuminate\Support\Facades\Auth; // Untuk memeriksa status login pengguna
+use Illuminate\Support\Facades\Log; // Untuk logging error
 
 class DiagnosisController extends Controller
 {
@@ -22,7 +23,7 @@ class DiagnosisController extends Controller
 
     /**
      * Menampilkan form kuesioner diagnosis kepada pengguna.
-     * Ini adalah halaman yang diakses pengguna tanpa login.
+     * Dapat diakses oleh pengguna umum (belum login) dan pengguna terautentikasi.
      *
      * @return \Illuminate\View\View
      */
@@ -81,10 +82,11 @@ class DiagnosisController extends Controller
 
         // 4. Periksa hasil prediksi dari Flask API
         if ($prediction && isset($prediction['diagnosis'])) {
-            // 5. Simpan hasil diagnosis ke MongoDB
+            // 5. Simpan hasil diagnosis ke MongoDB (opsional)
+            // Ini akan menyimpan hasil untuk pengguna yang login atau sebagai tamu.
             try {
                 DiagnosisResult::create([
-                    'user_id' => auth()->id() ?? null, // Akan null jika pengguna tidak login
+                    'user_id' => Auth::id(), // Akan null jika pengguna tidak login
                     'input_data' => $inputForFlask, // Simpan input yang dikirim ke model
                     'predicted_diagnosis' => $prediction['diagnosis'], // Simpan hasil prediksi
                     'timestamp' => now(), // Waktu saat ini
@@ -92,17 +94,23 @@ class DiagnosisController extends Controller
                 ]);
             } catch (\Exception $e) {
                 // Log error jika gagal menyimpan ke database, tapi jangan hentikan alur aplikasi
-                Log::error('Gagal menyimpan hasil diagnosis ke MongoDB dari user side: ' . $e->getMessage());
-                // Anda bisa memilih untuk tetap melanjutkan atau mengembalikan error
+                Log::error('Failed to save diagnosis result to MongoDB: ' . $e->getMessage());
+                // Anda bisa menambahkan pesan flash error ke pengguna jika perlu
+                // session()->flash('db_error', 'Gagal menyimpan riwayat diagnosis Anda. Hasil tetap ditampilkan.');
             }
 
             // 6. Mengarahkan ke view hasil diagnosis dan meneruskan data diagnosis.
             // File ini harus ada di resources/views/diagnosis/result.blade.php
-            return view('diagnosis.result', ['diagnosis' => $prediction['diagnosis']]);
+            return view('diagnosis.result', [
+                'diagnosis' => $prediction['diagnosis'],
+                'user_is_guest' => !Auth::check() // Kirim status ke view untuk pesan ajakan login/daftar
+            ]);
         } else {
-            // Jika prediksi gagal atau tidak ada hasil yang valid dari Flask API,
-            // kembalikan pengguna ke form sebelumnya dengan pesan error.
-            return back()->with('error', 'Gagal mendapatkan diagnosis. Silakan coba lagi. Pastikan Flask API berjalan.');
+            
+            Log::warning('Flask API prediction failed or returned invalid data.', ['response' => $prediction]);
+            return back()->with('error', 'Gagal mendapatkan diagnosis. Silakan coba lagi. Pastikan Flask API berjalan dengan benar.');
         }
     }
+
+    
 }

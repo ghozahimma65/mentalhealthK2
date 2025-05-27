@@ -15,8 +15,9 @@
 
     @stack('styles')
 </head>
-<body class="font-sans antialiased bg-gray-100">
-    <div id="admin-app-layout" class="flex h-screen overflow-hidden">
+<body class="flex flex-col min-h-screen font-sans antialiased bg-gray-100"> {{-- Tambahkan flex, flex-col, min-h-screen --}}
+    {{-- Kontainer utama dengan flex untuk sidebar dan area konten --}}
+    <div id="admin-app-layout" class="flex flex-1 overflow-hidden"> {{-- Gunakan flex-1 agar div ini memenuhi sisa ruang vertikal --}}
 
         <aside id="admin-layout-sidebar"
                class="fixed z-30 flex flex-col flex-shrink-0 w-64 h-full overflow-y-auto transition-transform duration-300 ease-in-out transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 md:static">

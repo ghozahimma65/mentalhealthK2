@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\QuoteController;
 
 // --- RUTE PUBLIK / UMUM ---
 
+// -------KALAU MAU NAMBAHIN ROUTE SESUAIKAN TEMPATNYA YA(ROUTE UNTUK ADMIN DAN USER-------)
 // Halaman landing
 Route::get('/', function () {
     return view('landing');
@@ -57,15 +58,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/predict', [PredictionController::class, 'predict'])->name('predictions.predict');
     Route::get('/history', [PredictionController::class, 'showHistory'])->name('predictions.history');
 
-    // Rute untuk profile
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/outcome/create', [OutcomeController::class, 'create'])->name('outcome.create');
+    Route::post('/outcome', [OutcomeController::class, 'store'])->name('outcome.store');
+    
+    Route::get('/outcome/progress', [OutcomeController::class, 'progress'])->name('outcome.progress');
+    
+    Route::get('/outcome/{outcome}', [OutcomeController::class, 'show'])->name('outcome.show');
 });
 
 
 // --- RUTE KHUSUS ADMIN ---
-// Semua rute di dalam grup ini memerlukan autentikasi DAN peran 'admin'
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard Admin
@@ -103,4 +105,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
 
 // --- RUTE AUTENTIKASI BAWAAN LARAVEL BREEZE/FORTIFY ---
+    // Rute untuk menambah data 
+    Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah');
+    Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store');
+
+    Route::get('/outcomes/all', [OutcomeController::class, 'progress'])->name('outcomes.all');
+});
+
+
+
 require __DIR__.'/auth.php';
