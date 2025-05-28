@@ -82,7 +82,8 @@ class OutcomeController extends Controller
                     'user_id' => Auth::id(), // ID pengguna yang sedang login (admin atau pengguna biasa)
                     'input_data' => $inputForFlask, // Simpan input mentah
                     'predicted_outcome' => $prediction['outcome_prediction'], // Simpan hasil prediksi
-                    'timestamp' => now() // Waktu saat ini
+                    'timestamp' => now(), // Waktu saat ini
+                    'admin_processed' => false,
                 ]);
             } catch (\Exception $e) {
                 Log::error('Gagal menyimpan prediksi outcome ke MongoDB: ' . $e->getMessage());

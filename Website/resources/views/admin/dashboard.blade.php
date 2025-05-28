@@ -48,7 +48,7 @@
                 <a href="{{ route('admin.diagnosis.pending') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.diagnosis.pending') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-hand-holding-heart"></i> Diagnosis
                 </a>
-                <a href="{{ route('admin.dashboard') }}"
+                <a href="{{ route('admin.outcome.pending') }}"
                     class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-smile"></i> Outcome
                 </a>
@@ -57,7 +57,7 @@
                 <a href="{{ route('admin.riwayatdiagnosis.index') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.riwayatdiagnosis.index') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-book-open"></i> Riwayat Diagnosis
                 </a>
-                <a href="{{ route('admin.dashboard') }}"
+                <a href="{{ route('admin.riwayatoutcome.index') }}"
                     class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-scroll"></i> Riwayat Outcome
                 </a>

@@ -4,15 +4,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\PredictionController; // Ini mungkin controller untuk user biasa?
-use App\Http\Controllers\DiagnosisController; // Controller untuk kuesioner pasien
-use App\Http\Controllers\Admin\OutcomeController; // Kemungkinan tidak terpakai
+use App\Http\Controllers\PredictionController;
+use App\Http\Controllers\DiagnosisController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DetailPenggunaController;
 use App\Http\Controllers\Admin\AdminDiagnosisController;
 use App\Http\Controllers\RiwayatDiagnosisController;
 use App\Http\Controllers\Admin\MeditationController;
 use App\Http\Controllers\Admin\QuoteController;
+use App\Http\Controllers\OutcomeController;
+use App\Http\Controllers\Admin\AdminOutcomeController; 
+use App\Http\Controllers\Admin\RiwayatOutcomeController;
 
 
 // --- RUTE PUBLIK / UMUM ---
@@ -87,10 +89,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Proses prediksi oleh admin
     Route::post('/diagnosis-predict/{id}', [AdminDiagnosisController::class, 'prediksi'])->name('diagnosis.prediksi');
 
+    Route::get('/outcome-pending', [AdminOutcomeController::class, 'listForPrediction'])->name('outcome.pending');
+    Route::post('/outcome-predict/{id}', [AdminOutcomeController::class, 'prediksi'])->name('outcome.prediksi');
 
     // --- Rute untuk Riwayat Diagnosis (RiwayatDiagnosisController) ---
     // Ini menampilkan semua riwayat diagnosis, termasuk yang sudah diproses admin/user.
     Route::get('/riwayat-diagnosis', [RiwayatDiagnosisController::class, 'index'])->name('riwayatdiagnosis.index');
+
+    Route::get('/riwayat-outcome', [RiwayatOutcomeController::class, 'index'])->name('riwayatoutcome.index');
 
     // Rute untuk Manajemen Meditasi
     Route::get('/meditations', [MeditationController::class, 'index'])->name('meditations.index');
@@ -110,7 +116,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store');
 
     Route::get('/outcomes/all', [OutcomeController::class, 'progress'])->name('outcomes.all');
-});
 
 
 
