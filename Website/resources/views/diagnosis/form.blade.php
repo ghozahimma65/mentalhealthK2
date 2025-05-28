@@ -211,17 +211,17 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="ai_detected_emotional_state" class="form-label">8. Bagaimana Suasana Hati Anda Saat ini?</label>
-                    <select id="ai_detected_emotional_state" name="ai_detected_emotional_state" class="form-select" required>
-                        <option value="" disabled {{ old('ai_detected_emotional_state') == '' ? 'selected' : '' }}>Pilih Suasana Hati Saat Ini</option>
-                        <option value="0" {{ old('ai_detected_emotional_state') == '0' ? 'selected' : '' }}>😟 Anxious (Cemas)</option>
-                        <option value="1" {{ old('ai_detected_emotional_state') == '1' ? 'selected' : '' }}>😔 Depressed (Sedih)</option>
-                        <option value="2" {{ old('ai_detected_emotional_state') == '2' ? 'selected' : '' }}>🤩 Excited (Gembira)</option>
-                        <option value="3" {{ old('ai_detected_emotional_state') == '3' ? 'selected' : '' }}>😊 Happy (Senang)</option>
-                        <option value="4" {{ old('ai_detected_emotional_state') == '4' ? 'selected' : '' }}>😐 Neutral (Netral)</option>
-                        <option value="5" {{ old('ai_detected_emotional_state') == '5' ? 'selected' : '' }}>😥 Stressed (Stres)</option>
-                    </select>
-                </div>
+    <label for="ai_detected_emotional_state" class="form-label">8. Pilih Emosi Utama yang Anda Rasakan Saat Ini?</label> {{-- Keterangan diubah --}}
+    <select id="ai_detected_emotional_state" name="ai_detected_emotional_state" class="form-select" required>
+        <option value="" disabled {{ old('ai_detected_emotional_state') == '' ? 'selected' : '' }}>Pilih Emosi Utama Saat Ini</option>
+        <option value="0" {{ old('ai_detected_emotional_state') == '0' ? 'selected' : '' }}>😟 Anxious (Cemas) - Merasa khawatir dan gelisah</option>
+        <option value="1" {{ old('ai_detected_emotional_state') == '1' ? 'selected' : '' }}>😔 Depressed (Sedih) - Merasa sangat murung atau putus asa</option>
+        <option value="2" {{ old('ai_detected_emotional_state') == '2' ? 'selected' : '' }}>🤩 Excited (Gembira) - Merasa sangat senang dan bersemangat</option>
+        <option value="3" {{ old('ai_detected_emotional_state') == '3' ? 'selected' : '' }}>😊 Happy (Senang) - Merasa bahagia dan puas</option>
+        <option value="4" {{ old('ai_detected_emotional_state') == '4' ? 'selected' : '' }}>😐 Neutral (Netral) - Merasa biasa saja, tidak ada emosi kuat</option>
+        <option value="5" {{ old('ai_detected_emotional_state') == '5' ? 'selected' : '' }}>😥 Stressed (Stres) - Merasa tegang, tertekan, atau kewalahan</option>
+    </select>
+</div>
             </div> {{-- Akhir grid --}}
 
             <div class="flex items-center justify-between mt-6">

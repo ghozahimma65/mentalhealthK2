@@ -3,43 +3,29 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\FlaskApiService; // Pastikan ini diimport
-use App\Models\MentalHealthOutcome; // Pastikan ini diimport
+use App\Services\FlaskApiService;
+use App\Models\MentalHealthOutcome;
+use App\Models\DiagnosisResult; // <--- PASTIKAN INI DIIMPORT
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log; // Pastikan ini diimport
+use Illuminate\Support\Facades\Log;
+use Carbon\Carbon; // <--- PASTIKAN INI DIIMPORT untuk format tanggal
 
 class OutcomeController extends Controller
 {
-    // <--- PASTIKAN DEKLARASI PROPERTI INI ADA DAN BENAR --->
-    protected $flaskApiService; 
+    protected $flaskApiService;
 
     public function __construct(FlaskApiService $flaskApiService)
     {
         $this->flaskApiService = $flaskApiService;
     }
 
-    // ... (metode create(), store(), progress(), show()) ...
-
-    /**
-     * Menampilkan form kuesioner perkembangan pengobatan.
-     * Dapat diakses oleh pengguna biasa dan admin (sesuai pengaturan rute).
-     *
-     * @return \Illuminate\View\View
-     */
     public function create()
     {
         return view('outcome.create');
     }
 
-    /**
-     * Memproses data yang disubmit dari form perkembangan pengobatan.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response|\Illuminate\View\View
-     */
     public function store(Request $request)
     {
-        // ... (kode store Anda, menggunakan $this->flaskApiService->predictOutcome) ...
         $validatedData = $request->validate([
             'diagnosis' => 'required|integer',
             'symptom_severity' => 'required|integer|min:1|max:10',
@@ -62,7 +48,7 @@ class OutcomeController extends Controller
             'Stress Level (1-10)' => (int)$validatedData['stress_level'],
         ];
 
-        $prediction = $this->flaskApiService->predictOutcome($inputForFlask); // Mengakses properti
+        $prediction = $this->flaskApiService->predictOutcome($inputForFlask);
 
         if ($prediction && isset($prediction['outcome_prediction'])) {
             try {
@@ -85,30 +71,113 @@ class OutcomeController extends Controller
 
     /**
      * Menampilkan riwayat atau tren perkembangan pengobatan.
+     * Dapat diakses oleh pengguna biasa dan admin.
+     *
+     * @return \Illuminate\View\View
      */
     public function progress()
     {
-        // ... (kode progress Anda, mungkin tidak langsung menggunakan flaskApiService) ...
+        $user = Auth::user();
+
+        // Ambil riwayat diagnosis awal untuk pengguna
+        $diagnosisResults = DiagnosisResult::where('user_id', $user->id)
+                                          ->latest('timestamp')
+                                          ->get(); // Ambil semua untuk digabungkan
+
+        // Ambil riwayat perkembangan (outcome) untuk pengguna
+        $outcomeResults = MentalHealthOutcome::where('user_id', $user->id)
+                                           ->latest('timestamp')
+                                           ->get(); // Ambil semua untuk digabungkan
+        
+        // Data untuk Chart.js (dari outcome saja) - Ini akan ditampilkan di halaman progress juga
+        $chartLabels = [];
+        $chartData = [];
+        $plotValueMap = [0 => 0, 2 => 1, 1 => 2]; // Map untuk nilai plot (0=Memburuk, 1=Tidak Berubah, 2=Membaik)
+        $plotLabelsMap = [0 => 'Memburuk', 1 => 'Tidak Berubah', 2 => 'Membaik']; // Map untuk label Y-axis
+
+        foreach ($outcomeResults as $outcome) {
+            $chartLabels[] = Carbon::parse($outcome->timestamp)->format('d M'); 
+            $chartData[] = $plotValueMap[$outcome->predicted_outcome] ?? null; 
+        }
+
+        // Helper maps untuk ditampilkan di tabel
+        $diagnosisNameMap = $this->getDiagnosisNameMap();
+        $outcomeNameMap = $this->getOutcomeNameMap();
+
+
+        // Logika untuk Admin melihat semua data
         if (Auth::user()->isAdmin()) {
-            $outcomes = MentalHealthOutcome::latest()->paginate(10);
-            return view('admin.outcome.progress', compact('outcomes'));
+            // Ambil semua data diagnosis & outcome untuk admin
+            $allDiagnosisResults = DiagnosisResult::latest('timestamp')->get();
+            $allOutcomeResults = MentalHealthOutcome::latest('timestamp')->get();
+
+            return view('admin.outcome.progress', compact(
+                'allDiagnosisResults', 
+                'allOutcomeResults', 
+                'diagnosisNameMap', 
+                'outcomeNameMap'
+            ));
         } else {
-            $outcomes = MentalHealthOutcome::where('user_id', Auth::id())
-                                           ->latest()
-                                           ->paginate(10);
-            return view('outcome.progress', compact('outcomes'));
+            // Untuk pengguna biasa, kirim data yang difilter dan data chart
+            return view('outcome.progress', compact(
+                'diagnosisResults', 
+                'outcomeResults', 
+                'diagnosisNameMap', 
+                'outcomeNameMap',
+                'chartLabels',
+                'chartData',
+                'plotLabelsMap'
+            ));
         }
     }
 
     /**
      * Menampilkan detail spesifik dari satu record perkembangan.
+     *
+     * @param MentalHealthOutcome $outcome
+     * @return \Illuminate\View\View
      */
     public function show(MentalHealthOutcome $outcome)
     {
-        // ... (kode show Anda) ...
+        // Pastikan pengguna memiliki hak akses untuk melihat outcome ini
+        // (Misalnya, hanya pemilik atau admin)
         if (Auth::user()->isAdmin() || $outcome->user_id == Auth::id()) {
-            return view('outcome.show', compact('outcome'));
+            return view('outcome.show', compact('outcome')); // Asumsi outcome.show menampilkan detail satu record
         }
         abort(403, 'Unauthorized action.');
     }
+
+    /**
+     * Helper: Memetakan kode diagnosis ke nama.
+     * Harus ada di dalam kelas ini.
+     * @return array
+     */
+    private function getDiagnosisNameMap()
+    {
+        return [
+            0 => 'Gangguan Bipolar',
+            1 => 'Gangguan Kecemasan Umum',
+            2 => 'Gangguan Depresi Mayor',
+            3 => 'Gangguan Panik',
+            99 => 'Lainnya / Tidak Tahu',
+        ];
+    }
+
+    /**
+     * Helper: Memetakan kode outcome ke nama.
+     * Harus ada di dalam kelas ini.
+     * @return array
+     */
+    private function getOutcomeNameMap()
+    {
+        return [
+            0 => 'Deteriorated',
+            1 => 'Improved',
+            2 => 'No Change',
+        ];
+    }
+    // Jika Anda juga perlu mapDiagnosisCodeToName dan getDiagnosisColorClass di controller ini
+    // dan belum ada, Anda bisa menambahkannya di sini.
+    // private function mapDiagnosisCodeToName($code) { /* ... */ return ''; }
+    // private function getDiagnosisColorClass($code) { /* ... */ return ''; }
 }
