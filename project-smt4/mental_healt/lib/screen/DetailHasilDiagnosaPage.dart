@@ -1,16 +1,13 @@
+// lib/screen/detail_hasil_diagnosa_screen.dart (GANTI NAMA FILE JIKA PERLU)
 import 'package:flutter/material.dart';
-
 // Ganti ini dengan import halaman home kamu
-import 'home_page.dart'; // Pastikan HomePage() tersedia
+import 'package:mobile_project/screen/home_page.dart'; // Pastikan HomePage() tersedia
 
-class HasilTesPage extends StatelessWidget {
-  // Untuk contoh, kita akan asumsikan ada properti yang menerima hasil tes
-  // Anda harus mengganti ini dengan cara Anda mendapatkan hasil tes yang sebenarnya
-  final String rawDiagnosisResult; // Misalnya, "GAD", "MDD", "PD", "BD"
+class DetailHasilDiagnosaPage extends StatelessWidget { // NAMA KELAS DIUBAH
+  final String rawDiagnosisResult;
 
-  const HasilTesPage({super.key, this.rawDiagnosisResult = "GAD"}); // Default for example
+  const DetailHasilDiagnosaPage({super.key, required this.rawDiagnosisResult}); // KONSTRUKTOR DISESUAIKAN
 
-  // Helper function untuk mendapatkan detail diagnosis
   Map<String, dynamic> _getDiagnosisDetails(String rawResult) {
     switch (rawResult) {
       case "MDD":
@@ -56,11 +53,8 @@ class HasilTesPage extends StatelessWidget {
     final diagnosisDetails = _getDiagnosisDetails(rawDiagnosisResult);
     final String diagnosisName = diagnosisDetails["name"];
     final String diagnosisDescription = diagnosisDetails["description"];
-    final String diagnosisFullDescription = diagnosisDetails["full_description"]; // Kembali menggunakan full_description
+    final String diagnosisFullDescription = diagnosisDetails["full_description"];
     final Color diagnosisColor = diagnosisDetails["color"];
-
-    // allDiagnosisTypes tidak lagi diperlukan, karena kita hanya menampilkan deskripsi dari 1 kelas
-    // final List<Map<String, String>> allDiagnosisTypes = [...];
 
     return Scaffold(
       body: Container(
@@ -82,7 +76,7 @@ class HasilTesPage extends StatelessWidget {
                 "Hasil Diagnosis",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 28, // Lebih besar
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
                 ),
@@ -93,21 +87,19 @@ class HasilTesPage extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.white70,
-                  fontSize: 18, // Lebih besar
+                  fontSize: 18,
                 ),
               ),
-              const SizedBox(height: 40), // Spasi lebih besar
-
-              // CARD HASIL DIAGNOSA UTAMA
+              const SizedBox(height: 40),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 24),
-                padding: const EdgeInsets.all(30.0), // Padding lebih besar
+                padding: const EdgeInsets.all(30.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(20), // Sudut lebih membulat
+                  borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2), // Shadow lebih jelas
+                      color: Colors.black.withOpacity(0.2),
                       spreadRadius: 3,
                       blurRadius: 10,
                       offset: const Offset(0, 5),
@@ -115,27 +107,25 @@ class HasilTesPage extends StatelessWidget {
                   ],
                 ),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // Sesuaikan ukuran kolom
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      diagnosisDescription, // Deskripsi diagnosis (e.g., Gangguan Kecemasan Umum)
+                      diagnosisDescription,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 20, // Ukuran teks deskripsi
+                        fontSize: 20,
                         color: Colors.black54,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(height: 25), // Spasi lebih besar
-
-                    // Kotak nama diagnosis utama
+                    const SizedBox(height: 25),
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 500),
                       curve: Curves.easeInOut,
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 15),
                       decoration: BoxDecoration(
-                        color: diagnosisColor, // Warna dinamis berdasarkan diagnosis
+                        color: diagnosisColor,
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
@@ -147,7 +137,7 @@ class HasilTesPage extends StatelessWidget {
                         ],
                       ),
                       child: Text(
-                        diagnosisName, // Nama diagnosis (e.g., Generalized Anxiety Disorder)
+                        diagnosisName,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           color: Colors.white,
@@ -164,12 +154,10 @@ class HasilTesPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20), // Spasi sebelum deskripsi lengkap
-
-                    // Deskripsi lengkap diagnosis utama
-                    const Divider(color: Colors.grey, height: 30), // Divider di sini
+                    const SizedBox(height: 20),
+                    const Divider(color: Colors.grey, height: 30),
                     Text(
-                      diagnosisFullDescription, // Deskripsi lengkap hanya untuk diagnosis hasil
+                      diagnosisFullDescription,
                       textAlign: TextAlign.justify,
                       style: const TextStyle(
                         fontSize: 16,
@@ -180,13 +168,7 @@ class HasilTesPage extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // Bagian "Mengenal Lebih Jauh Jenis Diagnosis" dan daftar Cards-nya telah DIHAPUS SEPENUHNYA
-              // Jadi, tidak ada lagi kode yang dirender di sini.
-
-              const SizedBox(height: 40), // Spasi setelah card utama sebelum disclaimer
-
-              // Disclaimer
+              const SizedBox(height: 40),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
@@ -198,10 +180,7 @@ class HasilTesPage extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(height: 30),
-
-              // TOMBOL "Simpan Hasil" dengan ikon
               ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pushReplacement(
@@ -211,20 +190,19 @@ class HasilTesPage extends StatelessWidget {
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  backgroundColor: const Color(0xFF424242), // Warna abu-abu gelap
+                  backgroundColor: const Color(0xFF424242),
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                   elevation: 6,
                 ),
-                icon: const Icon(Icons.save, size: 24), // Ikon simpan
+                icon: const Icon(Icons.save, size: 24), // Anda mungkin ingin mengganti ikon ini menjadi home atau lainnya
                 label: const Text(
-                  'Simpan Hasil',
+                  'Kembali ke Home', // Diubah dari 'Simpan Hasil'
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
-
               const SizedBox(height: 40),
             ],
           ),
