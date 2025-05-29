@@ -3,53 +3,40 @@ import 'package:flutter/material.dart';
 import 'package:sp_util/sp_util.dart';
 
 // Diasumsikan file layar tujuan navigasi sudah ada dan route terdaftar
-// di main.dart (/tesdiagnosa -> diganti /kuis, /hasil, /profile, /meditasi, /quotes, /rencana)
-// DAN SEKARANG TAMBAH /tesperkembangan UNTUK SCREEN BARU
+// di main.dart
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   String? name = SpUtil.getString('nama');
-  int _selectedIndex = 0; // Indeks untuk BottomNavigationBar
+  int _selectedIndex = 0;
 
-  // Handler untuk klik item Bottom Navigation Bar
   void _onItemTapped(int index) {
-    // Jika item yang sama diklik lagi (kecuali home), tidak melakukan apa-apa
-    // Untuk home, kita biarkan agar bisa "refresh" atau kembali ke state awal home jika diperlukan
-    // if (_selectedIndex == index && index != 0) return; // Logika ini bisa disesuaikan
-
     String? routeName;
     switch (index) {
       case 0: // Home
-        // Jika sudah di HomePage dan tombol Home ditekan, mungkin tidak perlu navigasi ulang
-        // atau bisa scroll ke atas jika itu diinginkan.
-        // Untuk saat ini, jika sudah di home, kita tidak melakukan pushNamed.
         if (ModalRoute.of(context)?.settings.name == '/homepage' ||
             ModalRoute.of(context)?.settings.name == '/') {
           print("Already on Home");
-          // Set state tetap dilakukan untuk update highlight
         } else {
-          // Jika tidak sedang di HomePage, pop sampai root lalu push /homepage atau hanya popUntil root
           Navigator.popUntil(context, (route) => route.isFirst);
-          // Jika aplikasi Anda menggunakan '/' sebagai rute home di main.dart, sesuaikan.
-          // Navigator.pushNamed(context, '/homepage');
         }
         break;
-      case 1: // Tes Perkembangan (ITEM BARU)
-        routeName =
-            '/tesperkembangan'; // Pastikan route ini terdaftar di main.dart
+      case 1: // Tes Perkembangan (Penilaian Diri)
+        routeName = '/tesperkembangan';
         break;
-      case 2: // Tes Diagnosa (sebelumnya indeks 1)
-        routeName =
-            '/kuis'; // Tetap menggunakan '/kuis' sesuai kode asli Anda untuk Tes Diagnosa
+      case 2: // Tes Diagnosa
+        routeName = '/kuis';
         break;
-      case 3: // Hasil Tes (sebelumnya indeks 2)
+      case 3: // Hasil Tes
         routeName = '/hasil';
         break;
-      case 4: // My Profile (sebelumnya indeks 3)
+      case 4: // My Profile
         routeName = '/profile';
         break;
       default:
@@ -57,10 +44,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     if (routeName != null) {
-      print(
-          "Navigating to $routeName from current index $_selectedIndex to $index");
-      // Cek jika kita tidak di HomePage sebelum popUntil (jika navigasi dari item non-home ke item non-home lain)
-      // Atau jika kita ingin selalu kembali ke root sebelum push route baru dari bottom nav
+      print("Navigating to $routeName from current index $_selectedIndex to $index");
       if (ModalRoute.of(context)?.settings.name != '/homepage' &&
           ModalRoute.of(context)?.settings.name != '/') {
         Navigator.popUntil(context, (route) => route.isFirst);
@@ -68,36 +52,96 @@ class _HomePageState extends State<HomePage> {
       Navigator.pushNamed(
         context,
         routeName,
-        arguments:
-            routeName == '/kuis' ? 'mental_health' : null, // hanya untuk kuis
+        arguments: routeName == '/kuis' ? 'mental_health' : null,
       );
     }
-    // Update index terpilih untuk highlight bottom nav
-    // Ini harus selalu dijalankan agar UI bottom nav terupdate
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  // Handler untuk klik kartu fitur (pindah ke halaman lain)
   void _handleFeatureCardTap(
       BuildContext context, String featureName, String routeName) {
     print('$featureName card tapped, navigating to $routeName');
     Navigator.pushNamed(context, routeName);
   }
 
+  Widget _buildGridItemCard({
+    required BuildContext context,
+    required String title,
+    String? subtitle,
+    IconData? iconData,
+    String? imagePath,
+    required Gradient gradient,
+    required String routeName,
+    bool isImageLarge = false,
+  }) {
+    return Card(
+      elevation: 2.5, // Elevation yang cukup
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // Border radius lebih kecil
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => _handleFeatureCardTap(context, title, routeName),
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          decoration: BoxDecoration(gradient: gradient),
+          padding: const EdgeInsets.all(8), // Padding internal kartu DIKURANGI LAGI
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // Konten di tengah vertikal
+            crossAxisAlignment: CrossAxisAlignment.center, // Konten di tengah horizontal
+            children: [
+              if (imagePath != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5.0), // Jarak dikurangi
+                  child: Image.asset(
+                    imagePath,
+                    height: isImageLarge ? 32 : 26, // Ukuran gambar/ikon DIKURANGI LAGI
+                    width: isImageLarge ? 32 : 26,
+                    fit: BoxFit.contain,
+                     errorBuilder: (context, error, stackTrace) => Icon(
+                      iconData ?? Icons.help_outline,
+                      size: isImageLarge ? 32 : 26,
+                      color: Colors.white70,
+                    ),
+                  ),
+                )
+              else if (iconData != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5.0), // Jarak dikurangi
+                  child: Icon(iconData, size: isImageLarge ? 32 : 26, color: Colors.white), // Ukuran ikon DIKURANGI LAGI
+                ),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontSize: 12, // Ukuran font judul DIKURANGI LAGI
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (subtitle != null && subtitle.isNotEmpty) ...[
+                const SizedBox(height: 1), // Jarak subjudul sangat kecil
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 8, // Ukuran font subtitle DIKURANGI LAGI
+                      color: Colors.white.withOpacity(0.8)),
+                  maxLines: 2, // Subtitle bisa 2 baris jika perlu, tapi akan memakan tempat
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    // Set _selectedIndex berdasarkan route saat ini jika memungkinkan,
-    // ini membantu menjaga bottom nav tetap sinkron jika navigasi terjadi dari tempat lain.
-    // Contoh sederhana:
-    // final String? currentRouteName = ModalRoute.of(context)?.settings.name;
-    // if (currentRouteName == '/tesperkembangan' && _selectedIndex != 1) {
-    //   _selectedIndex = 1;
-    // } else if (currentRouteName == '/kuis' && _selectedIndex != 2) {
-    //   _selectedIndex = 2;
-    // } // ... dan seterusnya. Ini bisa jadi lebih kompleks.
-
     return Scaffold(
       body: SafeArea(
         child: ListView(
@@ -109,43 +153,67 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 20),
             _buildSearchBar(),
             const SizedBox(height: 25),
-            _buildMentalHealthCard(),
-            const SizedBox(height: 30),
-            _buildFeatureCard(
-              context: context,
-              title: 'Meditasi',
-              subtitle: 'Temukan ketenangan dalam diri',
-              iconData: Icons.self_improvement_rounded,
-              gradient: const LinearGradient(
-                  colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight),
-              routeName: '/meditasi',
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisSpacing: 8, // Jarak antar kolom DIKURANGI LAGI
+                mainAxisSpacing: 8,  // Jarak antar baris DIKURANGI LAGI
+                childAspectRatio: 1.4, // NAIKKAN LAGI rasio aspek (misal 1.4 atau 1.5)
+                                       // Semakin besar, kartu semakin pendek
+                children: [
+                  _buildGridItemCard(
+                    context: context,
+                    title: 'Mental Health',
+                    subtitle: 'Cek kondisi mental', // Subtitle lebih singkat
+                    imagePath: 'assets/images/mental_health_illustration.png',
+                    isImageLarge: true,
+                    gradient: LinearGradient(
+                        colors: [Colors.deepPurple.shade400, Colors.deepPurple.shade600],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight),
+                    routeName: '/kuis',
+                  ),
+                  _buildGridItemCard(
+                    context: context,
+                    title: 'Meditasi',
+                    subtitle: 'Temukan tenang',
+                    iconData: Icons.self_improvement_rounded,
+                    gradient: const LinearGradient(
+                        colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight),
+                    routeName: '/meditasi',
+                  ),
+                  _buildGridItemCard(
+                    context: context,
+                    title: 'Quotes',
+                    subtitle: 'Inspirasi harian',
+                    iconData: Icons.format_quote_rounded,
+                    gradient: const LinearGradient(
+                        colors: [Color(0xFF00796B), Color(0xFF00897B)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight),
+                    routeName: '/quotes',
+                  ),
+                  _buildGridItemCard(
+                    context: context,
+                    title: 'Self Care',
+                    subtitle: 'Jadwalkan aktivitas',
+                    iconData: Icons.event_note_rounded,
+                    gradient: const LinearGradient(
+                        colors: [Color(0xFFEF6C00), Color(0xFFF57C00)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight),
+                    routeName: '/rencana',
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 15),
-            _buildFeatureCard(
-              context: context,
-              title: 'Quotes & Affirmation',
-              subtitle: 'Kutipan harian untuk inspirasi',
-              iconData: Icons.format_quote_rounded,
-              gradient: const LinearGradient(
-                  colors: [Color(0xFF00796B), Color(0xFF00897B)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight),
-              routeName: '/quotes',
-            ),
-            const SizedBox(height: 15),
-            _buildFeatureCard(
-              context: context,
-              title: 'Rencana Self Care',
-              subtitle: 'Jadwalkan aktivitas baikmu',
-              iconData: Icons.event_note_rounded,
-              gradient: const LinearGradient(
-                  colors: [Color(0xFFEF6C00), Color(0xFFF57C00)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight),
-              routeName: '/rencana',
-            ),
+
             const SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -166,11 +234,8 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
-          // ITEM BARU: Tes Perkembangan
           BottomNavigationBarItem(
-              icon: Icon(Icons
-                  .insights_rounded), // Ganti dengan ikon yang sesuai, misal Icons.insights_rounded atau Icons.analytics_outlined
-              label: 'Tes Perkembangan'),
+              icon: Icon(Icons.insights_rounded), label: 'Tes Perkembangan'),
           BottomNavigationBarItem(
               icon: Icon(Icons.play_circle_outline), label: 'Tes Diagnosa'),
           BottomNavigationBarItem(
@@ -190,8 +255,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // --- DEFINISI LENGKAP HELPER WIDGET (TETAP SAMA) ---
-
+  // --- DEFINISI HELPER WIDGET YANG SUDAH ADA (TETAP SAMA) ---
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
@@ -215,7 +279,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildGreeting() {
-    String? userName = name ?? ""; // TODO: Ganti nama user
+    String? userName = name ?? "";
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
@@ -264,6 +328,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildMentalHealthCard() {
+    // Definisi asli _buildMentalHealthCard Anda
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
@@ -303,7 +368,7 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(width: 10),
             Image.asset(
-              'assets/images/mental_health_illustration.png', // <-- PASTIKAN PATH BENAR
+              'assets/images/mental_health_illustration.png',
               height: 95, width: 95, fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) => Container(
                   height: 95,
@@ -328,7 +393,8 @@ class _HomePageState extends State<HomePage> {
     required Gradient gradient,
     required String routeName,
   }) {
-    return Padding(
+    // Definisi asli _buildFeatureCard Anda
+     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: InkWell(
         onTap: () => _handleFeatureCardTap(context, title, routeName),
@@ -376,7 +442,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildAffirmationCard() {
     const String affirmation =
-        "Setiap langkah kecilmu adalah kemajuan yang berarti."; // TODO: Buat dinamis
+        "Setiap langkah kecilmu adalah kemajuan yang berarti.";
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
@@ -413,4 +479,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-} // Akhir _HomePageState
+}
