@@ -23,6 +23,7 @@ dependencies:
   get: ^4.6.5
   sp_util: ^2.0.3
   flutter_easyloading: ^3.0.5
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:

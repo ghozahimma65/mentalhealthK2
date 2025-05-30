@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DiagnosisResult;
+// use App\Models\Notification; // Model ini dikomentari karena tidak lagi digunakan di Blade dashboard
 // use App\Models\MentalHealthArticle; // Model ini dikomentari karena tidak lagi digunakan di Blade dashboard
 use App\Models\MentalHealthOutcome;
 use Carbon\Carbon;
@@ -14,6 +15,12 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
+
+        // --- PENTING: LOGIKA REDIRECT ADMIN INI HARUS ADA DI SINI ---
+        if ($user->isAdmin()) { // Asumsi ada metode isAdmin() di model User Anda
+            return redirect()->route('admin.dashboard');
+        }
+        // --- AKHIR LOGIKA REDIRECT ADMIN ---
 
         // 1. Statistik Diagnosis
         $diagnosesCount = DiagnosisResult::where('user_id', $user->id)->count();
@@ -29,8 +36,8 @@ class DashboardController extends Controller
             $latestDiagnosis->result_name = $this->mapDiagnosisCodeToName($diagnosisCode);
             $latestDiagnosis->result_class = $this->getDiagnosisColorClass($diagnosisCode);
         }
-
-
+        
+        // 3. Notifikasi (kode pengambilan dihilangkan karena tidak ditampilkan di Blade)
         
         // 4. Waktu Prediksi Terakhir Keseluruhan (untuk kartu "Aktivitas Terbaru")
         $lastDiagnosisTime = DiagnosisResult::where('user_id', $user->id)->max('timestamp');
@@ -62,9 +69,8 @@ class DashboardController extends Controller
             $chartData[] = $plotValueMap[$outcome->predicted_outcome] ?? null; 
         }
 
+        // 6. Ambil Artikel Kesehatan Mental (kode pengambilan dihilangkan karena tidak ditampilkan di Blade)
         
-        // $mentalHealthArticles = collect(); 
-
         // 7. Ambil Riwayat Diagnosis Awal (untuk tabel "Riwayat Prediksi Terbaru")
         $diagnosisHistories = DiagnosisResult::where('user_id', $user->id)
                                              ->latest('timestamp')
@@ -77,10 +83,9 @@ class DashboardController extends Controller
                                                 ->take(5) // Ambil 5 terbaru untuk snapshot
                                                 ->get();
         
-        // --- PERBAIKAN: Hitung Total Catatan Perkembangan dan Total Aktivitas ---
-        $totalOutcomeRecords = MentalHealthOutcome::where('user_id', $user->id)->count(); // <--- INI SEKARANG DIDEFINISIKAN
-        $totalActivities = $diagnosesCount + $totalOutcomeRecords; // Hitung total aktivitas
-        // --- END PERBAIKAN ---
+        // Hitung Total Catatan Perkembangan dan Total Aktivitas
+        $totalOutcomeRecords = MentalHealthOutcome::where('user_id', $user->id)->count();
+        $totalActivities = $diagnosesCount + $totalOutcomeRecords;
 
         // Helper maps untuk tabel riwayat
         $diagnosisNameMap = $this->getDiagnosisNameMap();
@@ -92,7 +97,6 @@ class DashboardController extends Controller
             'diagnosesCount', 
             'latestDiagnosis',
             'lastPredictionOverall',
-            // 'mentalHealthArticles', // Tidak lagi dikirim
             'chartLabels',
             'chartData',
             'plotLabelsMap',
@@ -100,7 +104,7 @@ class DashboardController extends Controller
             'outcomeHistories',
             'diagnosisNameMap',
             'outcomeNameMap',
-            'totalActivities' // Ini yang akan menggantikan di Blade
+            'totalActivities'
         ));
     }
 
@@ -156,6 +160,7 @@ class DashboardController extends Controller
     /**
      * Helper: Memetakan kode diagnosis ke nama (untuk tabel riwayat).
      * Harus ada di dalam kelas ini.
+     * @param int $code
      * @return array
      */
     private function getDiagnosisNameMap()

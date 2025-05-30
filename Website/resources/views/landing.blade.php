@@ -128,19 +128,48 @@
             </div>
         </section>
 
-        <section class="max-w-4xl px-6 py-16 mx-auto">
-            <h1 class="text-center text-[#000c3b] text-2xl font-semibold mb-10">
-                Pertanyaan Yang Sering Diajukan - FAQ
-            </h1>
-            <div class="space-y-6">
-                <div class="bg-[#f0f7fa] px-6 py-6 text-base text-[#000c3b] rounded-md shadow">
-                    Apa itu Diagnosa?
+    {{-- FAQ Section --}}
+    <section class="max-w-4xl mx-auto px-6 py-16"> {{-- Hapus main tag di sini --}}
+        <h1 class="text-center text-[#000c3b] text-lg font-normal mb-10">
+            Pertanyaan Yang Sering Diajukan - FAQ
+        </h1>
+        <section class="space-y-6">
+            {{-- FAQ Item 1 --}}
+            <div class="bg-[#f0f7fa] rounded-md shadow">
+                <button class="accordion-header w-full text-left px-6 py-6 text-xs text-[#000c3b] font-semibold flex justify-between items-center cursor-pointer">
+                    <span>Apa itu Diagnosa?</span>
+                    <i class="fas fa-chevron-down transition-transform duration-300"></i>
+                </button>
+                <div class="accordion-content">
+                    <p class="px-6 pb-6 text-xs text-[#000c3b] leading-relaxed">
+                        Diagnosa adalah sebuah aplikasi sistem pakar yang dirancang untuk membantu pengguna dalam mengidentifikasi tingkat depresi berdasarkan gejala-gejala yang dialami. Aplikasi ini bertujuan untuk memberikan informasi awal dan rekomendasi solusi yang sesuai, serta menjadi langkah pertama dalam mencari dukungan kesehatan mental.
+                    </p>
                 </div>
-                <div class="bg-[#f0f7fa] px-6 py-6 text-base text-[#000c3b] rounded-md shadow">
-                    Siapa yang bisa mengakses Diagnosa?
+            </div>
+
+            {{-- FAQ Item 2 --}}
+            <div class="bg-[#f0f7fa] rounded-md shadow">
+                <button class="accordion-header w-full text-left px-6 py-6 text-xs text-[#000c3b] font-semibold flex justify-between items-center cursor-pointer">
+                    <span>Siapa yang bisa mengakses Diagnosa?</span>
+                    <i class="fas fa-chevron-down transition-transform duration-300"></i>
+                </button>
+                <div class="accordion-content">
+                    <p class="px-6 pb-6 text-xs text-[#000c3b] leading-relaxed">
+                        Diagnosa dapat diakses oleh siapa saja yang ingin memahami lebih lanjut tentang kondisi kesehatan mental mereka, khususnya terkait depresi. Aplikasi ini terbuka untuk umum dan dirancang agar mudah digunakan oleh berbagai kalangan.
+                    </p>
                 </div>
-                <div class="bg-[#f0f7fa] px-6 py-6 text-base text-[#000c3b] rounded-md shadow">
-                    Apakah hasil dari Diagnosa dapat diandalkan?
+            </div>
+
+            {{-- FAQ Item 3 --}}
+            <div class="bg-[#f0f7fa] rounded-md shadow">
+                <button class="accordion-header w-full text-left px-6 py-6 text-xs text-[#000c3b] font-semibold flex justify-between items-center cursor-pointer">
+                    <span>Apakah hasil dari Diagnosa dapat diandalkan?</span>
+                    <i class="fas fa-chevron-down transition-transform duration-300"></i>
+                </button>
+                <div class="accordion-content">
+                    <p class="px-6 pb-6 text-xs text-[#000c3b] leading-relaxed">
+                        Hasil dari Diagnosa didasarkan pada sistem pakar yang telah dirancang untuk memberikan estimasi awal. Namun, penting untuk diingat bahwa aplikasi ini bukan pengganti diagnosis medis profesional. Untuk diagnosis dan penanganan yang akurat, selalu konsultasikan dengan profesional kesehatan mental atau dokter.
+                    </p>
                 </div>
             </div>
         </section>

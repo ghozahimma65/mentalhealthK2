@@ -1,20 +1,23 @@
-// lib/screen/KuisScreen.dart (atau path file Anda)
+// lib/tes_info_screen.dart
 import 'package:flutter/material.dart';
+import 'tes_form_screen.dart'; // Import halaman formulir
 
-class KuisScreen extends StatelessWidget {
-  const KuisScreen({super.key});
+class TesInfoScreen extends StatelessWidget {
+  const TesInfoScreen({super.key});
 
-  // Menggunakan helper widget yang sama dengan tes_info_screen.dart untuk konsistensi tampilan
+  // Fungsi _buildDetailTesItem tetap sama seperti yang sudah kita diskusikan
+  // untuk perubahan warna teks item spesifik jika Anda sudah menerapkannya.
+  // Jika belum, dan Anda ingin warna teks item juga putih, Anda bisa
+  // memodifikasinya di sini atau menggunakan parameter seperti contoh sebelumnya.
   Widget _buildDetailTesItem(
     BuildContext context,
     IconData icon,
     String text, {
-    Color? textColor, // Opsional jika Anda ingin memberi warna khusus
+    Color? textColor,
     Color? iconColor,
   }) {
-    // Warna default untuk teks dan ikon jika tidak ada yang diberikan
     final defaultTextColorFromTheme = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey.shade700;
-    final defaultIconColor = Colors.deepPurple.shade400; // Warna ikon default
+    final defaultIconColor = Colors.deepPurple.shade400;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -42,51 +45,20 @@ class KuisScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ambil argumen jenis tes (dari langkah sebelumnya)
-    final String? testTypeArg =
-        ModalRoute.of(context)?.settings.arguments as String?;
-    // Default ke 'mental_health' jika argumen null, atau sesuaikan dengan logika Anda
-    final String testType = testTypeArg ?? 'mental_health'; 
-
-    // --- KONTEN SPESIFIK UNTUK KUISSCREEN (TES DIAGNOSA) ---
-    String appBarTitle = 'Informasi Tes'; // Judul AppBar
-    String mainContentTitle = 'Informasi Tes'; // Judul di bawah gambar
-    String description =
-        'Tes ini akan berisi sejumlah pertanyaan untuk membantu mengukur tingkat kondisi mental Anda. Jawablah setiap pertanyaan dengan jujur sesuai kondisi Anda beberapa waktu terakhir.';
-    String imagePath = 'assets/images/gambar_kuis.png'; // Gambar default untuk KuisScreen
-
-    // Anda bisa menambahkan logika if/else if di sini jika ingin konten sedikit berbeda
-    // berdasarkan variasi `testType` untuk Tes Diagnosa, namun dasarnya akan sama.
-    // Contoh:
-    if (testType == 'mental_health') {
-      mainContentTitle = 'Informasi Tes Kesehatan Mental';
-      // imagePath tetap, deskripsi bisa sama atau sedikit disesuaikan
-    } else if (testType == 'anxiety_test') { // Contoh tipe lain
-      mainContentTitle = 'Informasi Tes Kecemasan';
-      description = 'Tes ini fokus pada gejala kecemasan. Jawab dengan jujur.';
-      // imagePath bisa diganti jika ada gambar spesifik
-    }
-    // Untuk saat ini, kita gunakan konten yang mirip dengan template Screenshot 2025-05-28 203102.png
-
-    // Detail Tes untuk Tes Diagnosa
-    const String estimatedTime = "10-15 Menit"; // Sesuaikan perkiraan waktu
-    const String confidentialityText = 'Jawaban Anda akan dijaga kerahasiaannya.';
-    const String honestyDisclaimer = 'Tes ini adalah alat bantu awal, bukan diagnosis medis.'; // Disclaimer penting
-
-    const String buttonText = 'Mulai Tes!';
-    // --- AKHIR KONTEN SPESIFIK ---
+    const String imagePath = 'assets/images/insights_illustration.png'; // GANTI INI JIKA PERLU
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          appBarTitle,
-          style: const TextStyle(color: Colors.white),
+        // V V V PERUBAHAN ADA DI SINI V V V
+        title: const Text(
+          'Informasi Tes',
+          style: TextStyle(color: Colors.white), // Tambahkan style ini untuk warna teks putih
         ),
+        // ^ ^ ^ AKHIR PERUBAHAN ^ ^ ^
         backgroundColor: Colors.deepPurple,
         elevation: 0.5,
-        iconTheme: const IconThemeData( // Agar tombol kembali (jika ada) juga putih
-          color: Colors.white,
-        ),
+        // Jika Anda ingin ikon back (jika ada) juga berwarna putih, tambahkan:
+        // iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -105,7 +77,7 @@ class KuisScreen extends StatelessWidget {
                     errorBuilder: (context, error, stackTrace) {
                       return Center(
                         child: Icon(
-                          Icons.psychology_alt_outlined, // Ikon fallback
+                          Icons.insights_rounded,
                           size: 120,
                           color: Colors.deepPurple.shade200,
                         ),
@@ -114,44 +86,49 @@ class KuisScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
                   Text(
-                    mainContentTitle,
+                    'Tes Perkembangan',
                     textAlign: TextAlign.center,
                     style: Theme.of(context)
                         .textTheme
                         .headlineSmall
                         ?.copyWith(fontWeight: FontWeight.bold, color: Colors.black87),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 30),
                   Text(
-                    description,
-                    textAlign: TextAlign.center,
+                    'Informasi Tes :',
+                     style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Terima kasih telah menyelesaikan Tes Diagnosa. Sekarang, mari kita lihat bagaimana perkembangan Anda. Halaman ini berisi pertanyaan-pertanyaan untuk membantu Anda mengevaluasi kondisi dan perasaan Anda saat ini terkait dengan apa yang telah Anda lalui. Kejujuran Anda akan memberikan gambaran yang lebih jelas untuk langkah selanjutnya.',
                     style: Theme.of(context)
                         .textTheme
                         .bodyLarge
                         ?.copyWith(color: Colors.black54, height: 1.5, fontSize: 15),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 15),
                   Text(
                     'Detail Tes :',
-                     style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.black87),
+                     style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
                   _buildDetailTesItem(
                     context,
                     Icons.timer_outlined,
-                    'Perkiraan Waktu: $estimatedTime',
+                    'Perkiraan waktu : 8-10 menit',
+                    // Jika Anda ingin item ini juga putih, tambahkan textColor: Colors.white
                   ),
                   _buildDetailTesItem(
                     context,
-                    Icons.shield_outlined, // Mengganti Icons.privacy_tip_outlined agar lebih umum
-                    confidentialityText,
+                    Icons.shield_outlined,
+                    'Jawaban anda akan dijaga kerahasiaannya.',
+                    // textColor: Colors.white,
                   ),
                   _buildDetailTesItem(
                     context,
-                    Icons.info_outline, // Ikon untuk disclaimer
-                    honestyDisclaimer,
-                    // Anda bisa memberi warna khusus jika mau, misalnya:
-                    // textColor: Colors.red.shade700,
+                    Icons.priority_high,
+                    'Jawablah dengan jujur sesuai dengan kondisi anda.',
+                    // textColor: Colors.white, // Jika Anda sudah set ini menjadi putih sebelumnya, biarkan saja
                   ),
                   const SizedBox(height: 20),
                 ],
@@ -169,15 +146,12 @@ class KuisScreen extends StatelessWidget {
                      shape: RoundedRectangleBorder(
                          borderRadius: BorderRadius.circular(10))),
                  onPressed: () {
-                   // Navigasi ke halaman pertanyaan sambil mengirim jenis tes
-                   // Ini adalah fungsi asli dari KuisScreen Anda
-                   Navigator.pushNamed(
+                   Navigator.push(
                      context,
-                     '/pertanyaan', // Pastikan rute ini benar
-                     arguments: testType, // Meneruskan jenis tes
+                     MaterialPageRoute(builder: (context) => const TesFormScreen()),
                    );
                  },
-                 child: Text(buttonText),
+                 child: const Text('Mulai Tes'),
                ),
             ),
           ],

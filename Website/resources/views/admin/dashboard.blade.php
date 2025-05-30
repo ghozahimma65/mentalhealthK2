@@ -19,72 +19,72 @@
     {{-- Kontainer utama dengan flex untuk sidebar dan area konten --}}
     <div id="admin-app-layout" class="flex flex-1 overflow-hidden"> {{-- Gunakan flex-1 agar div ini memenuhi sisa ruang vertikal --}}
 
-        {{-- =============================================== --}}
-        {{-- ========== SIDEBAR ADMIN (BAGIAN TETAP DARI LAYOUT INI) ============== --}}
-        {{-- =============================================== --}}
         <aside id="admin-layout-sidebar"
                class="fixed z-30 flex flex-col flex-shrink-0 w-64 h-full overflow-y-auto transition-transform duration-300 ease-in-out transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 md:static">
             
-            {{-- Logo/Branding di Sidebar --}}
             <div class="flex items-center justify-center flex-shrink-0 h-20 p-4 border-b border-gray-200">
                 <div class="flex flex-col items-center justify-center w-auto h-auto text-xs font-semibold text-blue-600">
                     <img src="{{ asset('assets/logo.png') }}" width="35" height="29" class="mb-1" alt="Logo">
-                    Diagnosa Panel
+                    Admin Panel
                 </div>
             </div>
 
-            {{-- Navigasi Sidebar --}}
             <nav class="flex flex-col flex-1 px-4 pb-4 mt-4 space-y-1 overflow-y-auto text-sm">
                 <a href="{{ route('admin.dashboard') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-tachometer-alt"></i> Dashboard
                 </a>
 
                 <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">MANAJEMEN PENGGUNA</span>
-                <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
+                {{-- PERBAIKAN: Menggunakan nama rute 'admin.detailpengguna' --}}
+                <a href="{{ route('admin.detailpengguna') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.detailpengguna') || request()->routeIs('admin.detailpengguna.*') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-info-circle"></i> Detail Pengguna
                 </a>
-                <a href="#" {{-- Ganti # dengan route('admin.hasil.index') jika sudah ada --}}
+                <a href="{{ route('admin.dashboard') }}"
                     class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-chart-line"></i> Tren Hasil Klasifikasi
                 </a>
-                
+                <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">Prediksi</span>
+                {{-- PERBAIKAN: Menggunakan nama rute 'admin.diagnosis.pending' --}}
+                <a href="{{ route('admin.diagnosis.pending') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.diagnosis.pending') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
+                    <i class="mr-2 fas fa-hand-holding-heart"></i> Diagnosis
+                </a>
+                <a href="{{ route('admin.outcome.pending') }}"
+                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
+                    <i class="mr-2 fas fa-smile"></i> Outcome
+                </a>
+                <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">Riwayat</span>
+                {{-- PERBAIKAN: Menggunakan nama rute 'admin.riwayatdiagnosis.index' --}}
+                <a href="{{ route('admin.riwayatdiagnosis.index') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.riwayatdiagnosis.index') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
+                    <i class="mr-2 fas fa-book-open"></i> Riwayat Diagnosis
+                </a>
+                <a href="{{ route('admin.riwayatoutcome.index') }}"
+                    class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
+                    <i class="mr-2 fas fa-scroll"></i> Riwayat Outcome
+                </a>
                 <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">DATA MASTER</span>
-                <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
+                <a href="{{ route('admin.meditations.index') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.meditations.*') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-leaf"></i> Meditasi
                 </a> 
-                <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
+                <a href="{{ route('admin.quotes.index') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.quotes.*') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-quote-left"></i> Quotes & Affirmation
-                </a> 
-                
-                {{-- NAVIGASI ARTIKEL KESEHATAN MENTAL --}}
-                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.articles.index') || request()->routeIs('admin.articles.create') || request()->routeIs('admin.articles.edit') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
-                    <i class="mr-2 fas fa-newspaper"></i> Artikel Kesehatan Mental
-                </a> 
-                {{-- END NAVIGASI --}}
-
+                </a>
                 <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">PENGATURAN</span>
-                <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.tambah') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
+                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-user-plus"></i> Admin
-                </a>        
-                {{-- Tombol Logout --}}
+                </a>       
                 <form method="POST" action="{{ route('logout') }}" class="pt-4 mt-auto border-t border-gray-200">
                     @csrf
                     <a href="{{ route('logout') }}"
                        onclick="event.preventDefault(); this.closest('form').submit();"
                        class="block py-2.5 px-4 rounded transition duration-200 text-red-600 hover:bg-red-50 font-medium">
-                       <i class="mr-2 fas fa-sign-out-alt"></i> Logout
+                        <i class="mr-2 fas fa-sign-out-alt"></i> Logout
                     </a>
                 </form>
             </nav>
         </aside>
 
-        {{-- Kontainer untuk Top Bar dan Konten Utama (sebelah kanan Sidebar) --}}
         <div class="flex flex-col flex-1 overflow-hidden">
-            {{-- ==================================================================== --}}
-            {{-- ===== TOP BAR ADMIN (BAGIAN TETAP DARI LAYOUT INI) ===== --}}
-            {{-- ==================================================================== --}}
             <header class="sticky top-0 z-20 flex items-center justify-between flex-shrink-0 h-20 px-4 py-4 bg-white border-b border-gray-200 shadow-sm sm:px-6">
-                {{-- Sisi Kiri Top Bar: Tombol Toggle Sidebar untuk Mobile & Judul Halaman --}}
                 <div class="flex items-center">
                     <button id="admin-layout-sidebar-toggle" class="mr-3 text-gray-600 focus:outline-none md:hidden">
                         <i class="text-xl fas fa-bars"></i>
@@ -92,7 +92,6 @@
                     <h1 class="hidden text-xl font-semibold text-gray-700 md:block">@yield('header_title', 'Admin Panel')</h1>
                 </div>
 
-                {{-- Sisi Tengah Top Bar: Search (Opsional) --}}
                 <div class="flex justify-center flex-1 px-2 sm:px-6 lg:px-8">
                     @auth
                     <form class="relative hidden w-full max-w-md md:block" method="GET" action="#">
@@ -102,7 +101,6 @@
                     @endauth
                 </div>
 
-                {{-- Sisi Kanan Top Bar: Notifikasi, Profil, dll. --}}
                 <div class="flex items-center space-x-2 sm:space-x-4">
                     @auth
                     <button class="relative text-xl text-gray-600 hover:text-blue-600 focus:outline-none"><i class="fas fa-bell"></i><span class="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">1</span></button>
@@ -111,15 +109,12 @@
                         <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'User') }}&background=0D8ABC&color=fff&size=32&rounded=true" alt="Profile" class="object-cover w-8 h-8 rounded-full">
                         <span class="hidden text-sm font-semibold text-gray-700 lowercase sm:inline">{{ Auth::user()->name ?? 'User' }}</span>
                     </div>
-                    {{-- Tombol logout di Top Bar bisa dihilangkan jika sudah ada di sidebar --}}
-                    {{-- <form method="POST" action="{{ route('logout') }}" class="inline"> @csrf <button type="submit" class="text-xl text-gray-600 hover:text-blue-600 focus:outline-none" title="Logout"><i class="fas fa-sign-out-alt"></i></button></form> --}}
                     @else
                         <a href="{{ route('login') }}" class="px-3 py-2 text-sm font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600 sm:px-4 whitespace-nowrap">Login</a>
                     @endguest
                 </div>
             </header>
 
-            {{-- Konten Utama Halaman Admin (akan diisi oleh @section('content') dari child view) --}}
             <main class="flex-1 p-6 overflow-y-auto">
                 @yield('content')
             </main>
@@ -128,7 +123,6 @@
 
     @stack('scripts')
     <script>
-        // Script untuk toggle sidebar, sekarang menjadi bagian dari layouts.main
         const adminSidebarToggleBtn = document.getElementById('admin-layout-sidebar-toggle');
         const adminLayoutSidebarEl = document.getElementById('admin-layout-sidebar');
 
@@ -139,11 +133,10 @@
             });
         }
 
-        // Opsional: Tutup sidebar di mobile saat link navigasi di sidebar diklik
         if (adminLayoutSidebarEl) {
             adminLayoutSidebarEl.querySelectorAll('nav a').forEach(link => {
                 link.addEventListener('click', () => {
-                    if (window.innerWidth < 768 && !adminLayoutSidebarEl.classList.contains('-translate-x-full')) { // md breakpoint
+                    if (window.innerWidth < 768 && !adminLayoutSidebarEl.classList.contains('-translate-x-full')) {
                        adminLayoutSidebarEl.classList.add('-translate-x-full');
                        adminLayoutSidebarEl.classList.remove('translate-x-0');
                     }
