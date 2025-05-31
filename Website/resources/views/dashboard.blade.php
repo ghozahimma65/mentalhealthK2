@@ -91,10 +91,10 @@
                         <p class="text-sm text-gray-600">Isi kuesioner untuk prediksi perkembangan terbaru.</p>
                     </div>
                 </a>
-                <a href="{{ route('outcome.progress') }}" class="flex items-center p-4 space-x-3 transition duration-200 rounded-md bg-purple-50 hover:bg-purple-100">
+                <a href="{{ route('history.select_type') }}" class="flex items-center p-4 space-x-3 transition duration-200 rounded-md bg-purple-50 hover:bg-purple-100">
                     <i class="text-2xl text-purple-600 fas fa-chart-line"></i>
                     <div>
-                        <h3 class="font-medium text-gray-800">Perkembangan & Riwayat Pengobatan</h3>
+                        <h3 class="font-medium text-gray-800">Riwayat Diagnosis & Pengobatan</h3>
                         <p class="text-sm text-gray-600">Pantau progres pengobatan atau pemulihan Anda.</p>
                     </div>
                 </a>
@@ -188,6 +188,7 @@
             </p>
         </div>
     </div>
+    
 @endsection
 
 @push('scripts')

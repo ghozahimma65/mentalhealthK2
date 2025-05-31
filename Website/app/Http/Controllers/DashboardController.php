@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DiagnosisResult;
-// use App\Models\Notification; // Model ini dikomentari karena tidak lagi digunakan di Blade dashboard
-// use App\Models\MentalHealthArticle; // Model ini dikomentari karena tidak lagi digunakan di Blade dashboard
 use App\Models\MentalHealthOutcome;
 use Carbon\Carbon;
 

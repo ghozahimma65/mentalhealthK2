@@ -84,7 +84,7 @@
                    class="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white transition duration-200 ease-in-out bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <i class="mr-3 fas fa-plus-circle"></i> Catat Perkembangan Baru
                 </a>
-                <a href="{{ route('outcome.progress') }}"
+                <a href="{{ route('outcome.comprehensive_history') }}"
                    class="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-blue-700 transition duration-200 ease-in-out bg-blue-100 border border-transparent rounded-md shadow-sm hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     <i class="mr-3 fas fa-chart-line"></i> Lihat Tren Perkembangan Saya
                 </a>

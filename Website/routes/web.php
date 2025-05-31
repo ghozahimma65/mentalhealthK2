@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\PredictionController;
 use App\Http\Controllers\DiagnosisController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DetailPenggunaController;
@@ -14,6 +13,7 @@ use App\Http\Controllers\Admin\MeditationController;
 use App\Http\Controllers\Admin\QuoteController;
 use App\Http\Controllers\OutcomeController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PredictionHistoryController;
 use App\Http\Controllers\Admin\AdminOutcomeController; 
 use App\Http\Controllers\Admin\RiwayatOutcomeController;
 
@@ -28,6 +28,7 @@ Route::get('/', function () {
 // Rute untuk halaman diagnosis (bisa diakses tanpa login) - Untuk Pasien/User Biasa
 Route::get('/diagnosis', [DiagnosisController::class, 'showDiagnosisForm'])->name('diagnosis.form');
 Route::post('/diagnosis', [DiagnosisController::class, 'submitDiagnosis'])->name('diagnosis.submit');
+
 
 // Rute untuk pengujian koneksi MongoDB
 Route::get('/test-mongo', function () {
@@ -50,27 +51,21 @@ Route::get('/test-mongo', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // Rute Dashboard Utama
-    // Jika user adalah admin, akan di-redirect ke admin.dashboard di dalam Controller
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Rute untuk fitur prediksi (jika ini untuk pengguna biasa, bukan admin)
-    Route::get('/predict', [PredictionController::class, 'showCreateForm'])->name('predictions.create');
-    Route::post('/predict', [PredictionController::class, 'predict'])->name('predictions.predict');
-    Route::get('/history', [PredictionController::class, 'showHistory'])->name('predictions.history');
 
     Route::get('/outcome/create', [OutcomeController::class, 'create'])->name('outcome.create');
     // Proses submit form perkembangan
     Route::post('/outcome', [OutcomeController::class, 'store'])->name('outcome.store');
     // Melihat riwayat/progress perkembangan (metode progress() sudah punya logika user/admin)
-    Route::get('/outcome/progress', [OutcomeController::class, 'progress'])->name('outcome.progress');
+    Route::get('/outcome/comprehensive-history', [OutcomeController::class, 'viewComprehensiveHistory'])->name('outcome.comprehensive_history'); 
     // Rute untuk detail satu record perkembangan
     Route::get('/outcome/{outcome}', [OutcomeController::class, 'show'])->name('outcome.show');
 
-    // --- RIWAYAT DIAGNOSIS AWAL (Jika berbeda dengan outcome.progress) ---
-    // Jika PredictionHistoryController@index hanya menampilkan diagnosis awal
-    // Route::get('/predictions/history', [PredictionHistoryController::class, 'index'])->name('predictions.history');
-    // Route::get('/predictions/{diagnosisResult}', [PredictionHistoryController::class, 'show'])->name('predictions.show');
+    Route::get('/predictions/history', [DiagnosisController::class, 'historyIndex'])->name('predictions.history');
+    Route::get('/predictions/{diagnosisResult}', [DiagnosisController::class, 'historyShow'])->name('predictions.show');
 
+    Route::get('/history/select-type', [PredictionHistoryController::class, 'selectHistoryType'])->name('history.select_type');
     // --- PENGATURAN PROFIL PENGGUNA ---
     // Uncomment jika Anda menggunakan ProfileController
     // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

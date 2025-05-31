@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\FlaskApiService;
 use App\Models\MentalHealthOutcome;
-use App\Models\DiagnosisResult; // <--- PASTIKAN INI DIIMPORT
+use App\Models\DiagnosisResult; // Tetap diimport jika digunakan oleh metode lain atau sebagai helper
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon; // <--- PASTIKAN INI DIIMPORT untuk format tanggal
+use Carbon\Carbon;
 
 class OutcomeController extends Controller
 {
@@ -52,13 +52,11 @@ class OutcomeController extends Controller
 
         if ($prediction && isset($prediction['outcome_prediction'])) {
             try {
-                // <--- PENTING: Gunakan MentalHealthOutcome::create()
-                MentalHealthOutcome::create([ 
-                    'user_id' => Auth::id(), // ID pengguna yang sedang login (admin atau pengguna biasa)
-                    'input_data' => $inputForFlask, // Simpan input mentah
-                    'predicted_outcome' => $prediction['outcome_prediction'], // Simpan hasil prediksi
-                    'timestamp' => now(), // Waktu saat ini
-                    'admin_processed' => false,
+                MentalHealthOutcome::create([
+                    'user_id' => Auth::id(),
+                    'input_data' => $inputForFlask,
+                    'predicted_outcome' => $prediction['outcome_prediction'],
+                    'timestamp' => now(),
                 ]);
             } catch (\Exception $e) {
                 Log::error('Gagal menyimpan prediksi outcome ke MongoDB: ' . $e->getMessage());
@@ -72,114 +70,95 @@ class OutcomeController extends Controller
     }
 
     /**
-     * Menampilkan riwayat atau tren perkembangan pengobatan.
-     * Dapat diakses oleh pengguna biasa dan admin.
+     * Menampilkan riwayat perkembangan pengobatan SAJA (tabel tanpa grafik).
+     * Nama metode diubah dari 'progress' menjadi 'viewComprehensiveHistory'
+     * Ini sekarang akan menjadi halaman riwayat outcome saja.
      *
      * @return \Illuminate\View\View
      */
-    public function progress()
+    public function viewComprehensiveHistory() // <--- METODE UNTUK RIWAYAT OUTCOME SAJA
     {
         $user = Auth::user();
-
-        // Ambil riwayat diagnosis awal untuk pengguna
-        $diagnosisResults = DiagnosisResult::where('user_id', $user->id)
-                                          ->latest('timestamp')
-                                          ->get(); // Ambil semua untuk digabungkan
 
         // Ambil riwayat perkembangan (outcome) untuk pengguna
         $outcomeResults = MentalHealthOutcome::where('user_id', $user->id)
                                            ->latest('timestamp')
-                                           ->get(); // Ambil semua untuk digabungkan
-        
-        // Data untuk Chart.js (dari outcome saja) - Ini akan ditampilkan di halaman progress juga
-        $chartLabels = [];
-        $chartData = [];
-        $plotValueMap = [0 => 0, 2 => 1, 1 => 2]; // Map untuk nilai plot (0=Memburuk, 1=Tidak Berubah, 2=Membaik)
-        $plotLabelsMap = [0 => 'Memburuk', 1 => 'Tidak Berubah', 2 => 'Membaik']; // Map untuk label Y-axis
+                                           ->paginate(10); // Gunakan paginate
 
-        foreach ($outcomeResults as $outcome) {
-            $chartLabels[] = Carbon::parse($outcome->timestamp)->format('d M'); 
-            $chartData[] = $plotValueMap[$outcome->predicted_outcome] ?? null; 
-        }
-
-        // Helper maps untuk ditampilkan di tabel
-        $diagnosisNameMap = $this->getDiagnosisNameMap();
+        // Helper maps untuk ditampilkan di tabel (hanya outcome)
         $outcomeNameMap = $this->getOutcomeNameMap();
-
+        $diagnosisNameMap = $this->getDiagnosisNameMap(); // Diperlukan untuk mapping di tabel outcome
 
         // Logika untuk Admin melihat semua data
         if (Auth::user()->isAdmin()) {
-            // Ambil semua data diagnosis & outcome untuk admin
-            $allDiagnosisResults = DiagnosisResult::latest('timestamp')->get();
-            $allOutcomeResults = MentalHealthOutcome::latest('timestamp')->get();
+            $allOutcomeResults = MentalHealthOutcome::latest('timestamp')->paginate(10); // Gunakan paginate untuk admin
 
-            return view('admin.outcome.progress', compact(
-                'allDiagnosisResults', 
+            return view('outcome.full_history', compact( // View ini akan menampilkan tabel
                 'allOutcomeResults', 
-                'diagnosisNameMap', 
-                'outcomeNameMap'
+                'outcomeNameMap', 
+                'diagnosisNameMap' // Diperlukan untuk mapping Diagnosis di input_data
             ));
         } else {
-            // Untuk pengguna biasa, kirim data yang difilter dan data chart
-            return view('outcome.progress', compact(
-                'diagnosisResults', 
+            // Untuk pengguna biasa, kirim data yang difilter
+            return view('outcome.full_history', compact( // View ini akan menampilkan tabel
                 'outcomeResults', 
-                'diagnosisNameMap', 
                 'outcomeNameMap',
-                'chartLabels',
-                'chartData',
-                'plotLabelsMap'
+                'diagnosisNameMap' // Diperlukan untuk mapping Diagnosis di input_data
             ));
         }
     }
 
     /**
      * Menampilkan detail spesifik dari satu record perkembangan.
-     *
-     * @param MentalHealthOutcome $outcome
-     * @return \Illuminate\View\View
      */
     public function show(MentalHealthOutcome $outcome)
     {
-        // Pastikan pengguna memiliki hak akses untuk melihat outcome ini
-        // (Misalnya, hanya pemilik atau admin)
         if (Auth::user()->isAdmin() || $outcome->user_id == Auth::id()) {
-            return view('outcome.show', compact('outcome')); // Asumsi outcome.show menampilkan detail satu record
+            return view('outcome.show', compact('outcome'));
         }
         abort(403, 'Unauthorized action.');
     }
 
     /**
-     * Helper: Memetakan kode diagnosis ke nama.
-     * Harus ada di dalam kelas ini.
-     * @return array
+     * Metode ini sebelumnya 'outcomeHistoryIndex' dan sekarang tidak lagi dibutuhkan
+     * jika 'viewComprehensiveHistory' menjadi halaman riwayat outcome saja.
+     * Saya akan mengomentari atau menghapusnya.
      */
-    private function getDiagnosisNameMap()
+    /*
+    public function outcomeHistoryIndex()
     {
+        // Kode ini sekarang digabungkan/digantikan oleh viewComprehensiveHistory
+        // jika itu yang menjadi halaman riwayat outcome tunggal.
+        // Jika Anda masih ingin halaman riwayat outcome terpisah yang tidak dipaginasi,
+        // maka Anda perlu nama view yang berbeda dan logika berbeda.
+    }
+    */
+
+    // ... (metode helper getDiagnosisNameMap, getOutcomeNameMap, mapDiagnosisCodeToName, getDiagnosisColorClass) ...
+    private function getDiagnosisNameMap() {
         return [
-            0 => 'Gangguan Bipolar',
-            1 => 'Gangguan Kecemasan Umum',
-            2 => 'Gangguan Depresi Mayor',
-            3 => 'Gangguan Panik',
+            0 => 'Gangguan Bipolar', 1 => 'Gangguan Kecemasan Umum',
+            2 => 'Gangguan Depresi Mayor', 3 => 'Gangguan Panik',
             99 => 'Lainnya / Tidak Tahu',
         ];
     }
-
-    /**
-     * Helper: Memetakan kode outcome ke nama.
-     * Harus ada di dalam kelas ini.
-     * @return array
-     */
-    private function getOutcomeNameMap()
-    {
+    private function getOutcomeNameMap() {
         return [
-            0 => 'Deteriorated',
-            1 => 'Improved',
-            2 => 'No Change',
+            0 => 'Deteriorated', 1 => 'Improved', 2 => 'No Change',
         ];
     }
-    // Jika Anda juga perlu mapDiagnosisCodeToName dan getDiagnosisColorClass di controller ini
-    // dan belum ada, Anda bisa menambahkannya di sini.
-    // private function mapDiagnosisCodeToName($code) { /* ... */ return ''; }
-    // private function getDiagnosisColorClass($code) { /* ... */ return ''; }
+    private function mapDiagnosisCodeToName($code) {
+        switch ($code) {
+            case 0: return 'Gangguan Bipolar'; case 1: return 'Gangguan Kecemasan Umum';
+            case 2: return 'Gangguan Depresi Mayor'; case 3: return 'Gangguan Panik';
+            default: return 'Tidak Diketahui';
+        }
+    }
+    private function getDiagnosisColorClass($code) {
+        switch ($code) {
+            case 0: return 'text-purple-600'; case 1: return 'text-orange-600';
+            case 2: return 'text-red-600';    case 3: return 'text-yellow-600';
+            default: return 'text-gray-800';
+        }
+    }
 }
