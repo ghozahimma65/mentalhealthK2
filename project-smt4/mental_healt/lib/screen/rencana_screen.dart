@@ -1,8 +1,7 @@
 // Nama file: lib/screen/rencana_screen.dart
 import 'package:flutter/material.dart';
-// Sesuaikan path import helper dan model Anda
-import '../helpers/database_helper.dart';
-import '../models/self_care_plan.dart';
+import '../services/rencana_service.dart'; // GANTI IMPORT INI
+import '../models/self_care_plan.dart';   // Pastikan model sudah disesuaikan
 
 class RencanaScreen extends StatefulWidget {
   const RencanaScreen({super.key});
@@ -12,7 +11,7 @@ class RencanaScreen extends StatefulWidget {
 }
 
 class _RencanaScreenState extends State<RencanaScreen> {
-  final dbHelper = DatabaseHelper.instance;
+  final _rencanaService = RencanaService(); // Gunakan RencanaService
   List<SelfCarePlan> _selfCarePlans = [];
   bool _isLoading = true;
 
@@ -26,18 +25,18 @@ class _RencanaScreenState extends State<RencanaScreen> {
     if (!mounted) return;
     setState(() { _isLoading = true; });
     try {
-      final data = await dbHelper.getAllPlans();
+      final data = await _rencanaService.getRencanaList(); // Panggil dari service
       if (!mounted) return;
       setState(() {
         _selfCarePlans = data;
         _isLoading = false;
       });
     } catch (e) {
-      print("Error refreshing plan list: $e");
+      print("Error refreshing plan list from API: $e");
       if (!mounted) return;
       setState(() { _isLoading = false; });
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text('Gagal memuat rencana: ${e.toString()}'), backgroundColor: Colors.red)
+        SnackBar(content: Text('Gagal memuat rencana: ${e.toString()}'), backgroundColor: Colors.red)
       );
     }
   }
@@ -47,10 +46,11 @@ class _RencanaScreenState extends State<RencanaScreen> {
     final descriptionController = TextEditingController(text: plan?.description ?? '');
     bool isEditing = plan != null;
 
-    SelfCarePlan? result = await showDialog<SelfCarePlan>( // Ubah agar bisa return SelfCarePlan
+    Map<String, dynamic>? resultData = await showDialog<Map<String, dynamic>>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
+        // UI Dialog tetap sama seperti kode Anda sebelumnya (TextField untuk title & description)
         return AlertDialog(
           title: Text(isEditing ? 'Edit Rencana' : 'Tambah Rencana Baru'),
           contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 0.0),
@@ -76,7 +76,7 @@ class _RencanaScreenState extends State<RencanaScreen> {
           actions: <Widget>[
             TextButton(
               child: const Text('Batal'),
-              onPressed: () => Navigator.of(dialogContext).pop(null), // Return null jika batal
+              onPressed: () => Navigator.of(dialogContext).pop(null),
             ),
             ElevatedButton(
               child: Text(isEditing ? 'Simpan' : 'Tambah'),
@@ -84,24 +84,14 @@ class _RencanaScreenState extends State<RencanaScreen> {
                 final title = titleController.text.trim();
                 final description = descriptionController.text.trim();
                 if (title.isNotEmpty) {
-                  SelfCarePlan resultingPlan;
-                  if (isEditing) {
-                    plan!.title = title;
-                    plan.description = description;
-                    // plan.isCompleted tetap, tidak diubah di dialog ini
-                    resultingPlan = plan;
-                  } else {
-                    resultingPlan = SelfCarePlan(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      title: title,
-                      description: description,
-                    );
-                  }
-                  Navigator.of(dialogContext).pop(resultingPlan); // Return plan yang akan disimpan/diupdate
+                  Navigator.of(dialogContext).pop({
+                    'title': title,
+                    'description': description,
+                  });
                 } else {
-                   ScaffoldMessenger.of(context).showSnackBar(
-                     const SnackBar(content: Text('Judul rencana tidak boleh kosong!'), backgroundColor: Colors.red),
-                   );
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    const SnackBar(content: Text('Judul rencana tidak boleh kosong!'), backgroundColor: Colors.red),
+                  );
                 }
               },
             ),
@@ -110,45 +100,87 @@ class _RencanaScreenState extends State<RencanaScreen> {
       },
     );
 
-    // Proses hasil dari dialog
-    if (result != null) {
-      if (isEditing) {
-        await dbHelper.updatePlan(result);
-        print('Rencana diperbarui: ${result.title}');
-      } else {
-        await dbHelper.insertPlan(result);
-        print('Rencana ditambahkan: ${result.title}');
+    if (resultData != null) {
+      setState(() { _isLoading = true; });
+      try {
+        if (isEditing && plan != null) {
+          SelfCarePlan planToUpdate = SelfCarePlan(
+            id: plan.id, // ID dari plan yang diedit
+            title: resultData['title'],
+            description: resultData['description'],
+            isCompleted: plan.isCompleted, // Pertahankan status isCompleted saat ini
+            createdAt: plan.createdAt,
+            updatedAt: DateTime.now(), // Server akan update ini
+          );
+          await _rencanaService.updateRencana(plan.id, planToUpdate);
+        } else {
+          SelfCarePlan newPlan = SelfCarePlan.create( // Gunakan constructor .create
+            title: resultData['title'],
+            description: resultData['description'],
+            // isCompleted akan default false dari constructor .create
+          );
+          await _rencanaService.createRencana(newPlan);
+        }
+        _refreshPlanList(); // Refresh list setelah simpan/tambah
+      } catch (e) {
+        print("Error saving/updating plan via API: $e");
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Gagal menyimpan rencana: ${e.toString()}'), backgroundColor: Colors.red)
+          );
+        }
+      } finally {
+        if (mounted) setState(() { _isLoading = false; });
       }
-      _refreshPlanList(); // Refresh list setelah simpan/tambah
     }
   }
 
   Future<void> _toggleComplete(SelfCarePlan plan) async {
     if (!mounted) return;
+
+    SelfCarePlan planToUpdate = SelfCarePlan(
+      id: plan.id,
+      title: plan.title,
+      description: plan.description,
+      isCompleted: !plan.isCompleted, // Toggle status
+      createdAt: plan.createdAt,
+      updatedAt: DateTime.now(), // Server akan update ini
+    );
+
     // Optimistic UI update
-    final originalStatus = plan.isCompleted;
-    setState(() { plan.isCompleted = !plan.isCompleted; });
+    final int planIndex = _selfCarePlans.indexWhere((p) => p.id == plan.id);
+    if (planIndex != -1) {
+      setState(() {
+        _selfCarePlans[planIndex].isCompleted = planToUpdate.isCompleted;
+      });
+    }
     
     try {
-        await dbHelper.updatePlan(plan);
+      await _rencanaService.updateRencana(plan.id, planToUpdate);
+      // Jika sukses, tidak perlu refresh list penuh, UI sudah optimis
+      // Namun, jika ingin data createdAt/updatedAt terbaru, panggil _refreshPlanList()
+      // _refreshPlanList(); 
     } catch (e) {
-        print("Error updating plan status: $e");
-        if(mounted) {
-            // Rollback UI jika update DB gagal
-            setState(() { plan.isCompleted = originalStatus; });
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Gagal update status rencana.'), backgroundColor: Colors.red)
-            );
+      print("Error toggling complete status via API: $e");
+      if(mounted) {
+        // Rollback UI jika update API gagal
+        if (planIndex != -1) {
+          setState(() {
+             // Kembalikan ke status awal
+            _selfCarePlans[planIndex].isCompleted = !_selfCarePlans[planIndex].isCompleted;
+          });
         }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal update status: ${e.toString()}'), backgroundColor: Colors.red)
+        );
+      }
     }
-    // Tidak perlu _refreshPlanList() penuh jika hanya update isCompleted,
-    // kecuali jika urutan list bergantung pada status.
   }
 
   Future<void> _deletePlan(SelfCarePlan plan) async {
     bool? confirmDelete = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => AlertDialog( /* ... dialog konfirmasi seperti kode Anda ... */ 
         title: const Text("Hapus Rencana?"),
         content: Text("Anda yakin ingin menghapus rencana '${plan.title}'?"),
         actions: [
@@ -159,23 +191,38 @@ class _RencanaScreenState extends State<RencanaScreen> {
     );
 
     if (confirmDelete == true) {
-      await dbHelper.deletePlan(plan.id);
-      _refreshPlanList();
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Rencana "${plan.title}" dihapus'), duration: const Duration(seconds: 2)),
-      );
+      setState(() { _isLoading = true; });
+      try {
+        await _rencanaService.deleteRencana(plan.id); // Panggil service
+        _refreshPlanList(); // Refresh setelah delete
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Rencana "${plan.title}" dihapus'), duration: const Duration(seconds: 2)),
+        );
+      } catch (e) {
+        print("Error deleting plan via API: $e");
+         if(mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Gagal menghapus rencana: ${e.toString()}'), backgroundColor: Colors.red)
+            );
+        }
+      } finally {
+        if(mounted) setState(() { _isLoading = false; });
+      }
     }
   }
 
   @override
   void dispose() {
-    // Tidak perlu dbHelper.closeConnection() di sini, biarkan koneksi terbuka selama app berjalan
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Build method UI Anda (Scaffold, AppBar, ListView.builder)
+    // sebagian besar akan sama. Pastikan ListTile menggunakan data dari
+    // objek SelfCarePlan yang field-nya sudah disesuaikan dengan API.
+    // Misalnya, plan.id sekarang adalah String.
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rencana Self Care Saya'),
@@ -190,29 +237,18 @@ class _RencanaScreenState extends State<RencanaScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _selfCarePlans.isEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.event_note_outlined, size: 80, color: Colors.grey.shade400),
-                      const SizedBox(height: 16),
-                      const Text('Belum ada rencana self care.', style: TextStyle(fontSize: 18, color: Colors.grey)),
-                      const SizedBox(height: 8),
-                      const Text('Tekan tombol + untuk menambahkan.', style: TextStyle(fontSize: 14, color: Colors.grey)),
-                    ],
-                  ),
-                )
+              ? Center( /* ... Tampilan jika kosong ... */ ) // Sama seperti kode Anda
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0), // Sedikit padding
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
                   itemCount: _selfCarePlans.length,
                   itemBuilder: (context, index) {
                     final plan = _selfCarePlans[index];
                     return Card(
-                      elevation: 2.0,
-                      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0), // Margin antar card
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                      // ... (styling Card seperti kode Anda)
                       child: ListTile(
-                        contentPadding: const EdgeInsets.only(left: 8.0, right: 0.0), // Atur padding ListTile
+                        // ... (Checkbox, title, subtitle, trailing seperti kode Anda)
+                        // Pastikan semua field yang diakses dari 'plan' ada di model SelfCarePlan yang baru
+                        contentPadding: const EdgeInsets.only(left: 8.0, right: 0.0),
                         leading: Checkbox(
                           value: plan.isCompleted,
                           onChanged: (bool? value) => _toggleComplete(plan),
@@ -241,11 +277,11 @@ class _RencanaScreenState extends State<RencanaScreen> {
                             IconButton(
                               icon: Icon(Icons.delete_outline_rounded, color: Colors.red.shade400, size: 22),
                               tooltip: 'Hapus Rencana',
-                              onPressed: () => _deletePlan(plan), // Hapus index jika tidak diperlukan
+                              onPressed: () => _deletePlan(plan),
                             ),
                           ],
                         ),
-                        onTap: () => _toggleComplete(plan),
+                        onTap: () => _toggleComplete(plan), // Aksi saat item di-tap
                       ),
                     );
                   },
