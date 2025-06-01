@@ -3,40 +3,59 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-// Impor layar yang sudah ada (asumsikan semua path ini benar)
-import 'package:mobile_project/screen/riwayat_hasil_tes.dart';
+// --- Impor untuk Layar ---
+// Pastikan semua path dan nama file ini sesuai dengan struktur proyek Anda.
 
-// --- Impor untuk Halaman Detail Hasil ---
-// Pastikan path dan nama file ini sesuai dengan struktur proyek Anda,
-// dan kelas di dalamnya sudah diganti namanya.
-import 'package:mobile_project/screen/DetailHasilDiagnosaPage.dart'; // Berisi kelas DetailHasilDiagnosaPage
-import 'package:mobile_project/screen/HasilPenilaianDiriPage.dart'; // Berisi kelas HasilPenilaianDiriPage
-
-import 'package:mobile_project/screen/TesDiagnosaScreen.dart';
-import 'package:mobile_project/screen/KuisScreen.dart';
-import 'package:mobile_project/screen/PertanyaanScreen.dart';
-import 'package:mobile_project/screen/login_screen.dart';
-import 'package:mobile_project/screen/signup_screen.dart';
+// Layar Inti & Autentikasi
 import 'package:mobile_project/screen/splash_screen.dart';
 import 'package:mobile_project/screen/unboarding_screen.dart';
+import 'package:mobile_project/screen/login_screen.dart';
+import 'package:mobile_project/screen/register_screen.dart';
+import 'package:mobile_project/screen/forgot_password_screen.dart'; // <-- TAMBAHKAN IMPORT INI
+import 'package:mobile_project/screen/reset_password_screen.dart';   // <-- TAMBAHKAN IMPORT INI
+
+// Layar Utama & Fitur
 import 'package:mobile_project/screen/home_page.dart';
 import 'package:mobile_project/screen/profile_screen.dart';
 import 'package:mobile_project/screen/meditation_screen.dart';
-import 'package:mobile_project/screen/quotes_screen.dart';
+import 'package:mobile_project/screen/quotes_display_screen.dart';
 import 'package:mobile_project/screen/rencana_screen.dart';
+
+// Layar Tes & Hasil
+import 'package:mobile_project/screen/riwayat_hasil_tes.dart';
+import 'package:mobile_project/screen/DetailHasilDiagnosaPage.dart';
+import 'package:mobile_project/screen/HasilPenilaianDiriPage.dart';
+import 'package:mobile_project/screen/TesDiagnosaScreen.dart';
+import 'package:mobile_project/screen/KuisScreen.dart';
+import 'package:mobile_project/screen/PertanyaanScreen.dart';
+import 'package:mobile_project/screen/tes_info_screen.dart';
+
+// Layar Pengaturan & Lainnya
 import 'package:mobile_project/screen/edit_profile_screen.dart';
 import 'package:mobile_project/screen/ubah_kata_sandi_screen.dart';
 import 'package:mobile_project/screen/pengaturan_notifikasi_screen.dart';
 import 'package:mobile_project/screen/bantuan_screen.dart';
 import 'package:mobile_project/screen/tentang_aplikasi_screen.dart';
 import 'package:mobile_project/screen/kebijakan_privasi_screen.dart';
-import 'package:mobile_project/screen/tes_info_screen.dart';
+
 import 'package:sp_util/sp_util.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SpUtil.getInstance();
   runApp(const MyApp());
+  configLoading();
+}
+
+void configLoading() {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..loadingStyle = EasyLoadingStyle.dark
+    ..indicatorSize = 45.0
+    ..radius = 10.0
+    ..userInteractions = true
+    ..dismissOnTap = false;
 }
 
 class MyApp extends StatelessWidget {
@@ -50,85 +69,57 @@ class MyApp extends StatelessWidget {
       initialRoute: '/splash_screen',
       builder: EasyLoading.init(),
       routes: {
-        // Rute yang sudah ada (tidak diubah)
+        // Rute Autentikasi & Onboarding
         '/splash_screen': (context) => const SplashScreen(),
-        '/onboarding': (context) =>
-            const unboarding_screen(), // Pastikan nama kelas jika ada typo (UnboardingScreen)
+        '/onboarding': (context) => const unboarding_screen(), // Periksa nama kelas (mungkin UnboardingScreen?)
         '/login': (context) => const LoginScreen(),
-        '/signup': (context) => const SignUpScreen(),
-        '/tesdiagnosa': (context) => const TesDiagnosaScreen(),
-        '/kuis': (context) =>
-            const KuisScreen(),
-        '/pertanyaan': (context) => const PertanyaanScreen(),
-        '/hasil': (context) => const RiwayatHasilTesScreen(), // Rute ke RiwayatHasilTesScreen (sudah benar)
-        '/homepage': (context) =>
-            HomePage(),
-        '/profile': (context) =>
-            const ProfileScreen(),
-        '/meditasi': (context) => const MeditationScreen(),
-        '/quotes': (context) => const QuotesScreen(),
-        '/rencana': (context) => const RencanaScreen(),
-        '/tesperkembangan': (context) => const TesInfoScreen(), // Rute ke halaman info Tes Penilaian Diri (sudah benar)
-        '/edit_profile': (context) => const EditProfileScreen(),
-        '/ubah_kata_sandi': (context) => const UbahKataSandiScreen(),
-        '/pengaturan_notifikasi': (context) =>
-            const PengaturanNotifikasiScreen(),
-        '/bantuan': (context) => const BantuanScreen(),
-        '/tentang_aplikasi': (context) => const TentangAplikasiScreen(),
-        '/kebijakan_privasi': (context) => const KebijakanPrivasiScreen(),
+        '/signup': (context) => const RegisterScreen(), // Anda sudah punya ini
 
-        // --- PENYESUAIAN PADA RUTE /detailhasil ---
-        // Rute ini sekarang spesifik untuk DetailHasilDiagnosaPage
-        // dan mengharapkan argumen 'rawDiagnosisResult'.
-        // RiwayatHasilTesScreen yang baru tidak lagi menggunakan rute ini secara default
-        // karena ia menavigasi langsung menggunakan MaterialPageRoute.
-        // Rute ini dipertahankan JIKA ADA BAGIAN LAIN APLIKASI YANG MENGGUNAKANNYA.
-        // Jika tidak, Anda bisa menghapusnya.
+        // --- TAMBAHKAN RUTE UNTUK LUPA PASSWORD DI SINI ---
+        '/forgot-password': (context) => const ForgotPasswordScreen(),
+        '/reset-password': (context) {
+  final args = ModalRoute.of(context)?.settings.arguments as Map<String, String>?;
+  return ResetPasswordScreen(
+    initialToken: args?['token'],
+    initialEmail: args?['email'],
+  );
+},
+        // ----------------------------------------------------
+
+        // Rute Utama Setelah Login
+        '/homepage': (context) => HomePage(),
+        '/profile': (context) => const ProfileScreen(),
+
+        // Rute Fitur
+        '/meditasi': (context) => const MeditationScreen(),
+        '/quotes': (context) => const QuoteDisplayScreen(),
+        '/rencana': (context) => const RencanaScreen(),
+
+        // Rute Tes & Hasil
+        '/tesdiagnosa': (context) => const TesDiagnosaScreen(),
+        '/kuis': (context) => const KuisScreen(),
+        '/pertanyaan': (context) => const PertanyaanScreen(),
+        '/hasil': (context) => const RiwayatHasilTesScreen(),
+        '/tesperkembangan': (context) => const TesInfoScreen(),
         '/detailhasil': (context) {
           final args = ModalRoute.of(context)?.settings.arguments;
           if (args is Map && args.containsKey('rawDiagnosisResult') && args['rawDiagnosisResult'] is String) {
-            // Menggunakan DetailHasilDiagnosaPage yang diimpor
             return DetailHasilDiagnosaPage(rawDiagnosisResult: args['rawDiagnosisResult'] as String);
-          } else if (args is Map && args.containsKey('testType') && args.containsKey('resultId')) {
-            // Ini adalah blok untuk mencoba menangani format argumen LAMA jika masih ada yang memanggilnya.
-            // Anda mungkin perlu logika kompleks di sini untuk memetakan 'testType' atau 'resultId'
-            // ke 'rawDiagnosisResult' yang valid.
-            // Contoh sangat sederhana (ASUMSI 'resultId' adalah 'rawDiagnosisResult'):
-            print("PERINGATAN: Rute /detailhasil dipanggil dengan format argumen lama: $args. Mencoba fallback.");
-            if (args['resultId'] is String) {
-                 // return DetailHasilDiagnosaPage(rawDiagnosisResult: args['resultId'] as String);
-            }
-            // Jika tidak bisa dipetakan dengan aman, tampilkan error.
-            return Scaffold(
-              appBar: AppBar(title: const Text('Error Argumen Lama')),
-              body: Center(child: Text('Rute /detailhasil dipanggil dengan argumen format lama yang tidak dapat diproses: $args')),
-            );
           }
-          // Fallback jika argumen tidak sesuai atau tidak ada
-          print("ERROR: Rute /detailhasil dipanggil tanpa argumen 'rawDiagnosisResult' yang valid.");
+          print("ERROR: Rute /detailhasil dipanggil tanpa argumen 'rawDiagnosisResult' yang valid atau format argumen salah.");
           return Scaffold(
             appBar: AppBar(title: const Text('Error Argumen')),
             body: const Center(child: Text('Argumen tidak valid atau hilang untuk rute /detailhasil.')),
           );
         },
 
-        // Anda TIDAK PERLU menambahkan rute bernama baru seperti '/hasilPenilaianDiri' di sini
-        // jika RiwayatHasilTesScreen adalah satu-satunya tempat yang menavigasi ke sana
-        // dan sudah menggunakan MaterialPageRoute secara langsung.
-        // Contoh jika Anda tetap ingin menambahkannya (opsional):
-        // '/hasilPenilaianDiri': (context) {
-        //   final args = ModalRoute.of(context)?.settings.arguments;
-        //   if (args is Map && args.containsKey('outcomePrediction') && args.containsKey('answers')) {
-        //     return HasilPenilaianDiriPage( // Pastikan ini diimport
-        //       outcomePrediction: args['outcomePrediction'] as int,
-        //       answers: args['answers'] as Map<String, dynamic>,
-        //     );
-        //   }
-        //   return Scaffold(
-        //     appBar: AppBar(title: const Text('Error')),
-        //     body: const Center(child: Text('Argumen tidak valid untuk /hasilPenilaianDiri')),
-        //   );
-        // },
+        // Rute Pengaturan & Info
+        '/edit_profile': (context) => const EditProfileScreen(),
+        '/ubah_kata_sandi': (context) => const UbahKataSandiScreen(),
+        '/pengaturan_notifikasi': (context) => const PengaturanNotifikasiScreen(),
+        '/bantuan': (context) => const BantuanScreen(),
+        '/tentang_aplikasi': (context) => const TentangAplikasiScreen(),
+        '/kebijakan_privasi': (context) => const KebijakanPrivasiScreen(),
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(
