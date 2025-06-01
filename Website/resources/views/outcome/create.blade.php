@@ -180,7 +180,6 @@
         <option value="3" {{ old('medication') == '3' ? 'selected' : '' }}>Mood Stabilizers (Penstabil Suasana Hati) - Digunakan untuk mengelola fluktuasi mood ekstrem, seperti pada gangguan bipolar.</option>
         <option value="4" {{ old('medication') == '4' ? 'selected' : '' }}>SSRIs (Selective Serotonin Reuptake Inhibitors) - Kelas antidepresan umum untuk depresi dan beberapa gangguan kecemasan.</option>
         <option value="5" {{ old('medication') == '5' ? 'selected' : '' }}>Anxiolytics (Anxiolitik/Anti-kecemasan) - Obat untuk mengurangi kecemasan dan ketegangan (sering tumpang tindih dengan Benzodiazepin).</option>
-        <option value="99" {{ old('medication') == '99' ? 'selected' : '' }}>Tidak sedang mengonsumsi obat</option>
     </select>
 </div>
                 <div class="mb-4">

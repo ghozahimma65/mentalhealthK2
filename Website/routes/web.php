@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\PredictionController;
 use App\Http\Controllers\DiagnosisController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DetailPenggunaController;
@@ -68,9 +69,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/history/select-type', [PredictionHistoryController::class, 'selectHistoryType'])->name('history.select_type');
     // --- PENGATURAN PROFIL PENGGUNA ---
     // Uncomment jika Anda menggunakan ProfileController
-    // Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 
@@ -123,9 +124,6 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Rute untuk admin melihat semua data outcome dari semua pengguna
     // Metode 'progress' di OutcomeController sudah memiliki logika isAdmin()
     Route::get('/outcomes/all', [OutcomeController::class, 'progress'])->name('outcomes.all');
-
-    // Manajemen Artikel Kesehatan Mental
-    // Route::resource('articles', App\Http\Controllers\Admin\MentalHealthArticleController::class);
 
 
 

@@ -38,6 +38,7 @@ class DiagnosisController extends Controller
     /**
      * Memproses data yang disubmit dari form diagnosis.
      * Melakukan validasi, memanggil Flask API, menyimpan hasil,
+     * Melakukan validasi, memanggil Flask API, menyimpan hasil,
      * dan menampilkan hasil diagnosis atau pesan error.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -54,7 +55,7 @@ class DiagnosisController extends Controller
             'sleep_quality' => 'required|integer|min:1|max:10',
             'physical_activity' => 'required|numeric|min:0',
             'stress_level' => 'required|integer|min:1|max:10',
-            'ai_detected_emotional_state' => 'required|integer|in:0,1,2,3,4,5',
+            'ai_detected_emotional_state' => 'required|integer|in:0,1,2,3,4,5', // Sesuaikan dengan encoding emosi Anda
         ]);
 
         // 2. Mapping nama kolom dari form ke nama yang diharapkan oleh Flask API
@@ -74,6 +75,7 @@ class DiagnosisController extends Controller
         try {
             $prediction = $this->flaskApiService->predictDiagnosis($inputForFlask);
         } catch (\Exception $e) {
+            // Log error jika gagal memanggil Flask API
             Log::error('Error saat memanggil Flask API dari submitDiagnosis(): ' . $e->getMessage());
             return back()->with('error', 'Gagal terhubung ke layanan prediksi. Silakan coba lagi nanti.');
         }
@@ -84,9 +86,10 @@ class DiagnosisController extends Controller
             try {
                 DiagnosisResult::create([
                     'user_id' => Auth::id(), // Akan null jika pengguna tidak login
-                    'input_data' => $inputForFlask,
-                    'predicted_diagnosis' => $prediction['diagnosis'],
-                    'timestamp' => now(),
+                    'input_data' => $inputForFlask, // Simpan input yang dikirim ke model
+                    'predicted_diagnosis' => $prediction['diagnosis'], // Simpan hasil prediksi
+                    'timestamp' => now(), // Waktu saat ini
+                    'admin_processed' => false, // <-- PENTING: Set ini ke FALSE untuk prediksi pasien
                 ]);
             } catch (\Exception $e) {
                 Log::error('Gagal menyimpan hasil diagnosis ke MongoDB: ' . $e->getMessage());

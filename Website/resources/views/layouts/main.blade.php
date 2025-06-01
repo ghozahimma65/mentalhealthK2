@@ -98,7 +98,7 @@
                         {{-- Dropdown menu --}}
                         <div id="user-dropdown-menu" class="absolute right-0 z-50 w-48 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dropdown-menu" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                             <div class="py-1" role="none">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">Pengaturan Profil</a>
+                                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">Pengaturan Profil</a>
                                 
                                 <form method="POST" action="{{ route('logout') }}" role="none">
                                     @csrf
@@ -175,3 +175,5 @@
     </script>
 </body>
 </html>
+
+ 

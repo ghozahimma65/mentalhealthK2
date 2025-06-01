@@ -86,7 +86,7 @@
                 </a>
                 <a href="{{ route('outcome.comprehensive_history') }}"
                    class="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-blue-700 transition duration-200 ease-in-out bg-blue-100 border border-transparent rounded-md shadow-sm hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    <i class="mr-3 fas fa-chart-line"></i> Lihat Tren Perkembangan Saya
+                    <i class="mr-3 fas fa-chart-line"></i> Lihat Riwayat Perkembangan Saya
                 </a>
                 <a href="{{ route('dashboard') }}"
                    class="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-gray-700 transition duration-200 ease-in-out bg-gray-200 border border-transparent rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
