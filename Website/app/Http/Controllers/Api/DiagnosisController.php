@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth; // Untuk mendapatkan user_id (opsional)
 use Illuminate\Support\Facades\Log; // Untuk logging error
 use Illuminate\Support\Facades\Validator; // Untuk validasi input API
 
-class DiagnosaApiController extends Controller
+class DiagnosisController extends Controller
 {
     protected $flaskApiService;
 
@@ -68,7 +68,7 @@ class DiagnosaApiController extends Controller
         try {
             $prediction = $this->flaskApiService->predictDiagnosis($inputForFlask);
         } catch (\Exception $e) {
-            Log::error('Error calling Flask API from DiagnosaApiController: ' . $e->getMessage());
+            Log::error('Error calling Flask API from DiagnosisController: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menghubungi layanan prediksi. Mohon coba lagi.',
@@ -105,7 +105,7 @@ class DiagnosaApiController extends Controller
             ], 200);
 
         } else {
-            Log::warning('Flask API prediction failed or returned invalid data in DiagnosaApiController.', ['response' => $prediction]);
+            Log::warning('Flask API prediction failed or returned invalid data in DiagnosisController.', ['response' => $prediction]);
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal mendapatkan hasil diagnosis dari layanan prediksi. Data tidak valid.',

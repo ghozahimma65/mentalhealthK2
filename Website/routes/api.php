@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MeditasiController;
 use App\Http\Controllers\Api\QuotesController;
 use App\Http\Controllers\Api\RencanaController;
-use App\Http\Controllers\Api\DiagnosaApiController;
+use App\Http\Controllers\Api\DiagnosisController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -30,11 +30,12 @@ Route::prefix('quotes')->group(function () {
 
 Route::apiResource('rencana', RencanaController::class); // Ini akan membuat semua 5 route di atas
 
-// Route baru untuk Diagnosis dari Mobile
+// Route untuk Diagnosis dari Mobile
 Route::prefix('diagnosa')->group(function () {
     // Endpoint untuk submit kuesioner dan mendapatkan prediksi
-    Route::post('/submit', [DiagnosaApiController::class, 'submitDiagnosis']);
+    // SEKARANG DILINDUNGI OLEH AUTH:SANCTUM
+    Route::middleware('auth:sanctum')->post('/submit', [DiagnosisController::class, 'submitDiagnosis']);
 
-    // Opsional: Endpoint untuk melihat riwayat diagnosis pengguna yang login
-    Route::middleware('auth:sanctum')->get('/history', [DiagnosaApiController::class, 'history']);
+    // Endpoint untuk melihat riwayat diagnosis pengguna yang login (sudah dilindungi)
+    Route::middleware('auth:sanctum')->get('/history', [DiagnosisController::class, 'history']);
 });

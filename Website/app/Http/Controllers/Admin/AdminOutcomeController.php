@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\MentalHealthOutcome; // <-- Ubah dari OutcomeResult
+use App\Models\MentalHealthOutcome;
 use Illuminate\Http\Request;
-use App\Services\FlaskApiService; // Asumsikan Anda menggunakan FlaskApiService untuk prediksi outcome
+use App\Services\FlaskApiService;
 use Illuminate\Support\Facades\Log;
-use App\Models\User; // Digunakan untuk relasi user
-use App\Http\Controllers\Controller; // Impor base Controller
+use App\Models\User;
+use App\Http\Controllers\Controller;
 
 class AdminOutcomeController extends Controller
 {
@@ -26,48 +26,54 @@ class AdminOutcomeController extends Controller
      */
     public function listForPrediction()
     {
-        // Mengambil outcome yang belum diproses admin
-        // PERBAIKAN: Gunakan MentalHealthOutcome
         $outcomeResults = MentalHealthOutcome::with('user')
-                                         ->where('admin_processed', false)
-                                         ->orderBy('timestamp', 'desc')
-                                         ->get();
+            ->where('admin_processed', false)
+            ->orderBy('timestamp', 'desc')
+            ->get();
+
+        // Decode input_data menjadi array agar bisa digunakan di view jika masih string
+        foreach ($outcomeResults as $outcome) {
+            if (is_string($outcome->input_data)) {
+                $decoded = json_decode($outcome->input_data, true);
+                $outcome->input_data = is_array($decoded) ? $decoded : [];
+            }
+        }
 
         return view('admin.adminoutcome', compact('outcomeResults'));
     }
 
     /**
-     * Melakukan prediksi outcome berdasarkan data yang sudah ada di database (dari user/pasien).
-     * Logika ini diasumsikan mirip dengan prediksi diagnosis.
+     * Melakukan prediksi outcome berdasarkan data yang sudah ada di database.
      *
      * @param string $id ID dari dokumen mental_health_outcomes di MongoDB
      * @return \Illuminate\Http\RedirectResponse
      */
     public function prediksi($id)
     {
-        // PERBAIKAN: Gunakan MentalHealthOutcome
         $originalOutcomeRecord = MentalHealthOutcome::find($id);
 
         if (!$originalOutcomeRecord) {
             return redirect()->back()->with('error', 'Data outcome pasien tidak ditemukan.');
         }
 
-        // input_data harus mengandung semua data yang dibutuhkan oleh Flask API
-        $inputForFlask = $originalOutcomeRecord->input_data;
+        // Pastikan input_data dalam format array (bukan string)
+        $inputForFlask = is_string($originalOutcomeRecord->input_data)
+            ? json_decode($originalOutcomeRecord->input_data, true)
+            : $originalOutcomeRecord->input_data;
 
-        if (empty($inputForFlask)) {
-            return redirect()->back()->with('error', 'Data input (outcome) tidak ditemukan untuk record ini.');
+        if (empty($inputForFlask) || !is_array($inputForFlask)) {
+            return redirect()->back()->with('error', 'Data input (outcome) tidak ditemukan atau tidak valid untuk record ini.');
         }
 
         $predictedOutcomeFromFlask = null;
         $errorMessage = null;
 
         try {
-            // Asumsikan FlaskApiService memiliki method predictOutcome
             $prediction = $this->flaskApiService->predictOutcome($inputForFlask);
 
-            if ($prediction && isset($prediction['outcome'])) {
-                $predictedOutcomeFromFlask = $prediction['outcome'];
+            // Menggunakan 'outcome_prediction' agar sesuai dengan respons Flask API yang ada
+            if ($prediction && isset($prediction['outcome_prediction'])) {
+                $predictedOutcomeFromFlask = $prediction['outcome_prediction'];
             } else {
                 $errorMessage = 'Gagal mendapatkan outcome dari layanan prediksi. Respon tidak valid.';
                 Log::error('Flask API Invalid Response (Outcome): ' . json_encode($prediction));
@@ -82,42 +88,28 @@ class AdminOutcomeController extends Controller
         }
 
         try {
-            // Membuat entri baru untuk hasil prediksi outcome oleh admin
-            // PERBAIKAN: Gunakan MentalHealthOutcome
-            MentalHealthOutcome::create([
-                'user_id' => $originalOutcomeRecord->user_id,
-                'input_data' => $inputForFlask,
-                'predicted_outcome' => $predictedOutcomeFromFlask,
-                'timestamp' => now(),
-                'admin_processed' => true,
-                // Anda mungkin juga ingin menyertakan nilai-nilai input terpisah di sini
-                // jika Anda menyimpannya sebagai kolom terpisah di model MentalHealthOutcome,
-                // misalnya:
-                // 'diagnosis' => $originalOutcomeRecord->diagnosis,
-                // 'symptom_severity' => $originalOutcomeRecord->symptom_severity,
-                // ... dan seterusnya untuk kolom lain
-            ]);
-
-            // Menandai record asli sebagai sudah diproses oleh admin
-            $originalOutcomeRecord->admin_processed = true;
-            $originalOutcomeRecord->save();
+            // --- PERUBAHAN UTAMA DI SINI ---
+            // TIDAK PERLU membuat record baru. Cukup update record asli.
+            $originalOutcomeRecord->predicted_outcome = $predictedOutcomeFromFlask; // Set hasil prediksi
+            $originalOutcomeRecord->admin_processed = true; // Tandai sebagai sudah diproses
+            $originalOutcomeRecord->save(); // Simpan perubahan ke database
 
             $message = 'Prediksi outcome berhasil disimpan sebagai riwayat admin.';
-            // Catatan: Jika $originalOutcomeRecord->predicted_outcome awalnya null
-            // (karena user hanya mengisi input_data), perbandingan ini akan selalu true.
-            // Ini tetap valid, hanya perlu diketahui.
-            if ($originalOutcomeRecord->predicted_outcome !== $predictedOutcomeFromFlask) {
-                $message = 'Prediksi outcome berhasil disimpan sebagai riwayat admin. Hasil outcome berbeda dengan yang tercatat sebelumnya.';
-            } else {
-                $message = 'Prediksi outcome berhasil disimpan sebagai riwayat admin. Hasil outcome sama dengan yang tercatat sebelumnya.';
-            }
+            // Logika pesan ini sekarang akan membandingkan hasil prediksi baru dengan yang sudah ada (jika ada)
+            // Namun, karena ini adalah prediksi pertama oleh admin, predicted_outcome di record asli mungkin kosong.
+            // Anda bisa menyesuaikan logika pesan ini jika diperlukan.
+            // Untuk kasus ini, pesan default 'Prediksi outcome berhasil disimpan sebagai riwayat admin.' sudah cukup.
+            // if ($originalOutcomeRecord->predicted_outcome !== $predictedOutcomeFromFlask) {
+            //     $message = 'Prediksi outcome berhasil disimpan. Hasil berbeda dari sebelumnya.';
+            // } else {
+            //     $message = 'Prediksi outcome berhasil disimpan. Hasil sama dengan sebelumnya.';
+            // }
 
         } catch (\Exception $e) {
             Log::error('Gagal menyimpan riwayat outcome admin ke MongoDB: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Prediksi outcome berhasil, tetapi gagal menyimpan riwayat admin. Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Prediksi berhasil, tapi gagal menyimpan. Error: ' . $e->getMessage());
         }
 
-        // Mengarahkan ke halaman riwayat outcome setelah prediksi
         return redirect()->route('admin.riwayatoutcome.index')->with('success', $message);
     }
 }

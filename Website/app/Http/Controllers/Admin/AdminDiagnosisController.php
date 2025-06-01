@@ -76,23 +76,22 @@ class AdminDiagnosisController extends Controller
         }
 
         try {
-            DiagnosisResult::create([
-                'user_id' => $originalDiagnosisRecord->user_id,
-                'input_data' => $inputForFlask,
-                'predicted_diagnosis' => $predictedDiagnosisFromFlask,
-                'timestamp' => now(),
-                'admin_processed' => true,
-            ]);
-
-            $originalDiagnosisRecord->admin_processed = true;
-            $originalDiagnosisRecord->save();
+            // --- PERUBAHAN UTAMA DI SINI ---
+            // TIDAK PERLU membuat record baru. Cukup update record asli.
+            $originalDiagnosisRecord->predicted_diagnosis = $predictedDiagnosisFromFlask; // Set hasil prediksi
+            $originalDiagnosisRecord->admin_processed = true; // Tandai sebagai sudah diproses
+            $originalDiagnosisRecord->save(); // Simpan perubahan ke database
 
             $message = 'Prediksi berhasil disimpan sebagai riwayat admin.';
-            if ($originalDiagnosisRecord->predicted_diagnosis !== $predictedDiagnosisFromFlask) {
-                $message = 'Prediksi berhasil disimpan sebagai riwayat admin. Hasil diagnosis berbeda dengan yang tercatat sebelumnya.';
-            } else {
-                $message = 'Prediksi berhasil disimpan sebagai riwayat admin. Hasil diagnosis sama dengan yang tercatat sebelumnya.';
-            }
+            // Logika pesan ini sekarang akan membandingkan hasil prediksi baru dengan yang sudah ada (jika ada)
+            // Namun, karena ini adalah prediksi pertama oleh admin, predicted_diagnosis di record asli mungkin kosong.
+            // Anda bisa menyesuaikan logika pesan ini jika diperlukan.
+            // Untuk kasus ini, pesan default 'Prediksi berhasil disimpan sebagai riwayat admin.' sudah cukup.
+            // if ($originalDiagnosisRecord->predicted_diagnosis !== $predictedDiagnosisFromFlask) {
+            //     $message = 'Prediksi berhasil disimpan sebagai riwayat admin. Hasil diagnosis berbeda dengan yang tercatat sebelumnya.';
+            // } else {
+            //     $message = 'Prediksi berhasil disimpan sebagai riwayat admin. Hasil diagnosis sama dengan yang tercatat sebelumnya.';
+            // }
 
         } catch (\Exception $e) {
             Log::error('Gagal menyimpan riwayat diagnosis admin ke MongoDB: ' . $e->getMessage());
