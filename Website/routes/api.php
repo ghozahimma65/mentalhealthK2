@@ -7,28 +7,36 @@ use App\Http\Controllers\Api\MeditasiController;
 use App\Http\Controllers\Api\QuotesController;
 use App\Http\Controllers\Api\RencanaController;
 use App\Http\Controllers\Api\DiagnosisController;
+use App\Http\Controllers\Api\ForgotPasswordController;
+use App\Http\Controllers\Api\ResetPasswordController;
 
+// Rute ini sudah benar dilindungi middleware auth:sanctum
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// Rute publik untuk login
 Route::prefix('auth')->group(function() {
     Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('api.password.email');
+    Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('api.password.update');
 });
 
-// Route untuk Meditasi
+// Route untuk Meditasi (Saat ini publik, sesuaikan jika perlu auth)
 Route::prefix('meditasi')->group(function () {
-    Route::get('/', [MeditasiController::class, 'index']); // Mengambil semua data meditasi
-    Route::get('/{id}', [MeditasiController::class, 'show']); // Mengambil detail meditasi berdasarkan ID
+    Route::get('/', [MeditasiController::class, 'index']);
+    Route::get('/{id}', [MeditasiController::class, 'show']);
 });
 
-// Route baru untuk Quotes
+// Route baru untuk Quotes (Saat ini publik, sesuaikan jika perlu auth)
 Route::prefix('quotes')->group(function () {
-    Route::get('/', [QuotesController::class, 'index']); // Mengambil semua data kutipan
-    Route::get('/{id}', [QuotesController::class, 'show']); // Mengambil detail kutipan berdasarkan ID
+    Route::get('/', [QuotesController::class, 'index']);
+    Route::get('/{id}', [QuotesController::class, 'show']);
 });
 
-Route::apiResource('rencana', RencanaController::class); // Ini akan membuat semua 5 route di atas
+// Route untuk Rencana Self Care, SEKARANG DILINDUNGI AUTHENTIKASI
+Route::apiResource('rencana', RencanaController::class)->middleware('auth:sanctum');
 
 // Route untuk Diagnosis dari Mobile
 Route::prefix('diagnosa')->group(function () {

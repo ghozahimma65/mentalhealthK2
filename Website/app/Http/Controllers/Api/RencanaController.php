@@ -3,24 +3,25 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Plan; // Mengganti App\Models\Rencana menjadi App\Models\Plan
+use App\Models\Plan; // Pastikan ini adalah model Plan Anda
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Validator; // Untuk validasi
+use Illuminate\Support\Facades\Auth;    // Untuk mendapatkan user yang terautentikasi
 
 class RencanaController extends Controller
 {
     /**
-     * Display a listing of the rencana resources.
-     * Mengambil semua data rencana.
+     * Menampilkan daftar rencana milik pengguna yang terautentikasi.
      *
      * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
         try {
-            // Ambil semua data rencana, diurutkan dari yang terbaru
-            // Menggunakan model Plan
-            $rencanaList = Plan::orderBy('created_at', 'desc')->get();
+            // Ambil hanya rencana milik pengguna yang sedang login, urutkan dari terbaru
+            $rencanaList = Plan::where('user_id', Auth::id()) 
+                               ->orderBy('created_at', 'desc')
+                               ->get();
 
             return response()->json([
                 'success' => true,
@@ -38,24 +39,20 @@ class RencanaController extends Controller
     }
 
     /**
-     * Store a newly created rencana resource in storage.
-     * Menyimpan rencana baru.
+     * Menyimpan rencana baru milik pengguna yang terautentikasi.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
-        // Validasi input dari mobile
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000', // Deskripsi opsional
+            'description' => 'nullable|string|max:1000',
+            'is_completed' => 'sometimes|boolean', // Jika Anda punya field ini
         ], [
             'title.required' => 'Judul rencana wajib diisi.',
-            'title.string' => 'Judul rencana harus berupa teks.',
-            'title.max' => 'Judul rencana maksimal 255 karakter.',
-            'description.string' => 'Deskripsi harus berupa teks.',
-            'description.max' => 'Deskripsi maksimal 1000 karakter.',
+            // Anda bisa tambahkan pesan validasi lain jika perlu
         ]);
 
         if ($validator->fails()) {
@@ -63,21 +60,22 @@ class RencanaController extends Controller
                 'success' => false,
                 'message' => 'Validasi gagal.',
                 'errors' => $validator->errors()
-            ], 422);
+            ], 422); // Status 422 Unprocessable Entity
         }
 
         try {
-            // Buat rencana baru menggunakan model Plan
             $rencana = Plan::create([
                 'title' => $request->title,
                 'description' => $request->description,
+                'is_completed' => $request->input('is_completed', false), // Default false jika tidak ada
+                'user_id' => Auth::id(), // <-- Mengaitkan dengan pengguna yang login
             ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Rencana berhasil ditambahkan.',
                 'data' => $rencana
-            ], 201);
+            ], 201); // Status 201 Created
 
         } catch (\Exception $e) {
             return response()->json([
@@ -89,8 +87,7 @@ class RencanaController extends Controller
     }
 
     /**
-     * Display the specified rencana resource.
-     * Mengambil detail rencana berdasarkan ID.
+     * Menampilkan detail satu rencana milik pengguna yang terautentikasi.
      *
      * @param  string  $id
      * @return \Illuminate\Http\JsonResponse
@@ -98,14 +95,15 @@ class RencanaController extends Controller
     public function show($id)
     {
         try {
-            // Menggunakan model Plan
-            $rencana = Plan::find($id);
+            $rencana = Plan::where('id', $id)
+                           ->where('user_id', Auth::id()) // <-- Hanya milik user ini
+                           ->first();
 
             if (!$rencana) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Rencana tidak ditemukan.'
-                ], 404);
+                    'message' => 'Rencana tidak ditemukan atau Anda tidak berhak mengaksesnya.'
+                ], 404); // Status 404 Not Found (atau 403 Forbidden)
             }
 
             return response()->json([
@@ -124,8 +122,7 @@ class RencanaController extends Controller
     }
 
     /**
-     * Update the specified rencana resource in storage.
-     * Memperbarui rencana.
+     * Memperbarui rencana milik pengguna yang terautentikasi.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  $id
@@ -134,10 +131,11 @@ class RencanaController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
+            'title' => 'sometimes|required|string|max:255', // 'sometimes' berarti hanya validasi jika ada
             'description' => 'nullable|string|max:1000',
-        ], [
-            'title.required' => 'Judul rencana wajib diisi.',
+            'is_completed' => 'sometimes|boolean',
+        ],[
+            'title.required' => 'Judul rencana wajib diisi jika ingin diubah.',
         ]);
 
         if ($validator->fails()) {
@@ -149,25 +147,32 @@ class RencanaController extends Controller
         }
 
         try {
-            // Menggunakan model Plan
-            $rencana = Plan::find($id);
+            $rencana = Plan::where('id', $id)
+                           ->where('user_id', Auth::id()) // <-- Hanya milik user ini
+                           ->first();
 
             if (!$rencana) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Rencana tidak ditemukan.'
-                ], 404);
+                    'message' => 'Rencana tidak ditemukan atau Anda tidak berhak mengubahnya.'
+                ], 404); // Atau 403
             }
 
-            $rencana->update([
-                'title' => $request->title,
-                'description' => $request->description,
-            ]);
+            // Hanya update field yang dikirim oleh request
+            $dataToUpdate = $request->only(['title', 'description', 'is_completed']);
+            // Jika ada field kosong yang tidak ingin diupdate, pastikan logic ini sesuai.
+            // Atau, Anda bisa lakukan:
+            // if ($request->has('title')) $rencana->title = $request->title;
+            // if ($request->has('description')) $rencana->description = $request->description;
+            // if ($request->has('is_completed')) $rencana->is_completed = $request->is_completed;
+            // $rencana->save();
+            $rencana->update($dataToUpdate);
+
 
             return response()->json([
                 'success' => true,
                 'message' => 'Rencana berhasil diperbarui.',
-                'data' => $rencana
+                'data' => $rencana->fresh() // Ambil data terbaru dari database
             ], 200);
 
         } catch (\Exception $e) {
@@ -180,8 +185,7 @@ class RencanaController extends Controller
     }
 
     /**
-     * Remove the specified rencana resource from storage.
-     * Menghapus rencana.
+     * Menghapus rencana milik pengguna yang terautentikasi.
      *
      * @param  string  $id
      * @return \Illuminate\Http\JsonResponse
@@ -189,14 +193,15 @@ class RencanaController extends Controller
     public function destroy($id)
     {
         try {
-            // Menggunakan model Plan
-            $rencana = Plan::find($id);
+            $rencana = Plan::where('id', $id)
+                           ->where('user_id', Auth::id()) // <-- Hanya milik user ini
+                           ->first();
 
             if (!$rencana) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Rencana tidak ditemukan.'
-                ], 404);
+                    'message' => 'Rencana tidak ditemukan atau Anda tidak berhak menghapusnya.'
+                ], 404); // Atau 403
             }
 
             $rencana->delete();
@@ -204,7 +209,7 @@ class RencanaController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Rencana berhasil dihapus.'
-            ], 200);
+            ], 200); // Bisa juga 204 No Content jika tidak ada body
 
         } catch (\Exception $e) {
             return response()->json([

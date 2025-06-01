@@ -9,8 +9,8 @@ import 'package:mobile_project/screen/HasilPenilaianDiriPage.dart'; // SESUAIKAN
 // --- Struktur Data untuk Pertanyaan (TETAP SAMA) ---
 enum QuestionType { dropdown, numericDropdown, numberInput }
 
-class Option {
-  final String value;
+class Option<T> { // Membuat kelas Option menjadi generik untuk nilai (value)
+  final T value;
   final String text;
   Option({required this.value, required this.text});
 }
@@ -19,7 +19,7 @@ class Question {
   final String id;
   final String label;
   final QuestionType type;
-  final List<Option>? options;
+  final List<Option<dynamic>>? options; // Menggunakan dynamic untuk opsi
   final Map<int, String>? numericOptionsMap;
   final double? minVal;
   final double? maxVal;
@@ -81,10 +81,10 @@ class _TesFormScreenState extends State<TesFormScreen> {
         label: '1. Diagnosis terakhir Anda?',
         type: QuestionType.dropdown,
         options: [
-          Option(value: '0', text: 'Gangguan Bipolar'),
-          Option(value: '1', text: 'Gangguan Kecemasan Umum'),
-          Option(value: '2', text: 'Gangguan Depresi Mayor'),
-          Option(value: '3', text: 'Gangguan Panik'),
+          Option<int>(value: 0, text: 'Gangguan Bipolar'), // Diubah menjadi int
+          Option<int>(value: 1, text: 'Gangguan Kecemasan Umum'), // Diubah menjadi int
+          Option<int>(value: 2, text: 'Gangguan Depresi Mayor'), // Diubah menjadi int
+          Option<int>(value: 3, text: 'Gangguan Panik'), // Diubah menjadi int
         ],
         hintText:
             'Pilih diagnosis yang Anda ketahui atau telah didapatkan sebelumnya.',
@@ -125,12 +125,12 @@ class _TesFormScreenState extends State<TesFormScreen> {
         label: '5. Jenis pengobatan/obat yang sedang Anda gunakan?',
         type: QuestionType.dropdown,
         options: [
-          Option(value: '0', text: 'Antidepressants (Antidepresan)'),
-          Option(value: '1', text: 'Antipsychotics (Antipsikotik)'),
-          Option(value: '2', text: 'Benzodiazepines (Benzodiazepin)'),
-          Option(value: '3', text: 'Mood Stabilizers (Penstabil Suasana Hati)'),
-          Option(value: '4', text: 'SSRIs (Selective Serotonin Reuptake Inhibitors)'),
-          Option(value: '5', text: 'Anxiolytics (Anxiolitik/Anti-kecemasan)'),
+          Option<int>(value: 0, text: 'Antidepressants (Antidepresan)'),
+          Option<int>(value: 1, text: 'Antipsychotics (Antipsikotik)'),
+          Option<int>(value: 2, text: 'Benzodiazepines (Benzodiazepin)'),
+          Option<int>(value: 3, text: 'Mood Stabilizers (Penstabil Suasana Hati)'),
+          Option<int>(value: 4, text: 'SSRIs (Selective Serotonin Reuptake Inhibitors)'),
+          Option<int>(value: 5, text: 'Anxiolytics (Anxiolitik/Anti-kecemasan)'),
         ],
         hintText: 'Pilih jenis obat yang sedang Anda gunakan. Jika tidak ada, pilih opsi terakhir.',
       ),
@@ -139,10 +139,10 @@ class _TesFormScreenState extends State<TesFormScreen> {
         label: '6. Jenis terapi yang sedang Anda jalani?',
         type: QuestionType.dropdown,
         options: [
-          Option(value: '0', text: 'Cognitive Behavioral Therapy (CBT)'),
-          Option(value: '1', text: 'Dialectical Behavioral Therapy (DBT)'),
-          Option(value: '2', text: 'Interpersonal Therapy (IPT)'),
-          Option(value: '3', text: 'Mindfulness-Based Therapy (Terapi Berbasis Kesadaran)'),
+          Option<int>(value: 0, text: 'Cognitive Behavioral Therapy (CBT)'),
+          Option<int>(value: 1, text: 'Dialectical Behavioral Therapy (DBT)'),
+          Option<int>(value: 2, text: 'Interpersonal Therapy (IPT)'),
+          Option<int>(value: 3, text: 'Mindfulness-Based Therapy (Terapi Berbasis Kesadaran)'),
         ],
         hintText: 'Pilih jenis terapi yang sedang Anda jalani. Jika tidak ada, pilih opsi terakhir.',
       ),
@@ -214,23 +214,44 @@ class _TesFormScreenState extends State<TesFormScreen> {
         },
       );
     } else if (question.type == QuestionType.dropdown) {
-      inputWidget = DropdownButtonFormField<String>(
-        decoration: inputDecoration.copyWith(hintText: "Pilih salah satu..."),
-        value: _answers[question.id] as String?,
-        isExpanded: true,
-        items: question.options
-            ?.map((option) => DropdownMenuItem<String>(
-                  value: option.value,
-                  child: Text(option.text, style: const TextStyle(color: Colors.black87)),
-                ))
-            .toList(),
-        onChanged: (value) {
-          setState(() {
-            _answers[question.id] = value;
-          });
-        },
-        validator: (value) => value == null ? 'Mohon pilih salah satu opsi.' : null,
-      );
+      // Menangani tipe dropdown secara kondisional berdasarkan ID pertanyaan
+      if (question.id == 'diagnosis' || question.id == 'medication' || question.id == 'therapy_type') {
+        inputWidget = DropdownButtonFormField<int>( // Menentukan tipe int untuk diagnosis, medication, dan therapy_type
+          decoration: inputDecoration.copyWith(hintText: "Pilih salah satu..."),
+          value: _answers[question.id] as int?, // Casting ke int?
+          isExpanded: true,
+          items: question.options
+              ?.map((option) => DropdownMenuItem<int>(
+                    value: option.value as int, // Casting nilai ke int
+                    child: Text(option.text, style: const TextStyle(color: Colors.black87)),
+                  ))
+              .toList(),
+          onChanged: (value) {
+            setState(() {
+              _answers[question.id] = value;
+            });
+          },
+          validator: (value) => value == null ? 'Mohon pilih salah satu opsi.' : null,
+        );
+      } else {
+        inputWidget = DropdownButtonFormField<String>( // Tetap String untuk dropdown lainnya jika ada
+          decoration: inputDecoration.copyWith(hintText: "Pilih salah satu..."),
+          value: _answers[question.id] as String?,
+          isExpanded: true,
+          items: question.options
+              ?.map((option) => DropdownMenuItem<String>(
+                    value: option.value as String,
+                    child: Text(option.text, style: const TextStyle(color: Colors.black87)),
+                  ))
+              .toList(),
+          onChanged: (value) {
+            setState(() {
+              _answers[question.id] = value;
+            });
+          },
+          validator: (value) => value == null ? 'Mohon pilih salah satu opsi.' : null,
+        );
+      }
     } else if (question.type == QuestionType.numericDropdown) {
       inputWidget = DropdownButtonFormField<int>(
         decoration: inputDecoration.copyWith(hintText: "Pilih level..."),
@@ -281,10 +302,11 @@ class _TesFormScreenState extends State<TesFormScreen> {
       int simulatedOutcomePrediction;
       final moodScore = _answers['mood_score'];
       if (moodScore != null && moodScore is int) {
-        if (moodScore <= 3) simulatedOutcomePrediction = 0;
-        else if (moodScore >= 7) simulatedOutcomePrediction = 1;
-        else simulatedOutcomePrediction = 2;
+        if (moodScore <= 3) simulatedOutcomePrediction = 0; // Kondisi untuk Depresi/Cemas
+        else if (moodScore >= 7) simulatedOutcomePrediction = 1; // Kondisi untuk Baik/Euforia
+        else simulatedOutcomePrediction = 2; // Kondisi untuk Netral/Stabil
       } else {
+        // Jika mood_score tidak ada atau bukan int, berikan hasil acak
         simulatedOutcomePrediction = Random().nextInt(3);
       }
       print('Jawaban Terkumpul: $_answers');
