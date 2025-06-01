@@ -2,20 +2,18 @@
 
 namespace App\Models;
 
-use MongoDB\Laravel\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model; // Atau use Illuminate\Database\Eloquent\Model; jika SQL
 
 class Plan extends Model
 {
-    protected $connection = 'mongodb';
-    protected $collection = 'plans'; // Sesuai dengan nama koleksi di MongoDB
+    // ... (baris $connection, $collection jika ada) ...
 
     protected $fillable = [
         'title',
         'description',
-        // Tambahkan field lain jika ada, seperti user_id jika ini terkait dengan pengguna
+        'is_completed', // Jika Anda punya field ini
+        'user_id',      // <-- TAMBAHKAN INI
     ];
 
-    // Jika Anda ingin mengelola timestamps secara otomatis (created_at, updated_at)
-    // pastikan field ini ada di MongoDB atau biarkan Eloquent yang menambahkannya
-    protected $dates = ['created_at', 'updated_at'];
+    // ... (casts atau relasi lainnya jika ada) ...
 }
