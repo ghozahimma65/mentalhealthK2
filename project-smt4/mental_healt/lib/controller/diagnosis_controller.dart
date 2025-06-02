@@ -1,8 +1,8 @@
-// lib/controllers/diagnosis_controller.dart
+// lib/controller/diagnosis_controller.dart
 
 import 'package:get/get.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:sp_util/sp_util.dart'; // <--- PASTIKAN SUDAH IMPORT SP_UTIL
+import 'package:sp_util/sp_util.dart';
 import '../models/diagnosis_result.dart';
 import '../services/diagnosis_api_service.dart';
 
@@ -13,11 +13,15 @@ class DiagnosisController extends GetxController {
   final _errorMessage = Rx<String?>(null);
   final _latestDiagnosis = Rx<DiagnosisOutput?>(null);
 
+  // --- TAMBAHKAN INI ---
+  final RxList<DiagnosisOutput> diagnosisHistoryList = <DiagnosisOutput>[].obs;
+  // --- AKHIR PENAMBAHAN ---
+
+
   bool get isLoading => _isLoading.value;
   String? get errorMessage => _errorMessage.value;
   DiagnosisOutput? get latestDiagnosis => _latestDiagnosis.value;
 
-  // Fungsi untuk melakukan diagnosis dan memanggil API
   Future<void> performDiagnosis(DiagnosisInput input) async {
     _isLoading.value = true;
     _errorMessage.value = null;
@@ -26,19 +30,15 @@ class DiagnosisController extends GetxController {
     EasyLoading.show(status: 'Mengirim jawaban...', dismissOnTap: false);
 
     try {
-      // Ambil user_id dari SpUtil
-      // Pastikan 'user_id' adalah kunci yang Anda gunakan saat menyimpan ID pengguna setelah login
       final String? loggedInUserId = SpUtil.getString('user_id');
 
       if (loggedInUserId == null) {
-        // Handle case where user_id is not found (e.g., user not logged in)
         _errorMessage.value = 'User ID tidak ditemukan. Harap login kembali.';
         EasyLoading.showError(_errorMessage.value!, dismissOnTap: true);
         _isLoading.value = false;
-        return; // Hentikan eksekusi jika user_id tidak ada
+        return;
       }
 
-      // Buat instance DiagnosisInput baru dengan user_id yang diambil
       final DiagnosisInput inputWithUserId = DiagnosisInput(
         age: input.age,
         gender: input.gender,
@@ -48,10 +48,10 @@ class DiagnosisController extends GetxController {
         physicalActivity: input.physicalActivity,
         stressLevel: input.stressLevel,
         aiDetectedEmotionalState: input.aiDetectedEmotionalState,
-        userId: loggedInUserId, // <--- SERTAKAN USER_ID YANG DIAMBIL DARI SP_UTIL
+        userId: loggedInUserId,
       );
 
-      final result = await _apiService.submitDiagnosis(inputWithUserId); // Kirim input yang sudah diperbarui
+      final result = await _apiService.submitDiagnosis(inputWithUserId);
       _latestDiagnosis.value = result;
       EasyLoading.dismiss();
     } catch (e) {
@@ -63,9 +63,44 @@ class DiagnosisController extends GetxController {
     }
   }
 
+  // --- TAMBAHKAN METODE INI ---
+  Future<void> fetchDiagnosisHistory() async {
+    // Gunakan _isLoading untuk state loading umum, atau buat _isLoadingHistory khusus
+    _isLoading.value = true;
+    _errorMessage.value = null; // Atau _errorMessageHistory
+    diagnosisHistoryList.clear();
+
+    // EasyLoading bisa ditampilkan di sini jika diinginkan,
+    // tapi mungkin lebih baik ditangani di UI jika ini hanya salah satu tab.
+    // EasyLoading.show(status: 'Mengambil riwayat diagnosis...');
+
+    try {
+      final String? loggedInUserId = SpUtil.getString('user_id');
+      if (loggedInUserId == null) {
+        _errorMessage.value = 'ID Pengguna tidak ditemukan. Harap login kembali.';
+        // EasyLoading.showError(_errorMessage.value!); // Mungkin tidak perlu EasyLoading di sini
+        _isLoading.value = false;
+        return;
+      }
+
+      final history = await _apiService.getDiagnosisHistory(); // Memanggil service
+      diagnosisHistoryList.assignAll(history);
+      // EasyLoading.dismiss(); // Jika EasyLoading digunakan
+    } catch (e) {
+      _errorMessage.value = e.toString().replaceFirst('Exception: ', '');
+      print("Error mengambil riwayat diagnosis: ${_errorMessage.value}");
+      // EasyLoading.showError(_errorMessage.value ?? 'Gagal memuat riwayat diagnosis!'); // Jika EasyLoading digunakan
+    } finally {
+      _isLoading.value = false;
+      // EasyLoading.dismiss(); // Pastikan dismiss dipanggil
+    }
+  }
+  // --- AKHIR PENAMBAHAN ---
+
   void resetState() {
     _isLoading.value = false;
     _errorMessage.value = null;
     _latestDiagnosis.value = null;
+    diagnosisHistoryList.clear(); // Reset juga history list jika perlu
   }
 }

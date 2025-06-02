@@ -254,18 +254,30 @@ class _PertanyaanScreenState extends State<PertanyaanScreen> {
       await _diagnosisController.performDiagnosis(input);
 
       // Setelah performDiagnosis selesai, cek hasil atau error dari controller
-      if (_diagnosisController.latestDiagnosis != null) {
+      // --- PERBAIKAN DIMULAI DI SINI ---
+      if (_diagnosisController.latestDiagnosis != null && _diagnosisController.latestDiagnosis!.diagnosis != null) {
         // Navigasi ke halaman hasil dengan hasil prediksi dari API menggunakan GetX
         Get.offNamed(
           '/detailhasil', // Rute yang didefinisikan di GetMaterialApp
           arguments: {
-            'rawDiagnosisResult':
-                _diagnosisController.latestDiagnosis!.diagnosis
-          }, // Mengirim Map sebagai argumen
+            'rawDiagnosisResult': _diagnosisController.latestDiagnosis!.diagnosis.toString() // Mengirim String sebagai argumen
+          },
         );
-      } else if (_diagnosisController.errorMessage != null) {
+      } else if (_diagnosisController.latestDiagnosis != null && _diagnosisController.latestDiagnosis!.diagnosis == null) {
+        // Kasus jika latestDiagnosis ada tapi kode diagnosisnya null
+        EasyLoading.showError('Hasil diagnosis tidak valid dari server.');
+        print("Error: latestDiagnosis is not null, but diagnosis code is null.");
+      }
+      // --- PERBAIKAN SELESAI DI SINI ---
+      else if (_diagnosisController.errorMessage != null) {
         // Pesan error sudah ditangani dan ditampilkan oleh EasyLoading di dalam controller
-        // Tidak perlu SnackBar tambahan di sini.
+        // Tidak perlu SnackBar tambahan di sini, tapi Anda bisa menambahkan log jika perlu.
+        print("Error from DiagnosisController: ${_diagnosisController.errorMessage}");
+      } else {
+        // Kasus lain yang mungkin tidak terduga, misalnya latestDiagnosis null dan errorMessage juga null
+        // setelah performDiagnosis. Ini seharusnya jarang terjadi jika controller menangani semua path.
+        EasyLoading.showError('Gagal mendapatkan hasil diagnosis atau terjadi kesalahan tidak dikenal.');
+        print("Error: Unknown state after performDiagnosis. latestDiagnosis is null and errorMessage is null.");
       }
     } catch (e) {
       EasyLoading.showError(
@@ -293,15 +305,23 @@ class _PertanyaanScreenState extends State<PertanyaanScreen> {
       body: Obx(() {
         // Gunakan Obx untuk mendengarkan perubahan pada _isLoading di controller
         // Tampilkan indikator saat loading, atau jika data pertanyaan belum dimuat
-        if (_diagnosisController.isLoading || _questionsData.isEmpty) {
-          // EasyLoading sudah menangani indikator, jadi di sini cukup pesan teks atau SizedBox
-          return const Center(
-              child: Text('Memuat pertanyaan atau mengirim jawaban...'));
+        if (_diagnosisController.isLoading || _questionsData.isEmpty && !_diagnosisController.isLoading) { // Perbaikan kondisi, jangan tampilkan loading jika questionsData kosong TAPI isLoading false
+          // EasyLoading sudah menangani indikator global,
+          // jadi di sini cukup pesan teks atau SizedBox jika _questionsData masih kosong setelah inisialisasi
+           if (_questionsData.isEmpty && !_diagnosisController.isLoading) {
+            return const Center(child: Text('Memuat pertanyaan...')); // Atau indikator lokal jika diinginkan
+          }
+          // Jika isLoading true, EasyLoading sudah aktif, jadi tidak perlu widget tambahan di sini kecuali placeholder
+          return const SizedBox.shrink(); // Atau placeholder yang sesuai jika EasyLoading tidak menutupi seluruh layar
         }
         // Tampilkan pesan error jika ada
         if (_diagnosisController.errorMessage != null) {
           return Center(
-              child: Text('Error: ${_diagnosisController.errorMessage}'));
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text('Error: ${_diagnosisController.errorMessage}', textAlign: TextAlign.center),
+              )
+          );
         }
 
         // Tampilkan daftar pertanyaan jika tidak loading dan tidak ada error
@@ -315,11 +335,14 @@ class _PertanyaanScreenState extends State<PertanyaanScreen> {
 
             Widget inputWidget;
 
-           if (questionType == 'dropdown') {
+            if (questionType == 'dropdown') {
               final options = questionItem['options'] as List<Map<String, dynamic>>;
               inputWidget = DropdownButtonFormField<int>(
                 decoration: InputDecoration( // Langsung buat InputDecoration
                   hintText: 'Pilih jawaban...', // Atur hintText di sini
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 value: _answers[index] is int ? _answers[index] as int? : null,
                 items: options.map<DropdownMenuItem<int>>((option) {
@@ -333,6 +356,7 @@ class _PertanyaanScreenState extends State<PertanyaanScreen> {
                     _answers[index] = newValue;
                   });
                 },
+                isExpanded: true,
               );
             } else if (questionType == 'text_field') {
               // Untuk pertanyaan usia (index 0)
@@ -341,6 +365,9 @@ class _PertanyaanScreenState extends State<PertanyaanScreen> {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration( // Langsung buat InputDecoration
                   hintText: "Masukkan usia Anda", // Atur hintText di sini
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 onChanged: (newValue) {
                   setState(() {
@@ -380,6 +407,13 @@ class _PertanyaanScreenState extends State<PertanyaanScreen> {
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).primaryColor,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
             onPressed: _diagnosisController.isLoading
                 ? null
                 : _submitAnswers, // Nonaktifkan saat loading
