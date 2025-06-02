@@ -17,6 +17,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PredictionHistoryController;
 use App\Http\Controllers\Admin\AdminOutcomeController; 
 use App\Http\Controllers\Admin\RiwayatOutcomeController;
+use App\Http\Controllers\Admin\AdminTambahController;
 
 
 // --- RUTE PUBLIK / UMUM ---
@@ -113,13 +114,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/quotes', [QuoteController::class, 'index'])->name('quotes.index');
     Route::post('/quotes', [QuoteController::class, 'store'])->name('quotes.store');
     Route::delete('/quotes/{quote}', [QuoteController::class, 'destroy'])->name('quotes.destroy');
+
+    Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah');
+    Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store');
 });
 
 
 // --- RUTE AUTENTIKASI BAWAAN LARAVEL BREEZE/FORTIFY ---
-    // Rute untuk menambah data 
-    Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah');
-    Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store');
 
     // Rute untuk admin melihat semua data outcome dari semua pengguna
     // Metode 'progress' di OutcomeController sudah memiliki logika isAdmin()

@@ -13,7 +13,7 @@
         {{-- Area Statistik dan Notifikasi --}}
         <div class="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
             {{-- Kartu Jumlah Diagnosis --}}
-            {{-- Kartu Total Aktivitas Prediksi (Pengganti 'Total Diagnosis') --}}
+            {{-- Kartu Total Aktivitas Klasifikasi (Pengganti 'Total Diagnosis') --}}
     <div class="flex flex-col items-start justify-between p-6 bg-white rounded-lg shadow-md">
         <div>
             <h2 class="mb-2 text-xl font-semibold text-gray-700">Total Aktivitas Klasifikasi</h2>
@@ -88,7 +88,7 @@
                     <i class="text-2xl text-yellow-600 fas fa-notes-medical"></i>
                     <div>
                         <h3 class="font-medium text-gray-800">Catat Perkembangan Baru</h3>
-                        <p class="text-sm text-gray-600">Isi kuesioner untuk prediksi perkembangan terbaru.</p>
+                        <p class="text-sm text-gray-600">Isi kuesioner untuk Cek perkembangan terbaru.</p>
                     </div>
                 </a>
                 <a href="{{ route('history.select_type') }}" class="flex items-center p-4 space-x-3 transition duration-200 rounded-md bg-purple-50 hover:bg-purple-100">
@@ -119,14 +119,14 @@
                     <canvas id="healthTrendChart"></canvas>
                 </div>
                 <p class="mt-4 text-sm text-gray-500">
-                    Data tren akan menjadi lebih akurat seiring dengan bertambahnya riwayat prediksi perkembangan Anda. Terus semangat! ✨
+                    Data tren akan menjadi lebih akurat seiring dengan bertambahnya riwayat Klasifikasi perkembangan Anda. Terus semangat! ✨
                 </p>
             @else
                 <div class="flex items-center justify-center h-64 text-gray-400 bg-gray-100 rounded-md">
-                    <p>Lakukan minimal 2 kali prediksi perkembangan untuk melihat tren Anda di sini.</p>
+                    <p>Lakukan minimal 2 kali Klasifikasi perkembangan untuk melihat tren Anda di sini.</p>
                 </div>
                 <p class="mt-4 text-sm text-gray-500">
-                    Data tren akan muncul setelah Anda melakukan lebih banyak prediksi perkembangan. Terus semangat! ✨
+                    Data tren akan muncul setelah Anda melakukan lebih banyak Klasifikasi perkembangan. Terus semangat! ✨
                 </p>
             @endif
         </div>

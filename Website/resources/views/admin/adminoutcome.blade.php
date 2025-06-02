@@ -1,4 +1,4 @@
-@extends('admin.dashboard') {{-- Pastikan ini meng-extend layout dashboard admin Anda --}}
+@extends('admin.dashboard')
 
 @section('title', 'Klasifikasi Outcome')
 @section('header_title', 'Klasifikasi Outcome')
@@ -42,58 +42,64 @@
                                         {{-- Iterasi melalui input_data dan panggil method helper untuk deskripsi --}}
                                         {{-- Perhatikan bahwa kunci di input_data (dari Flask) mungkin memiliki format yang sedikit berbeda --}}
 
+                                <td class="px-4 py-2 border-b border-gray-200">{{ $outcome->user ? $outcome->user->name : 'Pengguna Tidak Dikenal' }}</td>
+                                <td class="px-4 py-2 border-b border-gray-200">{{ $outcome->timestamp ? $outcome->timestamp->format('d M Y, H:i') : '-' }}</td>
+                                <td class="px-4 py-2 border-b border-gray-200">
+                                    <ul class="pl-5 text-sm list-disc">
                                         {{-- Untuk 'user_id' (jika Anda ingin menampilkan ini dari input_data) --}}
                                         @if (isset($outcome->input_data['user_id']))
                                             <li><strong>ID Pengguna Input:</strong> {{ $outcome->input_data['user_id'] }}</li>
                                         @endif
 
-                                        {{-- Untuk 'diagnosis' --}}
-                                        @if (isset($outcome->input_data['diagnosis']))
-                                            <li><strong>Diagnosis Awal:</strong> {{ $outcome->getDiagnosisDescription($outcome->input_data['diagnosis']) }}</li>
+                                        {{-- Perbaikan: Sesuaikan nama kunci dengan yang ada di MongoDB --}}
+
+                                        {{-- Untuk 'Diagnosis' --}}
+                                        @if (isset($outcome->input_data['Diagnosis']))
+                                            <li><strong>Diagnosis Awal:</strong> {{ $outcome->getDiagnosisDescription($outcome->input_data['Diagnosis']) }}</li>
                                         @endif
                                         
-                                        {{-- Untuk 'symptom_severity' --}}
-                                        @if (isset($outcome->input_data['symptom_severity']))
-                                            <li><strong>Tingkat Keparahan Gejala:</strong> {{ $outcome->getSymptomSeverityDescription($outcome->input_data['symptom_severity']) }}</li>
+                                        {{-- Untuk 'Symptom Severity (1-10)' --}}
+                                        @if (isset($outcome->input_data['Symptom Severity (1-10)']))
+                                            <li><strong>Tingkat Keparahan Gejala:</strong> {{ $outcome->getSymptomSeverityDescription($outcome->input_data['Symptom Severity (1-10)']) }}</li>
                                         @endif
 
-                                        {{-- Untuk 'mood_score' --}}
-                                        @if (isset($outcome->input_data['mood_score']))
-                                            <li><strong>Skor Suasana Hati:</strong> {{ $outcome->getMoodScoreDescription($outcome->input_data['mood_score']) }}</li>
+                                        {{-- Untuk 'Mood Score (1-10)' --}}
+                                        @if (isset($outcome->input_data['Mood Score (1-10)']))
+                                            <li><strong>Skor Suasana Hati:</strong> {{ $outcome->getMoodScoreDescription($outcome->input_data['Mood Score (1-10)']) }}</li>
                                         @endif
 
-                                        {{-- Untuk 'physical_activity' --}}
-                                        @if (isset($outcome->input_data['physical_activity']))
-                                            <li><strong>Aktivitas Fisik:</strong> {{ $outcome->getPhysicalActivityDescription($outcome->input_data['physical_activity']) }}</li>
+                                        {{-- Untuk 'Physical Activity (hrs/week)' --}}
+                                        @if (isset($outcome->input_data['Physical Activity (hrs/week)']))
+                                            <li><strong>Aktivitas Fisik:</strong> {{ $outcome->getPhysicalActivityDescription($outcome->input_data['Physical Activity (hrs/week)']) }}</li>
                                         @endif
 
-                                        {{-- Untuk 'medication' --}}
-                                        @if (isset($outcome->input_data['medication']))
-                                            <li><strong>Pengobatan:</strong> {{ $outcome->getMedicationDescription($outcome->input_data['medication']) }}</li>
+                                        {{-- Untuk 'Medication' --}}
+                                        @if (isset($outcome->input_data['Medication']))
+                                            <li><strong>Pengobatan:</strong> {{ $outcome->getMedicationDescription($outcome->input_data['Medication']) }}</li>
                                         @endif
 
-                                        {{-- Untuk 'therapy_type' --}}
-                                        @if (isset($outcome->input_data['therapy_type']))
-                                            <li><strong>Jenis Terapi:</strong> {{ $outcome->getTherapyTypeDescription($outcome->input_data['therapy_type']) }}</li>
+                                        {{-- Untuk 'Therapy Type' --}}
+                                        @if (isset($outcome->input_data['Therapy Type']))
+                                            <li><strong>Jenis Terapi:</strong> {{ $outcome->getTherapyTypeDescription($outcome->input_data['Therapy Type']) }}</li>
                                         @endif
 
-                                        {{-- Untuk 'treatment_duration' --}}
-                                        @if (isset($outcome->input_data['treatment_duration']))
-                                            <li><strong>Durasi Pengobatan:</strong> {{ $outcome->getTreatmentDurationDescription($outcome->input_data['treatment_duration']) }}</li>
+                                        {{-- Untuk 'Treatment Duration (weeks)' --}}
+                                        @if (isset($outcome->input_data['Treatment Duration (weeks)']))
+                                            <li><strong>Durasi Pengobatan:</strong> {{ $outcome->getTreatmentDurationDescription($outcome->input_data['Treatment Duration (weeks)']) }}</li>
                                         @endif
 
-                                        {{-- Untuk 'stress_level' --}}
-                                        @if (isset($outcome->input_data['stress_level']))
-                                            <li><strong>Tingkat Stres:</strong> {{ $outcome->getStressLevelDescription($outcome->input_data['stress_level']) }}</li>
+                                        {{-- Untuk 'Stress Level (1-10)' --}}
+                                        @if (isset($outcome->input_data['Stress Level (1-10)']))
+                                            <li><strong>Tingkat Stres:</strong> {{ $outcome->getStressLevelDescription($outcome->input_data['Stress Level (1-10)']) }}</li>
                                         @endif
 
                                         {{-- Jika ada field lain yang tersimpan di input_data yang tidak memiliki metode khusus, tampilkan langsung --}}
                                         @foreach ($outcome->input_data as $key => $value)
                                             {{-- Lewati kunci yang sudah dihandle di atas untuk menghindari duplikasi --}}
                                             @if (!in_array($key, [
-                                                'user_id', 'diagnosis', 'symptom_severity', 'mood_score',
-                                                'physical_activity', 'medication', 'therapy_type',
-                                                'treatment_duration', 'stress_level',
+                                                'user_id', 'Diagnosis', 'Symptom Severity (1-10)', 'Mood Score (1-10)',
+                                                'Physical Activity (hrs/week)', 'Medication', 'Therapy Type',
+                                                'Treatment Duration (weeks)', 'Stress Level (1-10)'
                                             ]))
                                                 <li><strong>{{ str_replace('_', ' ', ucfirst($key)) }}:</strong> {{ $value }}</li>
                                             @endif

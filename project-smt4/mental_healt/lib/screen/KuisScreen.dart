@@ -1,20 +1,20 @@
-// lib/screen/KuisScreen.dart (atau path file Anda)
+// lib/screen/KuisScreen.dart
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart'; // Import GetX for navigation
 
 class KuisScreen extends StatelessWidget {
   const KuisScreen({super.key});
 
-  // Menggunakan helper widget yang sama dengan tes_info_screen.dart untuk konsistensi tampilan
   Widget _buildDetailTesItem(
-    BuildContext context,
-    IconData icon,
-    String text, {
-    Color? textColor, // Opsional jika Anda ingin memberi warna khusus
-    Color? iconColor,
-  }) {
-    // Warna default untuk teks dan ikon jika tidak ada yang diberikan
+      BuildContext context,
+      IconData icon,
+      String text, {
+        Color? textColor,
+        Color? iconColor,
+      }) {
     final defaultTextColorFromTheme = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey.shade700;
-    final defaultIconColor = Colors.deepPurple.shade400; // Warna ikon default
+    final defaultIconColor = Theme.of(context).primaryColor;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -22,17 +22,17 @@ class KuisScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Icon(
-            icon,
-            color: iconColor ?? defaultIconColor,
-            size: 20
+              icon,
+              color: iconColor ?? defaultIconColor,
+              size: 20
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               text,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: textColor ?? defaultTextColorFromTheme,
-                  ),
+                color: textColor ?? defaultTextColorFromTheme,
+              ),
             ),
           ),
         ],
@@ -43,38 +43,27 @@ class KuisScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Ambil argumen jenis tes (dari langkah sebelumnya)
-    final String? testTypeArg =
-        ModalRoute.of(context)?.settings.arguments as String?;
-    // Default ke 'mental_health' jika argumen null, atau sesuaikan dengan logika Anda
-    final String testType = testTypeArg ?? 'mental_health'; 
+    final String? testTypeArg = Get.arguments as String?; // Menggunakan Get.arguments
+    final String testType = testTypeArg ?? 'mental_health';
 
-    // --- KONTEN SPESIFIK UNTUK KUISSCREEN (TES DIAGNOSA) ---
-    String appBarTitle = 'Informasi Tes'; // Judul AppBar
-    String mainContentTitle = 'Informasi Tes'; // Judul di bawah gambar
+    String appBarTitle = 'Informasi Tes';
+    String mainContentTitle = 'Informasi Tes';
     String description =
         'Tes ini akan berisi sejumlah pertanyaan untuk membantu mengukur tingkat kondisi mental Anda. Jawablah setiap pertanyaan dengan jujur sesuai kondisi Anda beberapa waktu terakhir.';
-    String imagePath = 'assets/images/gambar_kuis.png'; // Gambar default untuk KuisScreen
+    String imagePath = 'assets/images/gambar_kuis.png';
 
-    // Anda bisa menambahkan logika if/else if di sini jika ingin konten sedikit berbeda
-    // berdasarkan variasi `testType` untuk Tes Diagnosa, namun dasarnya akan sama.
-    // Contoh:
     if (testType == 'mental_health') {
       mainContentTitle = 'Informasi Tes Kesehatan Mental';
-      // imagePath tetap, deskripsi bisa sama atau sedikit disesuaikan
     } else if (testType == 'anxiety_test') { // Contoh tipe lain
       mainContentTitle = 'Informasi Tes Kecemasan';
       description = 'Tes ini fokus pada gejala kecemasan. Jawab dengan jujur.';
-      // imagePath bisa diganti jika ada gambar spesifik
     }
-    // Untuk saat ini, kita gunakan konten yang mirip dengan template Screenshot 2025-05-28 203102.png
 
-    // Detail Tes untuk Tes Diagnosa
-    const String estimatedTime = "10-15 Menit"; // Sesuaikan perkiraan waktu
+    const String estimatedTime = "10-15 Menit";
     const String confidentialityText = 'Jawaban Anda akan dijaga kerahasiaannya.';
-    const String honestyDisclaimer = 'Tes ini adalah alat bantu awal, bukan diagnosis medis.'; // Disclaimer penting
+    const String honestyDisclaimer = 'Tes ini adalah alat bantu awal, bukan diagnosis medis.';
 
     const String buttonText = 'Mulai Tes!';
-    // --- AKHIR KONTEN SPESIFIK ---
 
     return Scaffold(
       appBar: AppBar(
@@ -82,9 +71,9 @@ class KuisScreen extends StatelessWidget {
           appBarTitle,
           style: const TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Theme.of(context).primaryColor,
         elevation: 0.5,
-        iconTheme: const IconThemeData( // Agar tombol kembali (jika ada) juga putih
+        iconTheme: const IconThemeData(
           color: Colors.white,
         ),
       ),
@@ -105,9 +94,9 @@ class KuisScreen extends StatelessWidget {
                     errorBuilder: (context, error, stackTrace) {
                       return Center(
                         child: Icon(
-                          Icons.psychology_alt_outlined, // Ikon fallback
+                          Icons.psychology_alt_outlined,
                           size: 120,
-                          color: Colors.deepPurple.shade200,
+                          color: Theme.of(context).primaryColor.withOpacity(0.5),
                         ),
                       );
                     },
@@ -133,7 +122,7 @@ class KuisScreen extends StatelessWidget {
                   const SizedBox(height: 30),
                   Text(
                     'Detail Tes :',
-                     style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.black87),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: Colors.black87),
                   ),
                   const SizedBox(height: 8),
                   _buildDetailTesItem(
@@ -143,42 +132,27 @@ class KuisScreen extends StatelessWidget {
                   ),
                   _buildDetailTesItem(
                     context,
-                    Icons.shield_outlined, // Mengganti Icons.privacy_tip_outlined agar lebih umum
+                    Icons.shield_outlined,
                     confidentialityText,
                   ),
                   _buildDetailTesItem(
                     context,
-                    Icons.info_outline, // Ikon untuk disclaimer
+                    Icons.info_outline,
                     honestyDisclaimer,
-                    // Anda bisa memberi warna khusus jika mau, misalnya:
-                    // textColor: Colors.red.shade700,
                   ),
                   const SizedBox(height: 20),
                 ],
               ),
             ),
             Padding(
-               padding: const EdgeInsets.only(bottom: 20.0, top: 20.0),
-               child: ElevatedButton(
-                 style: ElevatedButton.styleFrom(
-                     minimumSize: const Size(double.infinity, 50),
-                     backgroundColor: Colors.deepPurple,
-                     foregroundColor: Colors.white,
-                     textStyle: const TextStyle(
-                         fontSize: 16, fontWeight: FontWeight.bold),
-                     shape: RoundedRectangleBorder(
-                         borderRadius: BorderRadius.circular(10))),
-                 onPressed: () {
-                   // Navigasi ke halaman pertanyaan sambil mengirim jenis tes
-                   // Ini adalah fungsi asli dari KuisScreen Anda
-                   Navigator.pushNamed(
-                     context,
-                     '/pertanyaan', // Pastikan rute ini benar
-                     arguments: testType, // Meneruskan jenis tes
-                   );
-                 },
-                 child: Text(buttonText),
-               ),
+              padding: const EdgeInsets.only(bottom: 20.0, top: 20.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  // Navigasi ke halaman pertanyaan sambil mengirim jenis tes menggunakan GetX
+                  Get.toNamed('/pertanyaan', arguments: testType);
+                },
+                child: Text(buttonText),
+              ),
             ),
           ],
         ),

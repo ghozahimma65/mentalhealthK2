@@ -1,14 +1,22 @@
 // lib/riwayat_hasil_tes.dart
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+// Jika Anda memindahkan http dan jsonDecode ke riwayat_controller, Anda mungkin tidak butuh ini di sini
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+// import 'package:sp_util/sp_util.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-// --- IMPORT HALAMAN DETAIL YANG SUDAH DIGANTI NAMANYA ---
-// Pastikan path ini sesuai dengan struktur folder Anda
+// --- IMPORT HALAMAN DETAIL ---
 import 'package:mobile_project/screen/DetailHasilDiagnosaPage.dart';
 import 'package:mobile_project/screen/HasilPenilaianDiriPage.dart';
 
+// Import controller
+import 'package:mobile_project/controller/riwayat_controller.dart';
 
-// Enum untuk membedakan tipe tes yang dipilih di Riwayat
-enum RiwayatViewType { diagnosa, perkembangan }
+// Karena untuk sementara hanya ada diagnosis, kita bisa menyederhanakan enum
+// enum RiwayatViewType { diagnosa, perkembangan }
+enum RiwayatViewType { diagnosa } // <--- UBAH: Hanya 'diagnosa' untuk sementara
 
 class RiwayatHasilTesScreen extends StatefulWidget {
   const RiwayatHasilTesScreen({super.key});
@@ -18,14 +26,61 @@ class RiwayatHasilTesScreen extends StatefulWidget {
 }
 
 class _RiwayatHasilTesScreenState extends State<RiwayatHasilTesScreen> {
-  RiwayatViewType _selectedViewType = RiwayatViewType.diagnosa; // Default
+  // Langsung set ke diagnosa dan tidak ada opsi lain
+  RiwayatViewType _selectedViewType = RiwayatViewType.diagnosa;
+
+  final RiwayatController _riwayatController = Get.find<RiwayatController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _riwayatController.fetchDiagnosisHistory();
+    // _riwayatController.fetchPerkembanganHistory(); // TIDAK DIPANGGIL DULU
+  }
+
+  // Fungsi untuk mendapatkan warna dasar berdasarkan kode diagnosis
+  Color _getColorForDiagnosisCode(int? code) {
+    switch (code) {
+      case 0: return const Color(0xFFBA68C8); // Gangguan Bipolar (Purple)
+      case 1: return const Color(0xFF81C784); // Gangguan Kecemasan Umum (Light Green)
+      case 2: return const Color(0xFF64B5F6); // Gangguan Panik (Light Blue)
+      case 3: return const Color(0xFFE57373); // Gangguan Depresi Mayor (Reddish-pink)
+      default: return Colors.grey.shade600; // Default grey for unknown or null
+    }
+  }
+
+  // Fungsi untuk mendapatkan summary (ringkasan) berdasarkan kode diagnosis
+  String _getSummaryForDiagnosisCode(int? code) {
+    switch (code) {
+      case 0: return 'Diagnosis: Gangguan Bipolar';
+      case 1: return 'Diagnosis: Gangguan Kecemasan Umum (Anxiety)';
+      case 2: return 'Diagnosis: Gangguan Panik (Panic Attack)';
+      case 3: return 'Diagnosis: Gangguan Depresi Mayor';
+      default: return 'Diagnosis: Tidak Dikenal';
+    }
+  }
+
+  // Fungsi untuk memformat timestamp dari API
+  String _formatApiTimestamp(String? timestamp) {
+    if (timestamp == null) return 'Tidak diketahui';
+    try {
+      DateTime dt = DateTime.parse(timestamp);
+      return "${dt.day} ${[
+        'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+        'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+      ][dt.month - 1]} ${dt.year} - ${dt.hour}:${dt.minute.toString().padLeft(2, '0')}";
+    } catch (e) {
+      print('Error parsing timestamp: $e');
+      return timestamp;
+    }
+  }
 
   Widget _buildResultCard({
     required BuildContext context,
-    required String title, // Judul utama kartu, misal "Hasil Tes Diagnosa"
-    required String dateTime, // Misal "27 Mei 2025 - 10:00"
-    required String summary, // Misal "Diagnosis: Gangguan Kecemasan Umum" atau "Hasil: Kondisi Membaik"
-    required String actionText, // Misal "Klik untuk lihat detail"
+    required String title,
+    required String dateTime,
+    required String summary,
+    required String actionText,
     required String imagePath,
     required VoidCallback onPressed,
     Gradient? gradient,
@@ -72,7 +127,7 @@ class _RiwayatHasilTesScreenState extends State<RiwayatHasilTesScreen> {
                       style: TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.9)),
                     ),
                     const SizedBox(height: 10),
-                    Text( // Menggantikan button internal dengan teks aksi
+                    Text(
                       actionText,
                       style: const TextStyle(
                         fontSize: 13,
@@ -96,7 +151,7 @@ class _RiwayatHasilTesScreenState extends State<RiwayatHasilTesScreen> {
                     imagePath,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.notes_rounded, // Ikon fallback
+                      Icons.notes_rounded,
                       size: 30,
                       color: Colors.white54,
                     ),
@@ -112,141 +167,92 @@ class _RiwayatHasilTesScreenState extends State<RiwayatHasilTesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // DATA DUMMY (GANTI DENGAN DATA ASLI ANDA)
-    // Pastikan 'answers' untuk perkembangan berisi data yang valid jika diperlukan oleh HasilPenilaianDiriPage
-    final List<Map<String, dynamic>> allDummyResults = [
-      {
-        'id': 'diag001',
-        'viewType': RiwayatViewType.diagnosa,
-        'title': 'Tes Diagnosa',
-        'dateTime': '28 Mei 2025 - 10:30',
-        'summary': 'Hasil: Gangguan Kecemasan Umum',
-        'actionText': 'Lihat Detail Hasil',
-        'imagePath': 'assets/images/mental_health_illustration.png', // GANTI DENGAN PATH ASLI
-        'gradient': LinearGradient(colors: [Colors.blue.shade400, Colors.blue.shade600]),
-        'data': {'rawDiagnosisResult': 'GAD'},
-      },
-      {
-        'id': 'perk001',
-        'viewType': RiwayatViewType.perkembangan,
-        'title': 'Penilaian Diri',
-        'dateTime': '28 Mei 2025 - 11:15',
-        'summary': 'Hasil: Kondisi Cenderung Membaik',
-        'actionText': 'Lihat Detail Hasil',
-        'imagePath': 'assets/images/insights_illustration.png', // GANTI DENGAN PATH ASLI
-        'gradient': LinearGradient(colors: [Colors.green.shade400, Colors.green.shade600]),
-        'data': {'outcomePrediction': 1, 'answers': {'q1': 'value1', 'q2': 2}}, // Contoh answers
-      },
-      {
-        'id': 'diag002',
-        'viewType': RiwayatViewType.diagnosa,
-        'title': 'Tes Diagnosa',
-        'dateTime': '27 Mei 2025 - 15:00',
-        'summary': 'Hasil: Gangguan Depresi Mayor',
-        'actionText': 'Lihat Detail Hasil',
-        'imagePath': 'assets/images/mental_health_illustration.png', // GANTI
-        'gradient': LinearGradient(colors: [Colors.red.shade300, Colors.red.shade500]),
-        'data': {'rawDiagnosisResult': 'MDD'},
-      },
-      {
-        'id': 'perk002',
-        'viewType': RiwayatViewType.perkembangan,
-        'title': 'Penilaian Diri',
-        'dateTime': '27 Mei 2025 - 09:00',
-        'summary': 'Hasil: Kondisi Cukup Stabil',
-        'actionText': 'Lihat Detail Hasil',
-        'imagePath': 'assets/images/insights_illustration.png', // GANTI
-        'gradient': LinearGradient(colors: [Colors.purple.shade300, Colors.purple.shade500]),
-        'data': {'outcomePrediction': 2, 'answers': {'q1': 'valueX'}},
-      },
-    ];
-
-    final List<Map<String, dynamic>> filteredResults = allDummyResults
-        .where((result) => result['viewType'] == _selectedViewType)
-        .toList();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Riwayat Hasil Tes'),
-        // elevation: 0,
-        // backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        // foregroundColor: Colors.black87,
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
       ),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
+            // --- UBAH SEGMENTED BUTTON: Hanya tampilkan opsi 'Tes Diagnosa' ---
             child: SegmentedButton<RiwayatViewType>(
-              style: SegmentedButton.styleFrom(
-                // backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-                // foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                // selectedForegroundColor: Theme.of(context).colorScheme.onPrimary,
-                // selectedBackgroundColor: Theme.of(context).colorScheme.primary,
-              ),
               segments: const <ButtonSegment<RiwayatViewType>>[
                 ButtonSegment<RiwayatViewType>(
                     value: RiwayatViewType.diagnosa,
                     label: Text('Tes Diagnosa'),
-                    icon: Icon(Icons.medical_information_outlined)), // Ikon disesuaikan
-                ButtonSegment<RiwayatViewType>(
-                    value: RiwayatViewType.perkembangan,
-                    label: Text('Penilaian Diri'), // Label disesuaikan
-                    icon: Icon(Icons.trending_up_rounded)), // Ikon disesuaikan
+                    icon: Icon(Icons.medical_information_outlined)),
+                // HAPUS ButtonSegment untuk RiwayatViewType.perkembangan
               ],
               selected: <RiwayatViewType>{_selectedViewType},
               onSelectionChanged: (Set<RiwayatViewType> newSelection) {
                 setState(() {
                   _selectedViewType = newSelection.first;
+                  // Tidak perlu memanggil fetch lagi jika hanya ada satu tab
+                  // atau jika Anda hanya ingin fetch sekali di initState
                 });
               },
             ),
           ),
           Expanded(
-            child: filteredResults.isEmpty
-                ? Center(
-                    child: Text(
-                      'Belum ada riwayat untuk kategori ini.',
-                      style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    itemCount: filteredResults.length,
-                    itemBuilder: (context, index) {
-                      final result = filteredResults[index];
-                      return _buildResultCard(
-                        context: context,
-                        title: result['title'],
-                        dateTime: result['dateTime'],
-                        summary: result['summary'],
-                        actionText: result['actionText'],
-                        imagePath: result['imagePath'],
-                        gradient: result['gradient'],
-                        onPressed: () {
-                          if (result['viewType'] == RiwayatViewType.diagnosa) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DetailHasilDiagnosaPage( // Panggil kelas yang sudah di-rename
-                                  rawDiagnosisResult: (result['data'] as Map)['rawDiagnosisResult'] as String,
-                                ),
-                              ),
-                            );
-                          } else if (result['viewType'] == RiwayatViewType.perkembangan) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HasilPenilaianDiriPage( // Panggil kelas yang sudah di-rename
-                                  outcomePrediction: (result['data'] as Map)['outcomePrediction'] as int,
-                                  answers: (result['data'] as Map)['answers'] as Map<String, dynamic>,
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      );
-                    },
+            child: Obx(() {
+              // displayedResults akan selalu menjadi diagnosisHistory
+              List<Map<String, dynamic>> displayedResults = _riwayatController.diagnosisHistory;
+
+              if (_riwayatController.isLoadingHistory) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (_riwayatController.errorMessageHistory != null) {
+                return Center(child: Text('Error: ${_riwayatController.errorMessageHistory!}'));
+              } else if (displayedResults.isEmpty) {
+                return Center(
+                  child: Text(
+                    'Belum ada riwayat untuk kategori ini.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                   ),
+                );
+              } else {
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  itemCount: displayedResults.length,
+                  itemBuilder: (context, index) {
+                    final result = displayedResults[index];
+                    int? predictedDiagnosisCode = result['predicted_diagnosis'] is int
+                        ? result['predicted_diagnosis'] as int?
+                        : (result['predicted_diagnosis'] != null
+                            ? int.tryParse(result['predicted_diagnosis'].toString())
+                            : null);
+
+                    Color baseColor = _getColorForDiagnosisCode(predictedDiagnosisCode);
+
+                    return _buildResultCard(
+                      context: context,
+                      title: result['title'] ?? 'Tes Diagnosa', // Pastikan title ada dari API atau default
+                      dateTime: _formatApiTimestamp(result['timestamp']),
+                      summary: _getSummaryForDiagnosisCode(predictedDiagnosisCode),
+                      actionText: 'Lihat Detail Hasil',
+                      imagePath: 'assets/images/mental_health_illustration.png',
+                      gradient: LinearGradient(colors: [
+                        baseColor.withOpacity(0.8),
+                        baseColor,
+                      ]),
+                      onPressed: () {
+                        // Karena hanya ada satu tipe, kita bisa langsung navigasi ke DetailHasilDiagnosaPage
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailHasilDiagnosaPage(
+                              rawDiagnosisResultCode: predictedDiagnosisCode,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              }
+            }),
           ),
         ],
       ),

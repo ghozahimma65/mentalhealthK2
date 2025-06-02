@@ -1,9 +1,15 @@
 // Nama file: home_page.dart
 import 'package:flutter/material.dart';
-import 'package:sp_util/sp_util.dart'; // Anda menggunakan SpUtil
+import 'package:sp_util/sp_util.dart';
 
-// Diasumsikan file layar tujuan navigasi sudah ada dan route terdaftar
-// di main.dart
+// Import semua layar yang diperlukan oleh BottomNavigationBar dan feature cards
+import 'package:mobile_project/screen/riwayat_hasil_tes.dart'; // Riwayat Hasil Tes
+import 'package:mobile_project/screen/TesDiagnosaScreen.dart'; // Tes Diagnosa
+import 'package:mobile_project/screen/tes_info_screen.dart'; // Tes Perkembangan (Tes Info Screen)
+import 'package:mobile_project/screen/profile_screen.dart'; // My Profile
+import 'package:mobile_project/screen/meditation_screen.dart'; // Meditasi
+import 'package:mobile_project/screen/quotes_display_screen.dart'; // Quotes
+import 'package:mobile_project/screen/rencana_screen.dart'; // Rencana/Self Care
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,33 +19,82 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Hapus inisialisasi 'name' langsung di sini
-  // String? name = SpUtil.getString('nama'); 
+  int _selectedIndex = 0;
 
-  // Tambahkan variabel state untuk nama pengguna dan status loadingnya
+  // DAFTAR LAYAR YANG AKAN DITAMPILKAN PADA BOTTOM NAVIGATION BAR
+  // Pastikan semua layar ini ada dan sesuai dengan implementasi Anda.
+  final List<Widget> _screens = <Widget>[
+    const _HomePageContent(), // Index 0: Home Page Content
+    const TesInfoScreen(), // Index 1: Tes Perkembangan (Asumsi ini TesInfoScreen)
+    const TesDiagnosaScreen(), // Index 2: Tes Diagnosa
+    const RiwayatHasilTesScreen(), // Index 3: Hasil Tes (Riwayat Hasil Tes)
+    const ProfileScreen(), // Index 4: My Profile
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.insights_rounded), label: 'Tes Perkembangan'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.play_circle_outline), label: 'Tes Diagnosa'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.library_books_outlined), label: 'Hasil Tes'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline), label: 'My Profile'),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.deepPurple,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
+        onTap: _onItemTapped,
+        elevation: 5.0,
+        backgroundColor: Colors.white,
+      ),
+    );
+  }
+}
+
+/// Widget terpisah untuk konten utama halaman Beranda.
+/// Widget ini menangani pengambilan dan tampilan nama pengguna,
+/// serta membangun berbagai kartu fitur dan afirmasi.
+class _HomePageContent extends StatefulWidget {
+  const _HomePageContent({Key? key}) : super(key: key);
+
+  @override
+  State<_HomePageContent> createState() => _HomePageContentState();
+}
+
+class _HomePageContentState extends State<_HomePageContent> {
   String? _loggedInUserName;
   bool _isLoadingName = true; // Mulai dengan true untuk menunjukkan sedang loading
-
-  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    print("HomePage: initState() called - loading user name.");
+    print("HomePageContent: initState() called - loading user name.");
     _loadUserName(); // Panggil fungsi untuk memuat nama pengguna
   }
 
   Future<void> _loadUserName() async {
     if (!mounted) return;
-    // Tidak perlu setState untuk _isLoadingName = true di sini karena sudah true awalnya
-    // dan kita hanya set false setelah selesai atau error.
-
     try {
-      // PENTING: Pastikan key 'user_name' ini SAMA PERSIS 
-      // dengan key yang Anda gunakan saat menyimpan nama di AuthService.login()
-      String? nameFromPrefs = SpUtil.getString('user_name'); 
-      
-      print("HomePage: User name retrieved from SpUtil ('user_name'): $nameFromPrefs");
+      // PENTING: Pastikan kunci 'user_name' ini SAMA PERSIS
+      // dengan kunci yang Anda gunakan saat menyimpan nama di AuthService.login()
+      String? nameFromPrefs = SpUtil.getString('user_name');
+
+      print("HomePageContent: User name retrieved from SpUtil ('user_name'): $nameFromPrefs");
 
       if (mounted) {
         setState(() {
@@ -48,7 +103,7 @@ class _HomePageState extends State<HomePage> {
         });
       }
     } catch (e) {
-      print("HomePage: Error loading user name: $e");
+      print("HomePageContent: Error loading user name: $e");
       if (mounted) {
         setState(() {
           _loggedInUserName = null; // Atau "Guest" atau pesan error
@@ -58,66 +113,15 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // --- METHOD _onItemTapped ANDA TETAP SAMA ---
-  void _onItemTapped(int index) {
-    String? routeName;
-    switch (index) {
-      case 0: // Home
-        if (ModalRoute.of(context)?.settings.name == '/homepage' ||
-            ModalRoute.of(context)?.settings.name == '/') {
-          print("Already on Home");
-        } else {
-          Navigator.popUntil(context, (route) => route.isFirst);
-        }
-        break;
-      case 1: // Tes Perkembangan (Penilaian Diri)
-        routeName = '/tesperkembangan';
-        break;
-      case 2: // Tes Diagnosa
-        routeName = '/kuis';
-        break;
-      case 3: // Hasil Tes
-        routeName = '/hasil';
-        break;
-      case 4: // My Profile
-        routeName = '/profile';
-        break;
-      default:
-        print("Invalid index: $index");
-    }
-
-    if (routeName != null) {
-      print("Navigating to $routeName from current index $_selectedIndex to $index");
-      if (ModalRoute.of(context)?.settings.name != '/homepage' &&
-          ModalRoute.of(context)?.settings.name != '/') {
-        Navigator.popUntil(context, (route) => route.isFirst);
-      }
-      Navigator.pushNamed(
-        context,
-        routeName,
-        arguments: routeName == '/kuis' ? 'mental_health' : null,
-      );
-    }
-    // setState untuk _selectedIndex tidak perlu memanggil _loadUserName lagi
-    // kecuali jika pindah ke halaman home (index 0) dan Anda ingin memastikan refresh.
-    // Tapi karena ini BottomNavBar di HomePage itu sendiri, _loadUserName cukup di initState.
-    if (mounted) { // Pastikan widget masih ada sebelum panggil setState
-        setState(() {
-         _selectedIndex = index;
-        });
-    }
-  }
-
-  // --- METHOD _handleFeatureCardTap ANDA TETAP SAMA ---
+  // Metode untuk menangani tap pada kartu fitur di halaman Beranda
   void _handleFeatureCardTap(
       BuildContext context, String featureName, String routeName) {
     print('$featureName card tapped, navigating to $routeName');
     Navigator.pushNamed(context, routeName);
   }
 
-  // --- METHOD _buildGridItemCard ANDA TETAP SAMA ---
   Widget _buildGridItemCard({
-    required BuildContext context,
+    required BuildContext context, // Lewatkan context untuk onPressed
     required String title,
     String? subtitle,
     IconData? iconData,
@@ -126,8 +130,6 @@ class _HomePageState extends State<HomePage> {
     required String routeName,
     bool isImageLarge = false,
   }) {
-    // ... (kode _buildGridItemCard Anda yang sudah ada) ...
-    // Untuk singkatnya, saya tidak salin ulang di sini, tapi di kode Anda tetap ada
     return Card(
       elevation: 2.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -150,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                     height: isImageLarge ? 32 : 26,
                     width: isImageLarge ? 32 : 26,
                     fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => Icon(
+                    errorBuilder: (context, error, stackTrace) => Icon(
                       iconData ?? Icons.help_outline,
                       size: isImageLarge ? 32 : 26,
                       color: Colors.white70,
@@ -166,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                 title,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                    fontSize: 12, 
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.white),
                 maxLines: 2,
@@ -178,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                   subtitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontSize: 8, 
+                      fontSize: 8,
                       color: Colors.white.withOpacity(0.8)),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -191,9 +193,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // --- DEFINISI HELPER WIDGET YANG SUDAH ADA (HEADER, SEARCHBAR, AFFIRMATIONCARD) TETAP SAMA ---
-  Widget _buildHeader() {
-    // ... (kode _buildHeader Anda yang sudah ada) ...
+  // --- DEFINISI WIDGET PEMBANTU YANG SUDAH ADA (TIDAK BERUBAH) ---
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
       child: Row(
@@ -215,13 +216,12 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSearchBar() {
-    // ... (kode _buildSearchBar Anda yang sudah ada) ...
+  Widget _buildSearchBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
       child: TextField(
         decoration: InputDecoration(
-          hintText: 'Search..',
+          hintText: 'Cari..',
           hintStyle: TextStyle(color: Colors.grey.shade500),
           prefixIcon:
               Icon(Icons.search_rounded, color: Colors.grey.shade500, size: 24),
@@ -243,10 +243,9 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-  
-  Widget _buildAffirmationCard() {
-    // ... (kode _buildAffirmationCard Anda yang sudah ada) ...
-     const String affirmation = "Setiap langkah kecilmu adalah kemajuan yang berarti.";
+
+  Widget _buildAffirmationCard(BuildContext context) {
+    const String affirmation = "Setiap langkah kecilmu adalah kemajuan yang berarti.";
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
@@ -284,9 +283,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // --- MODIFIKASI WIDGET _buildGreeting ---
+  // --- WIDGET _buildGreeting YANG DIMODIFIKASI ---
   Widget _buildGreeting() {
-    // String? userName = name ?? ""; // HAPUS BARIS INI (variabel 'name' sudah dihapus)
     String userNameToDisplay = _loggedInUserName ?? ""; // Gunakan _loggedInUserName dari state
 
     return Padding(
@@ -294,22 +292,22 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _isLoadingName 
-            ? Row( // Tampilkan teks "Hello, " diikuti loading indicator jika nama sedang dimuat
-                children: [
-                  Text('Hello, ', style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+          _isLoadingName
+              ? Row( // Tampilkan "Hello, " diikuti indikator loading jika nama sedang dimuat
+                  children: [
+                    Text('Hello, ', style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold, color: Colors.black87)),
+                    SizedBox(
+                      width: Theme.of(context).textTheme.headlineMedium?.fontSize ?? 28, // Sesuaikan ukuran agar mirip teks
+                      height: Theme.of(context).textTheme.headlineMedium?.fontSize ?? 28,
+                      child: const CircularProgressIndicator(strokeWidth: 2.5),
+                    )
+                  ],
+                )
+              : Text( // Jika tidak loading, tampilkan nama
+                  'Hello, ${userNameToDisplay.isNotEmpty ? userNameToDisplay : 'Pengguna'}', // Fallback ke 'Pengguna' jika nama kosong
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold, color: Colors.black87)),
-                  SizedBox(
-                    width: Theme.of(context).textTheme.headlineMedium?.fontSize ?? 28, // Sesuaikan ukuran agar mirip teks
-                    height: Theme.of(context).textTheme.headlineMedium?.fontSize ?? 28,
-                    child: const CircularProgressIndicator(strokeWidth: 2.5),
-                  )
-                ],
-              )
-            : Text( // Jika tidak loading, tampilkan nama
-                'Hello, ${userNameToDisplay.isNotEmpty ? userNameToDisplay : 'Pengguna'}', // Fallback ke 'Pengguna' jika nama kosong
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold, color: Colors.black87)),
           const SizedBox(height: 5),
           Text('Bagaimana perasaanmu hari ini?',
               style: Theme.of(context)
@@ -321,115 +319,91 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // --- METHOD build ANDA TETAP SAMA STRUKTURNYA ---
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.only(bottom: 20.0),
-          children: [
-            _buildHeader(),
-            const SizedBox(height: 20),
-            _buildGreeting(), // Ini akan memanggil _buildGreeting yang sudah dimodifikasi
-            const SizedBox(height: 20),
-            _buildSearchBar(),
-            const SizedBox(height: 25),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,  
-                childAspectRatio: 1.4, 
-                children: [
-                  _buildGridItemCard(
-                    context: context,
-                    title: 'Mental Health',
-                    subtitle: 'Cek kondisi mental',
-                    imagePath: 'assets/images/mental_health_illustration.png',
-                    isImageLarge: true,
-                    gradient: LinearGradient(
-                        colors: [Colors.deepPurple.shade400, Colors.deepPurple.shade600],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight),
-                    routeName: '/kuis',
-                  ),
-                  _buildGridItemCard(
-                    context: context,
-                    title: 'Meditasi',
-                    subtitle: 'Temukan tenang',
-                    iconData: Icons.self_improvement_rounded,
-                    gradient: const LinearGradient(
-                        colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight),
-                    routeName: '/meditasi',
-                  ),
-                  _buildGridItemCard(
-                    context: context,
-                    title: 'Quotes',
-                    subtitle: 'Inspirasi harian',
-                    iconData: Icons.format_quote_rounded,
-                    gradient: const LinearGradient(
-                        colors: [Color(0xFF00796B), Color(0xFF00897B)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight),
-                    routeName: '/quotes',
-                  ),
-                  _buildGridItemCard(
-                    context: context,
-                    title: 'Self Care',
-                    subtitle: 'Jadwalkan aktivitas',
-                    iconData: Icons.event_note_rounded,
-                    gradient: const LinearGradient(
-                        colors: [Color(0xFFEF6C00), Color(0xFFF57C00)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight),
-                    routeName: '/rencana',
-                  ),
-                ],
-              ),
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.only(bottom: 20.0),
+        children: [
+          _buildHeader(context),
+          const SizedBox(height: 20),
+          _buildGreeting(), // Ini akan memanggil _buildGreeting yang sudah dimodifikasi
+          const SizedBox(height: 20),
+          _buildSearchBar(context),
+          const SizedBox(height: 25),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+              childAspectRatio: 1.4,
+              children: [
+                _buildGridItemCard(
+                  context: context,
+                  title: 'Mental Health',
+                  subtitle: 'Cek kondisi mental',
+                  imagePath: 'assets/images/mental_health_illustration.png',
+                  isImageLarge: true,
+                  gradient: LinearGradient(
+                      colors: [Colors.deepPurple.shade400, Colors.deepPurple.shade600],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight),
+                  routeName: '/kuis', // Ini harus mengarah ke TesDiagnosaScreen jika itu kuisnya
+                ),
+                _buildGridItemCard(
+                  context: context,
+                  title: 'Meditasi',
+                  subtitle: 'Temukan tenang',
+                  iconData: Icons.self_improvement_rounded,
+                  gradient: const LinearGradient(
+                      colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight),
+                  routeName: '/meditasi', // Asumsi rute ini mengarah ke MeditationScreen
+                ),
+                _buildGridItemCard(
+                  context: context,
+                  title: 'Quotes',
+                  subtitle: 'Inspirasi harian',
+                  iconData: Icons.format_quote_rounded,
+                  gradient: const LinearGradient(
+                      colors: [Color(0xFF00796B), Color(0xFF00897B)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight),
+                  routeName: '/quotes', // Asumsi rute ini mengarah ke QuotesScreen
+                ),
+                _buildGridItemCard(
+                  context: context,
+                  title: 'Self Care',
+                  subtitle: 'Jadwalkan aktivitas',
+                  iconData: Icons.event_note_rounded,
+                  gradient: const LinearGradient(
+                      colors: [Color(0xFFEF6C00), Color(0xFFF57C00)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight),
+                  routeName: '/rencana', // Asumsi rute ini mengarah ke RencanaScreen
+                ),
+              ],
             ),
-            const SizedBox(height: 30),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'Pengingat Untukmu',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black.withOpacity(0.8),
-                    ),
-              ),
+          ),
+          const SizedBox(height: 30),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              'Pengingat Untukmu',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black.withOpacity(0.8),
+                  ),
             ),
-            const SizedBox(height: 15),
-            _buildAffirmationCard(),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home_filled), label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.insights_rounded), label: 'Tes Perkembangan'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.play_circle_outline), label: 'Tes Diagnosa'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.library_books_outlined), label: 'Hasil Tes'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: 'My Profile'),
+          ),
+          const SizedBox(height: 15),
+          _buildAffirmationCard(context),
+          const SizedBox(height: 20),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.deepPurple,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        onTap: _onItemTapped,
-        elevation: 5.0,
-        backgroundColor: Colors.white,
       ),
     );
   }

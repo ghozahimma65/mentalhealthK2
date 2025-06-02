@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MeditasiController;
 use App\Http\Controllers\Api\QuotesController;
 use App\Http\Controllers\Api\RencanaController;
-use App\Http\Controllers\Api\DiagnosaApiController;
+use App\Http\Controllers\Api\DiagnosisController;
 use App\Http\Controllers\Api\ForgotPasswordController;
 use App\Http\Controllers\Api\ResetPasswordController;
 
@@ -38,14 +38,12 @@ Route::prefix('quotes')->group(function () {
 // Route untuk Rencana Self Care, SEKARANG DILINDUNGI AUTHENTIKASI
 Route::apiResource('rencana', RencanaController::class)->middleware('auth:sanctum');
 
-// Route baru untuk Diagnosis dari Mobile
+// Route untuk Diagnosis dari Mobile
 Route::prefix('diagnosa')->group(function () {
-    // Endpoint untuk submit kuesioner dan mendapatkan prediksi (Saat ini publik)
-    Route::post('/submit', [DiagnosaApiController::class, 'submitDiagnosis']);
+    // Endpoint untuk submit kuesioner dan mendapatkan prediksi
+    // SEKARANG DILINDUNGI OLEH AUTH:SANCTUM
+    Route::middleware('auth:sanctum')->post('/submit', [DiagnosisController::class, 'submitDiagnosis']);
 
-    // Opsional: Endpoint untuk melihat riwayat diagnosis pengguna yang login (Sudah benar dilindungi)
-    Route::middleware('auth:sanctum')->get('/history', [DiagnosaApiController::class, 'history']);
-
-     Route::post('/outcome', [ApiOutcomeController::class, 'store']); // <--- INI UTAMA
-    Route::get('/outcome/history', [ApiOutcomeController::class, 'history']);
+    // Endpoint untuk melihat riwayat diagnosis pengguna yang login (sudah dilindungi)
+    Route::middleware('auth:sanctum')->get('/history', [DiagnosisController::class, 'history']);
 });

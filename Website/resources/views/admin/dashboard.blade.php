@@ -15,9 +15,8 @@
 
     @stack('styles')
 </head>
-<body class="flex flex-col min-h-screen font-sans antialiased bg-gray-100"> {{-- Tambahkan flex, flex-col, min-h-screen --}}
-    {{-- Kontainer utama dengan flex untuk sidebar dan area konten --}}
-    <div id="admin-app-layout" class="flex flex-1 overflow-hidden"> {{-- Gunakan flex-1 agar div ini memenuhi sisa ruang vertikal --}}
+<body class="flex flex-col min-h-screen font-sans antialiased bg-gray-100">
+    <div id="admin-app-layout" class="flex flex-1 overflow-hidden">
 
         <aside id="admin-layout-sidebar"
                class="fixed z-30 flex flex-col flex-shrink-0 w-64 h-full overflow-y-auto transition-transform duration-300 ease-in-out transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0 md:static">
@@ -35,7 +34,6 @@
                 </a>
 
                 <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">MANAJEMEN PENGGUNA</span>
-                {{-- PERBAIKAN: Menggunakan nama rute 'admin.detailpengguna' --}}
                 <a href="{{ route('admin.detailpengguna') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.detailpengguna') || request()->routeIs('admin.detailpengguna.*') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-info-circle"></i> Detail Pengguna
                 </a>
@@ -53,7 +51,6 @@
                     <i class="mr-2 fas fa-smile"></i> Outcome
                 </a>
                 <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">Riwayat</span>
-                {{-- PERBAIKAN: Menggunakan nama rute 'admin.riwayatdiagnosis.index' --}}
                 <a href="{{ route('admin.riwayatdiagnosis.index') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.riwayatdiagnosis.index') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-book-open"></i> Riwayat Diagnosis
                 </a>
@@ -69,17 +66,9 @@
                     <i class="mr-2 fas fa-quote-left"></i> Quotes & Affirmation
                 </a>
                 <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">PENGATURAN</span>
-                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
-                    <i class="mr-2 fas fa-user-plus"></i> Admin
+                <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
+                    <i class="mr-2 fas fa-user-plus"></i> Tambah Admin
                 </a>       
-                <form method="POST" action="{{ route('logout') }}" class="pt-4 mt-auto border-t border-gray-200">
-                    @csrf
-                    <a href="{{ route('logout') }}"
-                       onclick="event.preventDefault(); this.closest('form').submit();"
-                       class="block py-2.5 px-4 rounded transition duration-200 text-red-600 hover:bg-red-50 font-medium">
-                        <i class="mr-2 fas fa-sign-out-alt"></i> Logout
-                    </a>
-                </form>
             </nav>
         </aside>
 
@@ -94,8 +83,9 @@
 
                 <div class="flex justify-center flex-1 px-2 sm:px-6 lg:px-8">
                     @auth
-                    <form class="relative hidden w-full max-w-md md:block" method="GET" action="#">
-                        <input type="text" placeholder="Search..." class="w-full py-2 pl-10 pr-4 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                    {{-- Form pencarian sekarang akan menggunakan JS untuk navigasi --}}
+                    <form id="global-search-form" class="relative hidden w-full max-w-md md:block">
+                        <input type="text" id="global-search-input" placeholder="Cari..." class="w-full py-2 pl-10 pr-4 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                         <span class="absolute text-gray-400 -translate-y-1/2 left-3 top-1/2"><i class="fas fa-search"></i></span>
                     </form>
                     @endauth
@@ -103,11 +93,24 @@
 
                 <div class="flex items-center space-x-2 sm:space-x-4">
                     @auth
-                    <button class="relative text-xl text-gray-600 hover:text-blue-600 focus:outline-none"><i class="fas fa-bell"></i><span class="absolute flex items-center justify-center w-4 h-4 text-xs font-semibold text-white bg-red-500 rounded-full -top-1 -right-1">1</span></button>
-                    <button class="text-xl text-gray-600 hover:text-blue-600 focus:outline-none"><i class="fas fa-comment-dots"></i></button>
-                    <div class="flex items-center space-x-2">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'User') }}&background=0D8ABC&color=fff&size=32&rounded=true" alt="Profile" class="object-cover w-8 h-8 rounded-full">
-                        <span class="hidden text-sm font-semibold text-gray-700 lowercase sm:inline">{{ Auth::user()->name ?? 'User' }}</span>
+                    <div class="relative inline-block text-left">
+                        <button type="button" class="flex items-center space-x-2 focus:outline-none" id="user-menu-button" aria-expanded="true" aria-haspopup="true">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'User') }}&background=0D8ABC&color=fff&size=32&rounded=true" alt="Profile" class="object-cover w-8 h-8 rounded-full">
+                            <span class="hidden text-sm font-semibold text-gray-700 lowercase sm:inline">{{ Auth::user()->name ?? 'User' }}</span>
+                            <i class="text-gray-500 fas fa-caret-down"></i>
+                        </button>
+
+                        <div id="user-dropdown-menu" class="absolute right-0 hidden w-48 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                            <div class="py-1" role="none">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">Profil</a>
+                                <form method="POST" action="{{ route('logout') }}" role="none">
+                                    @csrf
+                                    <button type="submit" class="block w-full px-4 py-2 text-sm text-left text-red-700 hover:bg-red-50" role="menuitem" tabindex="-1" id="user-menu-item-1">
+                                        Logout
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                     @else
                         <a href="{{ route('login') }}" class="px-3 py-2 text-sm font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600 sm:px-4 whitespace-nowrap">Login</a>
@@ -125,7 +128,12 @@
     <script>
         const adminSidebarToggleBtn = document.getElementById('admin-layout-sidebar-toggle');
         const adminLayoutSidebarEl = document.getElementById('admin-layout-sidebar');
+        const userMenuButton = document.getElementById('user-menu-button');
+        const userDropdownMenu = document.getElementById('user-dropdown-menu');
+        const globalSearchForm = document.getElementById('global-search-form');
+        const globalSearchInput = document.getElementById('global-search-input');
 
+        // Sidebar toggle logic
         if (adminSidebarToggleBtn && adminLayoutSidebarEl) {
             adminSidebarToggleBtn.addEventListener('click', () => {
                 adminLayoutSidebarEl.classList.toggle('-translate-x-full');
@@ -133,6 +141,7 @@
             });
         }
 
+        // Close sidebar on link click for smaller screens
         if (adminLayoutSidebarEl) {
             adminLayoutSidebarEl.querySelectorAll('nav a').forEach(link => {
                 link.addEventListener('click', () => {
@@ -141,6 +150,64 @@
                        adminLayoutSidebarEl.classList.remove('translate-x-0');
                     }
                 });
+            });
+        }
+
+        // Dropdown toggle logic
+        if (userMenuButton && userDropdownMenu) {
+            userMenuButton.addEventListener('click', (event) => {
+                event.stopPropagation(); // Prevent document click from closing immediately
+                userDropdownMenu.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (event) => {
+                if (!userMenuButton.contains(event.target) && !userDropdownMenu.contains(event.target)) {
+                    userDropdownMenu.classList.add('hidden');
+                }
+            });
+        }
+
+        // --- Logic untuk fitur pencarian / navigasi cepat ---
+        if (globalSearchForm && globalSearchInput) {
+            globalSearchForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Mencegah submit form secara default
+
+                const query = globalSearchInput.value.trim().toLowerCase();
+
+                // Daftar kata kunci dan rute yang sesuai
+                const routes = {
+                    'dashboard': '{{ route('admin.dashboard') }}',
+                    'pengguna': '{{ route('admin.detailpengguna') }}',
+                    'detail pengguna': '{{ route('admin.detailpengguna') }}',
+                    'klasifikasi': '{{ route('admin.dashboard') }}', // Contoh untuk tren klasifikasi
+                    'diagnosis': '{{ route('admin.diagnosis.pending') }}',
+                    'prediksi diagnosis': '{{ route('admin.diagnosis.pending') }}',
+                    'outcome': '{{ route('admin.outcome.pending') }}',
+                    'prediksi outcome': '{{ route('admin.outcome.pending') }}',
+                    'riwayat diagnosis': '{{ route('admin.riwayatdiagnosis.index') }}',
+                    'riwayat outcome': '{{ route('admin.riwayatoutcome.index') }}',
+                    'meditasi': '{{ route('admin.meditations.index') }}',
+                    'quotes': '{{ route('admin.quotes.index') }}',
+                    'affirmation': '{{ route('admin.quotes.index') }}',
+                    // Tambahkan kata kunci lain yang relevan di sini
+                };
+
+                let navigated = false;
+                for (const keyword in routes) {
+                    if (query.includes(keyword)) {
+                        window.location.href = routes[keyword];
+                        navigated = true;
+                        break; // Hentikan setelah menemukan kecocokan pertama
+                    }
+                }
+
+                if (!navigated && query) {
+                    // Jika tidak ada kecocokan yang tepat, Anda bisa tambahkan logika fallback.
+                    // Misalnya, menampilkan pesan "tidak ditemukan" atau mengarahkan ke halaman dashboard.
+                    alert('Tidak ditemukan halaman yang cocok untuk "' + query + '".');
+                    // window.location.href = '{{ route('admin.dashboard') }}'; // Atau kembali ke dashboard
+                }
             });
         }
     </script>
