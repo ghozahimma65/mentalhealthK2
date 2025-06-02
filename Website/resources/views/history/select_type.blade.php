@@ -21,7 +21,7 @@
                class="flex flex-col items-center justify-center flex-1 max-w-sm p-8 transition duration-200 ease-in-out transform rounded-lg shadow-md bg-purple-50 hover:bg-purple-100 hover:scale-105">
                 <i class="mb-4 text-5xl text-purple-600 fas fa-chart-line"></i>
                 <h2 class="mb-2 text-xl font-bold text-gray-800">Riwayat Perkembangan Pengobatan</h2>
-                <p class="text-sm text-gray-600">Telusuri semua catatan progres dan hasil prediksi perkembangan Anda.</p>
+                <p class="text-sm text-gray-600">Telusuri semua catatan progres dan hasil klasifikasi perkembangan Anda.</p>
             </a>
         </div>
 

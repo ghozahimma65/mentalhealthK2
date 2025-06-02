@@ -5,7 +5,7 @@
 @section('content')
     <div class="container p-6 mx-auto lg:p-8">
         <h1 class="mb-6 text-3xl font-bold text-gray-800">Riwayat Perkembangan Pengobatan Anda</h1>
-        <p class="mb-8 text-gray-600">Berikut adalah catatan semua prediksi perkembangan kondisi Anda.</p>
+        <p class="mb-8 text-gray-600">Berikut adalah catatan semua Klasifikasi perkembangan kondisi Anda.</p>
 
         {{-- Bagian Grafik Tren (DIHILANGKAN DARI SINI) --}}
         {{--
@@ -65,7 +65,7 @@
                                 <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Tanggal</th>
                                 <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Diagnosis Terakhir</th>
                                 <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Tingkat Stres</th>
-                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Hasil Prediksi</th>
+                                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Hasil Klasifikasi</th>
                                 <th class="relative px-6 py-3">
                                     <span class="sr-only">Detail</span>
                                 </th>

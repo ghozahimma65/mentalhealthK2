@@ -9,7 +9,7 @@
 
         @if (isset($outcome))
             <div class="p-8 mb-8 bg-white shadow-lg rounded-xl">
-                <h2 class="mb-4 text-2xl font-bold text-gray-800">Hasil Prediksi:</h2>
+                <h2 class="mb-4 text-2xl font-bold text-gray-800">Hasil Klasifikasi:</h2>
                 @php
                     $outcomeNameMap = [0 => 'Deteriorated', 1 => 'Improved', 2 => 'No Change'];
                     $resultColorClass = 'text-gray-800';

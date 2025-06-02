@@ -16,7 +16,7 @@
             {{-- Kartu Total Aktivitas Prediksi (Pengganti 'Total Diagnosis') --}}
     <div class="flex flex-col items-start justify-between p-6 bg-white rounded-lg shadow-md">
         <div>
-            <h2 class="mb-2 text-xl font-semibold text-gray-700">Total Aktivitas Prediksi</h2>
+            <h2 class="mb-2 text-xl font-semibold text-gray-700">Total Aktivitas Klasifikasi</h2>
             <p class="text-5xl font-bold text-blue-600">
                 {{ $totalActivities ?? '0' }} {{-- Variabel ini harus disiapkan di Controller --}}
             </p>
@@ -49,20 +49,20 @@
                     @if(isset($lastPredictionOverall))
                         <div class="flex items-center mb-3 text-lg font-medium text-gray-800">
                             <i class="mr-2 text-blue-500 fas fa-calendar-alt"></i>
-                            Terakhir Melakukan Prediksi: <span class="ml-1 text-blue-600">{{ $lastPredictionOverall->format('d M Y') }}</span>
+                            Terakhir Melakukan Klasifikasi: <span class="ml-1 text-blue-600">{{ $lastPredictionOverall->format('d M Y') }}</span>
                         </div>
                         <p class="text-sm text-gray-600">
                             Pukul: {{ $lastPredictionOverall->format('H:i') }} WIB
                         </p>
                         <p class="mt-2 text-sm text-gray-600">
-                            Kami mencatat aktivitas prediksi terbaru Anda.
+                            Kami mencatat aktivitas terbaru Anda.
                         </p>
                     @else
                         <div class="flex items-center mb-3 text-lg text-gray-600">
                             <i class="mr-2 text-gray-400 fas fa-calendar-times"></i>
-                            Belum ada aktivitas prediksi.
+                            Belum ada aktivitas.
                         </div>
-                        <p class="text-sm text-gray-600">Mulai prediksi diagnosis atau catat perkembangan pertama Anda sekarang!</p>
+                        <p class="text-sm text-gray-600">Mulai cek diagnosis atau catat perkembangan pertama Anda sekarang!</p>
                     @endif
                     
                     @if(!isset($lastPredictionOverall) && (!isset($notifications) || $notifications->isEmpty()))
@@ -79,8 +79,8 @@
                 <a href="{{ route('diagnosis.form') }}" class="flex items-center p-4 space-x-3 transition duration-200 rounded-md bg-blue-50 hover:bg-blue-100">
                     <i class="text-2xl text-blue-600 fas fa-robot"></i>
                     <div>
-                        <h3 class="font-medium text-gray-800">Mulai Prediksi Diagnosis Baru</h3>
-                        <p class="text-sm text-gray-600">Dapatkan prediksi kondisi kesehatan terbaru Anda.</p>
+                        <h3 class="font-medium text-gray-800">Mulai Klasifikasi Diagnosis Baru</h3>
+                        <p class="text-sm text-gray-600">Dapatkan Klasifikasi kondisi kesehatan terbaru Anda.</p>
                     </div>
                 </a>
                 

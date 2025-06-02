@@ -43,7 +43,7 @@
                     class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-chart-line"></i> Tren Hasil Klasifikasi
                 </a>
-                <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">Prediksi</span>
+                <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">Klasifikasi</span>
                 {{-- PERBAIKAN: Menggunakan nama rute 'admin.diagnosis.pending' --}}
                 <a href="{{ route('admin.diagnosis.pending') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.diagnosis.pending') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-hand-holding-heart"></i> Diagnosis

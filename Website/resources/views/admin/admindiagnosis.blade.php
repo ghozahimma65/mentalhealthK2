@@ -1,12 +1,12 @@
 @extends('admin.dashboard') {{-- Meng-extend layout dashboard.blade.php --}}
 
-@section('title', 'Prediksi Diagnosis') {{-- Mengisi section 'title' di dashboard --}}
+@section('title', 'Klasifikasi Diagnosis') {{-- Mengisi section 'title' di dashboard --}}
 
 @section('header_title', 'Prediksi Diagnosis') {{-- Mengisi section 'header_title' di dashboard --}}
 
 @section('content') {{-- Memulai section 'content' --}}
-    <div class="container mx-auto bg-white p-6 rounded shadow-md">
-        <h1 class="text-2xl font-bold mb-4">Detail Pengguna & Inputan Gejala</h1>
+    <div class="container p-6 mx-auto bg-white rounded shadow-md">
+        <h1 class="mb-4 text-2xl font-bold">Detail Pengguna & Inputan Gejala</h1>
 
         @if (session('success'))
             <div class="alert-success">
@@ -24,20 +24,20 @@
             <table class="min-w-full bg-white"> {{-- Gunakan min-w-full untuk memastikan tabel tidak meluap --}}
                 <thead>
                     <tr>
-                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">User</th>
-                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Waktu Pengajuan</th> {{-- Kolom baru --}}
-                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Inputan (Gejala)</th>
-                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
+                        <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-50">User</th>
+                        <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-50">Waktu Pengajuan</th> {{-- Kolom baru --}}
+                        <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-50">Inputan (Gejala)</th>
+                        <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase border-b border-gray-200 bg-gray-50">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($diagnosisResults as $result)
                         <tr>
-                            <td class="py-2 px-4 border-b border-gray-200">{{ $result->user->name ?? 'Pengguna Tidak Dikenal' }}</td>
-                            <td class="py-2 px-4 border-b border-gray-200">{{ $result->timestamp->format('d M Y, H:i') }}</td> {{-- Menampilkan timestamp --}}
-                            <td class="py-2 px-4 border-b border-gray-200">
+                            <td class="px-4 py-2 border-b border-gray-200">{{ $result->user->name ?? 'Pengguna Tidak Dikenal' }}</td>
+                            <td class="px-4 py-2 border-b border-gray-200">{{ $result->timestamp->format('d M Y, H:i') }}</td> {{-- Menampilkan timestamp --}}
+                            <td class="px-4 py-2 border-b border-gray-200">
                                 @if ($result->input_data)
-                                    <ul class="list-disc list-inside text-sm"> {{-- Menambah text-sm agar lebih ringkas --}}
+                                    <ul class="text-sm list-disc list-inside"> {{-- Menambah text-sm agar lebih ringkas --}}
                                         {{-- Iterasi melalui input_data dan panggil method helper untuk deskripsi --}}
                                         {{-- Perhatikan bahwa kunci di input_data (dari Flask) mungkin memiliki format yang sedikit berbeda --}}
 
@@ -102,17 +102,17 @@
                                     Tidak ada input data
                                 @endif
                             </td>
-                            <td class="py-2 px-4 border-b border-gray-200">
+                            <td class="px-4 py-2 border-b border-gray-200">
                                 {{-- HANYA FOKUS PADA BAGIAN FORM ACTION --}}
                                 <form action="{{ route('admin.diagnosis.prediksi', $result->_id) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="action-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-sm">Prediksi</button>
+                                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-blue-500 rounded action-button hover:bg-blue-600">Prediksi</button>
                                 </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="py-2 px-4 border-b border-gray-200 text-center text-gray-500">Belum ada data diagnosis yang menunggu prediksi.</td>
+                            <td colspan="4" class="px-4 py-2 text-center text-gray-500 border-b border-gray-200">Belum ada data diagnosis yang menunggu prediksi.</td>
                         </tr>
                     @endforelse
                 </tbody>

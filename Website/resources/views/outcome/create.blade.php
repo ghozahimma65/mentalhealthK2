@@ -94,7 +94,7 @@
         <form action="{{ route('outcome.store') }}" method="POST" class="p-6 bg-white rounded-lg">
             @csrf
             <p class="mb-8 text-center text-gray-600">
-                Isi kuesioner ini secara berkala untuk memantau progres Anda dan mendapatkan prediksi perkembangan.
+                Isi kuesioner ini secara berkala untuk memantau progres Anda dan mendapatkan Klasifikasi perkembangan.
             </p>
             
             {{-- Pesan Error Validasi dari Laravel --}}
@@ -223,7 +223,7 @@
                     <i class="mr-2 fas fa-arrow-left"></i> Kembali ke Dashboard
                 </a>
                 <button type="submit" class="submit-button">
-                    Dapatkan Prediksi Perkembangan <i class="ml-2 fas fa-chart-line"></i>
+                    Dapatkan Klasifikasi Perkembangan <i class="ml-2 fas fa-chart-line"></i>
                 </button>
             </div>
         </form>

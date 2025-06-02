@@ -45,4 +45,7 @@ Route::prefix('diagnosa')->group(function () {
 
     // Opsional: Endpoint untuk melihat riwayat diagnosis pengguna yang login (Sudah benar dilindungi)
     Route::middleware('auth:sanctum')->get('/history', [DiagnosaApiController::class, 'history']);
+
+     Route::post('/outcome', [ApiOutcomeController::class, 'store']); // <--- INI UTAMA
+    Route::get('/outcome/history', [ApiOutcomeController::class, 'history']);
 });

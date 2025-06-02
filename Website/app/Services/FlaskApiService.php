@@ -50,21 +50,8 @@ class FlaskApiService
      * @param array $data Input data untuk model outcome.
      * @return array|null Hasil prediksi atau null jika terjadi error.
      */
-    public function predictOutcome(array $data)
-    {
-        try {
-            $response = $this->client->post('/predict_outcome', [
-                'json' => $data,
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ]
-            ]);
-
-            return json_decode($response->getBody()->getContents(), true);
-        } catch (Exception $e) {
-            \Log::error('Gagal memanggil Flask API untuk outcome: ' . $e->getMessage());
-            return null;
-        }
+    public function predictOutcome(array $data): ?array {
+        try { $response = Http::timeout(30)->post("{$this->baseUrl}/predict_outcome", $data); $response->throw(); return $response->json(); }
+        catch (\Exception $e) { Log::error("Flask API (Outcome) Error: {$e->getMessage()}", ['data' => $data]); return null; }
     }
 }

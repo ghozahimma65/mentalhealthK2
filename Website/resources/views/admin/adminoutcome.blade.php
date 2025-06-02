@@ -1,11 +1,11 @@
 @extends('admin.dashboard') {{-- Pastikan ini meng-extend layout dashboard admin Anda --}}
 
-@section('title', 'Prediksi Outcome')
-@section('header_title', 'Prediksi Outcome')
+@section('title', 'Klasifikasi Outcome')
+@section('header_title', 'Klasifikasi Outcome')
 
 @section('content')
-    <div class="container mx-auto bg-white p-6 rounded shadow-md">
-        <h1 class="text-2xl font-bold mb-4">Detail Pengguna & Inputan Outcome</h1>
+    <div class="container p-6 mx-auto bg-white rounded shadow-md">
+        <h1 class="mb-4 text-2xl font-bold">Detail Pengguna & Inputan Outcome</h1>
 
         @if (session('success'))
             <div class="alert-success">
@@ -20,25 +20,25 @@
         @endif
 
         @if ($outcomeResults->isEmpty())
-            <p class="text-gray-600 text-center">Tidak ada data outcome yang menunggu untuk diprediksi.</p>
+            <p class="text-center text-gray-600">Tidak ada data outcome yang menunggu untuk diklasifikasi.</p>
         @else
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white">
                     <thead>
                         <tr>
-                            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">USER</th>
-                            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">WAKTU PENGAJUAN</th>
-                            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">INPUTAN (OUTCOME)</th>
-                            <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">AKSI</th>
+                            <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">USER</th>
+                            <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">WAKTU PENGAJUAN</th>
+                            <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">INPUTAN (OUTCOME)</th>
+                            <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">AKSI</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($outcomeResults as $outcome)
                             <tr>
-                                <td class="py-2 px-4 border-b border-gray-200">{{ $outcome->user ? $outcome->user->name : 'Pengguna Tidak Dikenal' }}</td>
-                                <td class="py-2 px-4 border-b border-gray-200">{{ $outcome->timestamp ? $outcome->timestamp->format('d M Y, H:i') : '-' }}</td>
-                                <td class="py-2 px-4 border-b border-gray-200">
-                                    <ul class="list-disc pl-5 text-sm"> {{-- Menambah text-sm agar lebih ringkas --}}
+                                <td class="px-4 py-2 border-b border-gray-200">{{ $outcome->user ? $outcome->user->name : 'Pengguna Tidak Dikenal' }}</td>
+                                <td class="px-4 py-2 border-b border-gray-200">{{ $outcome->timestamp ? $outcome->timestamp->format('d M Y, H:i') : '-' }}</td>
+                                <td class="px-4 py-2 border-b border-gray-200">
+                                    <ul class="pl-5 text-sm list-disc"> {{-- Menambah text-sm agar lebih ringkas --}}
                                         {{-- Iterasi melalui input_data dan panggil method helper untuk deskripsi --}}
                                         {{-- Perhatikan bahwa kunci di input_data (dari Flask) mungkin memiliki format yang sedikit berbeda --}}
 
@@ -100,10 +100,10 @@
                                         @endforeach
                                     </ul>
                                 </td>
-                                <td class="py-2 px-4 border-b border-gray-200">
+                                <td class="px-4 py-2 border-b border-gray-200">
                                     <form action="{{ route('admin.outcome.prediksi', $outcome->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded text-sm">Prediksi</button>
+                                        <button type="submit" class="px-3 py-1 text-sm font-bold text-white bg-blue-500 rounded hover:bg-blue-700">Klasifikasi</button>
                                     </form>
                                 </td>
                             </tr>

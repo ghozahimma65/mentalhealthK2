@@ -8,7 +8,7 @@
         <p class="mb-8 text-gray-600">Informasi lengkap mengenai diagnosis awal yang Anda lakukan pada {{ \Carbon\Carbon::parse($diagnosisResult->timestamp)->format('d M Y, H:i') }}.</p>
 
         <div class="p-8 mb-8 bg-white shadow-lg rounded-xl">
-            <h2 class="mb-4 text-2xl font-bold text-gray-800">Hasil Prediksi:</h2>
+            <h2 class="mb-4 text-2xl font-bold text-gray-800">Hasil Klasifikasi:</h2>
             <p class="mb-6 text-xl font-semibold">
                 <span class="
                     @php
