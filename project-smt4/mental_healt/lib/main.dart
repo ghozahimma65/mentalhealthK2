@@ -31,7 +31,6 @@ import 'package:mobile_project/screen/PertanyaanScreen.dart';
 import 'package:mobile_project/screen/tes_info_screen.dart';
 
 // Layar Pengaturan & Lainnya
-import 'package:mobile_project/screen/edit_profile_screen.dart';
 import 'package:mobile_project/screen/ubah_kata_sandi_screen.dart';
 import 'package:mobile_project/screen/pengaturan_notifikasi_screen.dart';
 import 'package:mobile_project/screen/bantuan_screen.dart';
@@ -113,8 +112,7 @@ class MyApp extends StatelessWidget {
           );
         },
 
-        // Rute Pengaturan & Info
-        '/edit_profile': (context) => const EditProfileScreen(),
+        // Rute Pengaturan & Inf
         '/ubah_kata_sandi': (context) => const UbahKataSandiScreen(),
         '/pengaturan_notifikasi': (context) => const PengaturanNotifikasiScreen(),
         '/bantuan': (context) => const BantuanScreen(),
