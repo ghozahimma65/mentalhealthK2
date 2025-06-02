@@ -22,14 +22,6 @@ import 'package:mobile_project/screen/quotes_display_screen.dart';
 import 'package:mobile_project/screen/rencana_screen.dart';
 
 // Layar Tes & Hasil
-import 'package:mobile_project/screen/riwayat_hasil_tes.dart';
-import 'package:mobile_project/screen/DetailHasilDiagnosaPage.dart';
-import 'package:mobile_project/screen/HasilPenilaianDiriPage.dart';
-import 'package:mobile_project/screen/TesDiagnosaScreen.dart';
-import 'package:mobile_project/screen/KuisScreen.dart';
-import 'package:mobile_project/screen/PertanyaanScreen.dart';
-import 'package:mobile_project/screen/tes_info_screen.dart';
-
 // Layar Pengaturan & Lainnya
 import 'package:mobile_project/screen/ubah_kata_sandi_screen.dart';
 import 'package:mobile_project/screen/pengaturan_notifikasi_screen.dart';
@@ -93,24 +85,6 @@ class MyApp extends StatelessWidget {
         '/meditasi': (context) => const MeditationScreen(),
         '/quotes': (context) => const QuoteDisplayScreen(),
         '/rencana': (context) => const RencanaScreen(),
-
-        // Rute Tes & Hasil
-        '/tesdiagnosa': (context) => const TesDiagnosaScreen(),
-        '/kuis': (context) => const KuisScreen(),
-        '/pertanyaan': (context) => const PertanyaanScreen(),
-        '/hasil': (context) => const RiwayatHasilTesScreen(),
-        '/tesperkembangan': (context) => const TesInfoScreen(),
-        '/detailhasil': (context) {
-          final args = ModalRoute.of(context)?.settings.arguments;
-          if (args is Map && args.containsKey('rawDiagnosisResult') && args['rawDiagnosisResult'] is String) {
-            return DetailHasilDiagnosaPage(rawDiagnosisResult: args['rawDiagnosisResult'] as String);
-          }
-          print("ERROR: Rute /detailhasil dipanggil tanpa argumen 'rawDiagnosisResult' yang valid atau format argumen salah.");
-          return Scaffold(
-            appBar: AppBar(title: const Text('Error Argumen')),
-            body: const Center(child: Text('Argumen tidak valid atau hilang untuk rute /detailhasil.')),
-          );
-        },
 
         // Rute Pengaturan & Inf
         '/ubah_kata_sandi': (context) => const UbahKataSandiScreen(),
