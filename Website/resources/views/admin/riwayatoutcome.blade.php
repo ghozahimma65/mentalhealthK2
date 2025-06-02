@@ -25,7 +25,7 @@
             <p class="text-center text-gray-600">Tidak ada riwayat outcome yang tersedia.</p>
             <div class="relative px-4 py-3 text-blue-700 bg-blue-100 border border-blue-400 rounded" role="alert">
                 <strong class="font-bold">Info:</strong>
-                <span class="block sm:inline">Belum ada riwayat outcome yang tersimpan. Lakukan prediksi terlebih dahulu.</span>
+                <span class="block sm:inline">Belum ada riwayat outcome yang tersimpan. Lakukan klasifikasi terlebih dahulu.</span>
             </div>
         @else
             <div class="overflow-x-auto bg-white rounded-lg shadow-md">

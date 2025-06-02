@@ -2,7 +2,7 @@
 
 @section('title', 'Klasifikasi Diagnosis') {{-- Mengisi section 'title' di dashboard --}}
 
-@section('header_title', 'Prediksi Diagnosis') {{-- Mengisi section 'header_title' di dashboard --}}
+@section('header_title', 'Klasifikasi Diagnosis') {{-- Mengisi section 'header_title' di dashboard --}}
 
 @section('content') {{-- Memulai section 'content' --}}
     <div class="container p-6 mx-auto bg-white rounded shadow-md">
@@ -106,13 +106,13 @@
                                 {{-- HANYA FOKUS PADA BAGIAN FORM ACTION --}}
                                 <form action="{{ route('admin.diagnosis.prediksi', $result->_id) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-blue-500 rounded action-button hover:bg-blue-600">Prediksi</button>
+                                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-blue-500 rounded action-button hover:bg-blue-600">Klasifikasi</button>
                                 </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-4 py-2 text-center text-gray-500 border-b border-gray-200">Belum ada data diagnosis yang menunggu prediksi.</td>
+                            <td colspan="4" class="px-4 py-2 text-center text-gray-500 border-b border-gray-200">Belum ada data diagnosis yang menunggu klasifikasi.</td>
                         </tr>
                     @endforelse
                 </tbody>
