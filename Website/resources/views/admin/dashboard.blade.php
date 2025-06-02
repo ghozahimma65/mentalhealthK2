@@ -37,7 +37,7 @@
                 <a href="{{ route('admin.detailpengguna') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.detailpengguna') || request()->routeIs('admin.detailpengguna.*') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-info-circle"></i> Detail Pengguna
                 </a>
-                <a href="{{ route('admin.dashboard') }}"
+               <a href="{{ route('admin.classification_trends') }}"
                     class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-chart-line"></i> Tren Hasil Klasifikasi
                 </a>

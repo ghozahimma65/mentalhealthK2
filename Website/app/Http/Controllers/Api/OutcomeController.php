@@ -4,130 +4,130 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\MentalHealthOutcome; // Menggunakan model yang Anda berikan
+use App\Services\FlaskApiService;
+use App\Models\MentalHealthOutcome;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-// Jika Anda memiliki service khusus untuk prediksi outcome, import di sini
-// use App\Services\MyOutcomePredictionService; // Contoh
 
 class OutcomeController extends Controller
 {
-    // Jika Anda menggunakan service untuk prediksi, inject di sini
-    // protected $myOutcomePredictionService;
-    // public function __construct(MyOutcomePredictionService $myOutcomePredictionService)
-    // {
-    //     $this->myOutcomePredictionService = $myOutcomePredictionService;
-    // }
+    protected $flaskApiService;
 
-    /**
-     * Endpoint API untuk submit kuesioner tes perkembangan (outcome) dari mobile
-     * dan mengembalikan hasil prediksi.
-     */
+    private const FLASK_OUTCOME_FEATURE_MAP = [
+        'diagnosis' => 'Diagnosis',
+        'symptom_severity' => 'Symptom Severity (1-10)',
+        'mood_score' => 'Mood Score (1-10)',
+        'physical_activity' => 'Physical Activity (hrs/week)',
+        'medication' => 'Medication',
+        'therapy_type' => 'Therapy Type',
+        'treatment_duration' => 'Treatment Duration (weeks)',
+        'stress_level' => 'Stress Level (1-10)'
+    ];
+
+    public function __construct(FlaskApiService $flaskApiService)
+    {
+        $this->flaskApiService = $flaskApiService;
+    }
+
     public function submitOutcome(Request $request)
     {
-        // 1. Validasi input dari aplikasi mobile
-        // Sesuaikan dengan field yang ada di model OutcomeInput Flutter Anda
-        // dan yang ada di $fillable model MentalHealthOutcome
-        $validator = Validator::make($request->all(), [
-            'diagnosis' => 'nullable|integer',
-            'symptom_severity' => 'nullable|integer|min:1|max:10',
-            'mood_score' => 'nullable|integer|min:1|max:10',
-            'physical_activity' => 'nullable|numeric|min:0',
-            'medication' => 'nullable|integer',
-            'therapy_type' => 'nullable|integer',
-            'treatment_duration' => 'nullable|integer|min:0',
-            'stress_level' => 'nullable|integer|min:1|max:10',
-            // user_id akan diambil dari Auth::id()
-        ]);
+        $validationRules = [];
+        foreach (array_keys(self::FLASK_OUTCOME_FEATURE_MAP) as $mobileKey) {
+            if ($mobileKey === 'physical_activity') {
+                $validationRules[$mobileKey] = 'required|numeric|min:0';
+            } else {
+                $validationRules[$mobileKey] = 'required|integer';
+            }
+            if (in_array($mobileKey, ['symptom_severity', 'mood_score', 'stress_level'])) {
+                $validationRules[$mobileKey] .= '|min:1|max:10';
+            }
+            if ($mobileKey === 'treatment_duration') {
+                 $validationRules[$mobileKey] .= '|min:0';
+            }
+            if ($mobileKey === 'diagnosis') {
+                 $validationRules[$mobileKey] .= '|in:0,1,2,3,99';
+            }
+             if ($mobileKey === 'medication') {
+                 $validationRules[$mobileKey] .= '|in:0,1,2,3,4,5,99';
+            }
+            if ($mobileKey === 'therapy_type') {
+                 $validationRules[$mobileKey] .= '|in:0,1,2,3,99';
+            }
+        }
+
+        $validator = Validator::make($request->all(), $validationRules);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validasi input gagal.',
-                'errors' => $validator->errors()
-            ], 422);
+            return response()->json(['success' => false, 'message' => 'Validasi input gagal.', 'errors' => $validator->errors()], 422);
         }
 
         $validatedData = $validator->validated();
+        $inputForFlask = [];
 
-        // 2. Logika untuk memprediksi outcome
-        // Ini bisa berupa pemanggilan ke service lain (seperti Flask API),
-        // atau logika internal di Laravel.
-        // Untuk contoh ini, kita akan simulasikan hasil prediksi (0: Menurun, 1: Membaik, 2: Stabil)
-        // Anda harus mengganti ini dengan logika prediksi Anda yang sebenarnya.
-        $predictedOutcome = null;
-        $feedbackMessage = "Terus pantau perkembangan Anda dan jangan ragu untuk mencari bantuan jika diperlukan.";
-
-        // Contoh logika sederhana berdasarkan mood_score (HARUS DISESUAIKAN!)
-        if (isset($validatedData['mood_score'])) {
-            if ($validatedData['mood_score'] <= 3) {
-                $predictedOutcome = 0; // Menurun
-                $feedbackMessage = "Perkembangan Anda menunjukkan beberapa area yang memerlukan perhatian lebih. Pertimbangkan untuk berkonsultasi.";
-            } elseif ($validatedData['mood_score'] >= 7) {
-                $predictedOutcome = 1; // Membaik
-                $feedbackMessage = "Selamat! Ada indikasi perkembangan positif. Terus pertahankan usaha baik Anda.";
+        foreach (self::FLASK_OUTCOME_FEATURE_MAP as $mobileKey => $flaskKey) {
+            if (isset($validatedData[$mobileKey])) {
+                if ($mobileKey === 'physical_activity') {
+                    $inputForFlask[$flaskKey] = (float)$validatedData[$mobileKey];
+                } else {
+                    $inputForFlask[$flaskKey] = (int)$validatedData[$mobileKey];
+                }
             } else {
-                $predictedOutcome = 2; // Stabil
-                $feedbackMessage = "Kondisi Anda tampak stabil. Ini adalah waktu yang baik untuk refleksi dan konsistensi.";
+                 Log::error("API Mobile (Outcome): Fitur WAJIB '$mobileKey' untuk mapping ke Flask '$flaskKey' tidak ada di validatedData!");
+                return response()->json(['success' => false, 'message' => "Data input tidak lengkap: $mobileKey hilang."], 400);
             }
-        } else {
-            // Jika tidak ada data yang cukup untuk prediksi, bisa berikan nilai default
-            $predictedOutcome = 2; // Default ke stabil jika tidak ada mood_score
         }
-        // Akhir Logika Prediksi Contoh (HARUS DISESUAIKAN)
 
+        $prediction = null;
+        // feedback_message sudah dihilangkan
 
-        // 3. Simpan input data dan hasil prediksi ke MongoDB
         try {
-            if (!Auth::check()) {
-                return response()->json(['success' => false, 'message' => 'Pengguna tidak terautentikasi.'], 401);
-            }
+            Log::info('API Mobile (Outcome): Mengirim data ke Flask: ', $inputForFlask);
+            $predictionResultFromFlask = $this->flaskApiService->predictOutcome($inputForFlask);
+            Log::info('API Mobile (Outcome): Respons dari Flask: ', is_array($predictionResultFromFlask) ? $predictionResultFromFlask : (array) $predictionResultFromFlask);
 
-            // Menyimpan semua data yang divalidasi ke dalam field 'input_data'
-            // dan field individual jika diperlukan oleh $fillable
+            // --- PERBAIKAN KUNCI DI SINI ---
+            // Flask API Anda mengembalikan 'outcome_prediction', bukan 'predicted_outcome'
+            if ($predictionResultFromFlask && isset($predictionResultFromFlask['outcome_prediction']) && is_int($predictionResultFromFlask['outcome_prediction'])) {
+                $prediction = (int)$predictionResultFromFlask['outcome_prediction'];
+            } else {
+                Log::warning('API Mobile (Outcome): Prediksi dari Flask API gagal atau data tidak valid.', ['response' => $predictionResultFromFlask]);
+                // Pesan error disesuaikan
+                return response()->json(['success' => false, 'message' => 'Gagal mendapatkan hasil prediksi outcome dari layanan. Respon tidak sesuai atau kunci "outcome_prediction" tidak ditemukan/bukan integer.'], 500);
+            }
+        } catch (\Exception $e) {
+            Log::error('API Mobile (Outcome): Error memanggil Flask API: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menghubungi layanan prediksi outcome.', 'error' => $e->getMessage()], 500);
+        }
+
+        try {
             MentalHealthOutcome::create([
-                'user_id' => Auth::id(),
-                'diagnosis' => $validatedData['diagnosis'] ?? null,
-                'symptom_severity' => $validatedData['symptom_severity'] ?? null,
-                'mood_score' => $validatedData['mood_score'] ?? null,
-                'physical_activity' => $validatedData['physical_activity'] ?? null,
-                'medication' => $validatedData['medication'] ?? null,
-                'therapy_type' => $validatedData['therapy_type'] ?? null,
-                'treatment_duration' => $validatedData['treatment_duration'] ?? null,
-                'stress_level' => $validatedData['stress_level'] ?? null,
-                'input_data' => $validatedData, // Simpan semua input yang divalidasi
-                'predicted_outcome' => $predictedOutcome,
-                'feedback_message' => $feedbackMessage, // Simpan pesan feedback jika ada
+                'user_id' => Auth::check() ? Auth::id() : null,
+                'input_data' => $inputForFlask,
+                'predicted_outcome' => $prediction,
                 'timestamp' => now(),
-                'admin_processed' => false, // Default
+                'admin_processed' => false,
             ]);
         } catch (\Exception $e) {
-            Log::error('Gagal menyimpan hasil tes perkembangan ke MongoDB: ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json(['success' => false, 'message' => 'Gagal menyimpan hasil tes perkembangan.'], 500);
+            Log::error('API Mobile (Outcome): Gagal menyimpan hasil ke MongoDB: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['success' => false, 'message' => 'Prediksi berhasil, namun gagal menyimpan data ke riwayat.'], 500);
         }
 
-        // 4. Mengembalikan hasil prediksi ke aplikasi mobile
         return response()->json([
             'success' => true,
             'message' => 'Hasil tes perkembangan berhasil dikirim.',
-            'predicted_outcome' => $predictedOutcome, // integer
-            'feedback_message' => $feedbackMessage, // string (opsional)
-            'timestamp' => now()->toIso8601String(), // string ISO 8601
-            'input_data' => $validatedData // Kirim kembali input jika diperlukan oleh halaman hasil di Flutter
+            'predicted_outcome' => $prediction, // Ini adalah integer yang akan dikirim ke Flutter
+            'timestamp' => now()->toIso8601String(),
+            'input_data' => $inputForFlask
         ], 200);
     }
 
-    /**
-     * Menampilkan riwayat tes perkembangan (outcome) untuk pengguna yang login.
-     */
     public function history(Request $request)
     {
+        // ... (logika history Anda sudah baik, pastikan $item->predicted_outcome
+        // dikirim sebagai integer) ...
         if (!Auth::check()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Anda harus login untuk melihat riwayat tes perkembangan.'
-            ], 401);
+            return response()->json(['success' => false, 'message' => 'Anda harus login untuk melihat riwayat.'], 401);
         }
 
         try {
@@ -135,48 +135,21 @@ class OutcomeController extends Controller
                                     ->orderBy('timestamp', 'desc')
                                     ->get();
 
-            // Memformat data untuk menyertakan deskripsi jika diperlukan oleh Flutter
-            // Meskipun Flutter Anda mungkin sudah memiliki logika ini, ini adalah contoh
-            // bagaimana Anda bisa melakukannya di backend.
             $formattedHistory = $history->map(function($item) {
-                // Pastikan input_data adalah array atau objek sebelum diakses
                 $inputData = is_array($item->input_data) ? $item->input_data : (is_object($item->input_data) ? (array) $item->input_data : []);
-
                 return [
                     '_id' => $item->_id,
                     'user_id' => $item->user_id,
-                    'predicted_outcome' => $item->predicted_outcome,
-                    'feedback_message' => $item->feedback_message,
+                    'predicted_outcome' => $item->predicted_outcome, // Ini sudah integer dari database
                     'timestamp' => $item->timestamp ? $item->timestamp->toIso8601String() : null,
-                    // Mengambil data dari kolom individual jika ada, atau dari input_data sebagai fallback
-                    'diagnosis' => $item->diagnosis ?? ($inputData['diagnosis'] ?? null),
-                    'symptom_severity' => $item->symptom_severity ?? ($inputData['symptom_severity'] ?? null),
-                    'mood_score' => $item->mood_score ?? ($inputData['mood_score'] ?? null),
-                    'physical_activity' => $item->physical_activity ?? ($inputData['physical_activity'] ?? null),
-                    'medication' => $item->medication ?? ($inputData['medication'] ?? null),
-                    'therapy_type' => $item->therapy_type ?? ($inputData['therapy_type'] ?? null),
-                    'treatment_duration' => $item->treatment_duration ?? ($inputData['treatment_duration'] ?? null),
-                    'stress_level' => $item->stress_level ?? ($inputData['stress_level'] ?? null),
-                    'input_data' => $inputData, // Sertakan input_data asli jika Flutter membutuhkannya
-                    // Anda bisa menambahkan deskripsi menggunakan helper method dari model jika perlu
-                    // 'diagnosis_description' => $item->getDiagnosisDescription($item->diagnosis ?? ($inputData['diagnosis'] ?? null)),
-                    // 'mood_score_description' => $item->getMoodScoreDescription($item->mood_score ?? ($inputData['mood_score'] ?? null)),
+                    'input_data' => $inputData,
                 ];
             });
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Riwayat tes perkembangan berhasil diambil.',
-                'data' => $formattedHistory
-            ], 200);
-
+            return response()->json(['success' => true, 'message' => 'Riwayat tes perkembangan berhasil diambil.', 'data' => $formattedHistory], 200);
         } catch (\Exception $e) {
-            Log::error('Error mengambil riwayat tes perkembangan untuk user ' . Auth::id() . ': ' . $e->getMessage(), ['exception' => $e]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Gagal mengambil riwayat tes perkembangan.',
-                'error' => $e->getMessage() // Kirim pesan error aktual untuk debugging
-            ], 500);
+            Log::error('API Mobile (Outcome): Error mengambil riwayat tes perkembangan user ' . Auth::id() . ': ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['success' => false, 'message' => 'Gagal mengambil riwayat tes perkembangan.', 'error' => $e->getMessage()], 500);
         }
     }
 }
