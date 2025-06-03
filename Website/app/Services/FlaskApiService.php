@@ -2,69 +2,63 @@
 
 namespace App\Services;
 
-use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http; // <--- TAMBAHKAN INI UNTUK LARAVEL HTTP CLIENT
 use Exception;
+use Illuminate\Support\Facades\Log; // Pastikan ini juga diimport jika belum
 
 class FlaskApiService
 {
-    protected $client;
     protected $baseUrl;
 
     public function __construct()
     {
-        $this->baseUrl = env('FLASK_API_URL', 'http://127.0.0.1:5000'); // Atur di .env
-        $this->client = new Client([
-            'base_uri' => $this->baseUrl,
-            'timeout'  => 10.0, // Timeout request dalam detik
-        ]);
+        // Pastikan variabel lingkungan ini sudah diatur di .env Anda
+        $this->baseUrl = env('FLASK_API_BASE_URL', 'http://127.0.0.1:5000'); 
     }
 
     /**
      * Memanggil model diagnosis di Flask API.
+     * Menggunakan Laravel HTTP Client.
      *
      * @param array $data Input data untuk model diagnosis.
      * @return array|null Hasil prediksi atau null jika terjadi error.
      */
-    public function predictDiagnosis(array $data)
+    public function predictDiagnosis(array $data): ?array
     {
         try {
-            $response = $this->client->post('/predict_diagnosis', [
-                'json' => $data,
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ]
-            ]);
+            // Menggunakan Laravel HTTP Client (Http::)
+            // 'json()' secara otomatis mengatur Content-Type ke application/json
+            $response = Http::timeout(30)->post("{$this->baseUrl}/predict_diagnosis", $data);
 
-            return json_decode($response->getBody()->getContents(), true);
+            $response->throw(); // Melempar exception jika status code >= 400
+
+            return $response->json(); // Menguraikan respons JSON secara otomatis
         } catch (Exception $e) {
             // Log error atau tangani sesuai kebutuhan
-            \Log::error('Gagal memanggil Flask API untuk diagnosis: ' . $e->getMessage());
+            Log::error('Gagal memanggil Flask API untuk diagnosis: ' . $e->getMessage(), ['data_sent' => $data]);
             return null;
         }
     }
 
     /**
      * Memanggil model outcome di Flask API.
+     * Menggunakan Laravel HTTP Client.
      *
      * @param array $data Input data untuk model outcome.
      * @return array|null Hasil prediksi atau null jika terjadi error.
      */
-    public function predictOutcome(array $data)
+    public function predictOutcome(array $data): ?array
     {
-        try {
-            $response = $this->client->post('/predict_outcome', [
-                'json' => $data,
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json',
-                ]
-            ]);
-
-            return json_decode($response->getBody()->getContents(), true);
-        } catch (Exception $e) {
-            \Log::error('Gagal memanggil Flask API untuk outcome: ' . $e->getMessage());
-            return null;
+        try { 
+            // Menggunakan Laravel HTTP Client (Http::)
+            $response = Http::timeout(30)->post("{$this->baseUrl}/predict_outcome", $data); 
+            
+            $response->throw(); // Melempar exception jika status code >= 400
+            
+            return $response->json(); // Menguraikan respons JSON secara otomatis
+        } catch (\Exception $e) { 
+            Log::error("Flask API (Outcome) Error: {$e->getMessage()}", ['data_sent' => $data]); 
+            return null; 
         }
     }
 }

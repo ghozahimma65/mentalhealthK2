@@ -129,7 +129,7 @@
         </section>
 
     {{-- FAQ Section --}}
-    <section class="max-w-4xl mx-auto px-6 py-16"> {{-- Hapus main tag di sini --}}
+    <section class="max-w-4xl px-6 py-16 mx-auto"> {{-- Hapus main tag di sini --}}
         <h1 class="text-center text-[#000c3b] text-lg font-normal mb-10">
             Pertanyaan Yang Sering Diajukan - FAQ
         </h1>
@@ -138,7 +138,7 @@
             <div class="bg-[#f0f7fa] rounded-md shadow">
                 <button class="accordion-header w-full text-left px-6 py-6 text-xs text-[#000c3b] font-semibold flex justify-between items-center cursor-pointer">
                     <span>Apa itu Diagnosa?</span>
-                    <i class="fas fa-chevron-down transition-transform duration-300"></i>
+                    <i class="transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
                 <div class="accordion-content">
                     <p class="px-6 pb-6 text-xs text-[#000c3b] leading-relaxed">
@@ -151,11 +151,11 @@
             <div class="bg-[#f0f7fa] rounded-md shadow">
                 <button class="accordion-header w-full text-left px-6 py-6 text-xs text-[#000c3b] font-semibold flex justify-between items-center cursor-pointer">
                     <span>Siapa yang bisa mengakses Diagnosa?</span>
-                    <i class="fas fa-chevron-down transition-transform duration-300"></i>
+                    <i class="transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
                 <div class="accordion-content">
                     <p class="px-6 pb-6 text-xs text-[#000c3b] leading-relaxed">
-                        Diagnosa dapat diakses oleh siapa saja yang ingin memahami lebih lanjut tentang kondisi kesehatan mental mereka, khususnya terkait depresi. Aplikasi ini terbuka untuk umum dan dirancang agar mudah digunakan oleh berbagai kalangan.
+                        Diagnosa dapat diakses oleh siapa saja yang ingin memahami lebih lanjut tentang kondisi kesehatan mental mereka,Aplikasi ini terbuka untuk umum dan dirancang agar mudah digunakan oleh berbagai kalangan.
                     </p>
                 </div>
             </div>
@@ -164,7 +164,7 @@
             <div class="bg-[#f0f7fa] rounded-md shadow">
                 <button class="accordion-header w-full text-left px-6 py-6 text-xs text-[#000c3b] font-semibold flex justify-between items-center cursor-pointer">
                     <span>Apakah hasil dari Diagnosa dapat diandalkan?</span>
-                    <i class="fas fa-chevron-down transition-transform duration-300"></i>
+                    <i class="transition-transform duration-300 fas fa-chevron-down"></i>
                 </button>
                 <div class="accordion-content">
                     <p class="px-6 pb-6 text-xs text-[#000c3b] leading-relaxed">

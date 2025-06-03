@@ -4,26 +4,26 @@
 @section('header_title', 'Riwayat Diagnosis')
 
 @section('content')
-    <div class="container mx-auto py-8">
-        <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">Riwayat Diagnosis Pengguna</h1>
+    <div class="container py-8 mx-auto">
+        <h1 class="mb-6 text-3xl font-bold text-center text-gray-800">Riwayat Diagnosis Pengguna</h1>
 
         @if ($riwayatDiagnoses->isEmpty())
-            <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative" role="alert">
+            <div class="relative px-4 py-3 text-blue-700 bg-blue-100 border border-blue-400 rounded" role="alert">
                 <strong class="font-bold">Info:</strong>
-                <span class="block sm:inline">Belum ada riwayat diagnosis yang tersimpan. Lakukan prediksi terlebih dahulu.</span>
+                <span class="block sm:inline">Belum ada riwayat diagnosis yang tersimpan. Lakukan Klasifikasi terlebih dahulu.</span>
             </div>
         @else
             <div class="overflow-x-auto bg-white rounded-lg shadow-md">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                 Pengguna
                             </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                 Hasil Diagnosis
                             </th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                 Tanggal & Waktu Diagnosis
                             </th>
                         </tr>
@@ -31,14 +31,14 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @foreach ($riwayatDiagnoses as $diagnosis)
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
                                     {{ $diagnosis->user->name ?? 'Pengguna Tidak Dikenal' }}
                                     @if ($diagnosis->user_id)
                                         {{-- Opsional: Tampilkan ID pengguna jika ingin --}}
-                                        {{-- <span class="text-gray-500 text-xs">({{ $diagnosis->user_id }})</span> --}}
+                                        {{-- <span class="text-xs text-gray-500">({{ $diagnosis->user_id }})</span> --}}
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                <td class="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                                     @php
                                         $diagnosisText = 'Diagnosis Tidak Dikenal';
                                         // Sesuaikan mapping ini dengan output sebenarnya dari model Flask Anda
@@ -50,14 +50,14 @@
                                             default: $diagnosisText = 'Diagnosis tidak diketahui atau perlu pemeriksaan lebih lanjut'; break;
                                         }
                                     @endphp
-                                    <span class="font-bold text-lg">
+                                    <span class="text-lg font-bold">
                                         {{ $diagnosisText }} {{-- Hanya tampilkan teks deskripsi --}}
                                     </span>
                                     {{-- Jika Anda ingin menampilkan angka aslinya juga, bisa tambahkan di sini: --}}
                                     {{-- <br>
                                     <span class="text-sm text-gray-600">({{ $diagnosis->predicted_diagnosis }})</span> --}}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $diagnosis->timestamp->format('d M Y, H:i:s') }}
                                 </td>
                             </tr>

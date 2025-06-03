@@ -41,7 +41,8 @@
                     class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
                     <i class="mr-2 fas fa-chart-line"></i> Tren Hasil Klasifikasi
                 </a>
-                <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">Prediksi</span>
+                <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">Klasifikasi</span>
+                {{-- PERBAIKAN: Menggunakan nama rute 'admin.diagnosis.pending' --}}
                 <a href="{{ route('admin.diagnosis.pending') }}" class="block py-2.5 px-4 rounded transition duration-200 {{ request()->routeIs('admin.diagnosis.pending') ? 'bg-blue-500 text-white font-bold' : 'hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium' }}">
                     <i class="mr-2 fas fa-hand-holding-heart"></i> Diagnosis
                 </a>
@@ -65,8 +66,8 @@
                     <i class="mr-2 fas fa-quote-left"></i> Quotes & Affirmation
                 </a>
                 <span class="block px-4 mt-4 mb-1 text-xs font-semibold text-gray-400">PENGATURAN</span>
-                <a href="#" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
-                    <i class="mr-2 fas fa-user-plus"></i> Admin
+                <a href="{{ route('admin.tambah') }}" class="block py-2.5 px-4 rounded transition duration-200 hover:bg-blue-50 text-gray-700 hover:text-blue-600 font-medium">
+                    <i class="mr-2 fas fa-user-plus"></i> Tambah Admin
                 </a>       
             </nav>
         </aside>
@@ -96,15 +97,15 @@
                         <button type="button" class="flex items-center space-x-2 focus:outline-none" id="user-menu-button" aria-expanded="true" aria-haspopup="true">
                             <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name ?? 'User') }}&background=0D8ABC&color=fff&size=32&rounded=true" alt="Profile" class="object-cover w-8 h-8 rounded-full">
                             <span class="hidden text-sm font-semibold text-gray-700 lowercase sm:inline">{{ Auth::user()->name ?? 'User' }}</span>
-                            <i class="fas fa-caret-down text-gray-500"></i>
+                            <i class="text-gray-500 fas fa-caret-down"></i>
                         </button>
 
-                        <div id="user-dropdown-menu" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
+                        <div id="user-dropdown-menu" class="absolute right-0 hidden w-48 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                             <div class="py-1" role="none">
                                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-0">Profil</a>
                                 <form method="POST" action="{{ route('logout') }}" role="none">
                                     @csrf
-                                    <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50" role="menuitem" tabindex="-1" id="user-menu-item-1">
+                                    <button type="submit" class="block w-full px-4 py-2 text-sm text-left text-red-700 hover:bg-red-50" role="menuitem" tabindex="-1" id="user-menu-item-1">
                                         Logout
                                     </button>
                                 </form>

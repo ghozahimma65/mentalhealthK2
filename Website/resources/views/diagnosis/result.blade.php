@@ -83,7 +83,7 @@
                     @endif
                 </div>
                 <p class="leading-relaxed text-gray-700 text-md"> {{-- Ukuran teks diperbesar dan leading --}}
-                    *Diagnosis ini adalah hasil prediksi awal dan tidak menggantikan konsultasi profesional.
+                    *Diagnosis ini adalah hasil klasifikasi awal dan tidak menggantikan konsultasi profesional.
                     Jika Anda merasa membutuhkan bantuan, silakan hubungi ahli kesehatan mental.
                 </p>
             @else

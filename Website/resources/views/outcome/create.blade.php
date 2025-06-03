@@ -94,7 +94,7 @@
         <form action="{{ route('outcome.store') }}" method="POST" class="p-6 bg-white rounded-lg">
             @csrf
             <p class="mb-8 text-center text-gray-600">
-                Isi kuesioner ini secara berkala untuk memantau progres Anda dan mendapatkan prediksi perkembangan.
+                Isi kuesioner ini secara berkala untuk memantau progres Anda dan mendapatkan Klasifikasi perkembangan.
             </p>
             
             {{-- Pesan Error Validasi dari Laravel --}}
@@ -128,7 +128,6 @@
                         <option value="1">Gangguan Kecemasan Umum</option>
                         <option value="2">Gangguan Depresi Mayor</option>
                         <option value="3">Gangguan Panik</option>
-                        <option value="99">Lainnya / Tidak Tahu</option>
                     </select>
                     <p class="mt-1 text-sm text-gray-600">Pilih diagnosis yang Anda ketahui atau telah didapatkan sebelumnya.</p>
                 </div>
@@ -172,32 +171,28 @@
                 </div>
                 
                 <div class="mb-4">
-                    <label for="medication" class="form-label">5. Jenis pengobatan/obat yang sedang Anda gunakan?</label>
-                    <select id="medication" name="medication" class="form-select" required>
-                        <option value="" disabled selected>Pilih Jenis Pengobatan</option>
-                        <option value="0">Antidepressants (Antidepresan)</option>
-                        <option value="1">Antipsychotics (Antipsikotik)</option>
-                        <option value="2">Benzodiazepines (Benzodiazepin)</option>
-                        <option value="3">Mood Stabilizers (Penstabil Suasana Hati)</option>
-                        <option value="4">SSRIs (Selective Serotonin Reuptake Inhibitors)</option>
-                        <option value="5">Anxiolytics (Anxiolitik/Anti-kecemasan)</option>
-                        <option value="99">Tidak sedang mengonsumsi obat</option>
-                    </select>
-                    <p class="mt-1 text-sm text-gray-600">Pilih jenis obat yang sedang Anda gunakan. Jika tidak ada, pilih opsi terakhir.</p>
-                </div>
-
+    <label for="medication" class="form-label">5. Jenis pengobatan/obat yang sedang Anda gunakan?</label>
+    <select id="medication" name="medication" class="form-select" required>
+        <option value="" disabled selected>Pilih Jenis Pengobatan</option>
+        <option value="0" {{ old('medication') == '0' ? 'selected' : '' }}>Antidepressants (Antidepresan) - Untuk mengatasi gejala depresi dan kecemasan.</option>
+        <option value="1" {{ old('medication') == '1' ? 'selected' : '' }}>Antipsychotics (Antipsikotik) - Digunakan untuk gangguan psikotik seperti skizofrenia atau gangguan bipolar.</option>
+        <option value="2" {{ old('medication') == '2' ? 'selected' : '' }}>Benzodiazepines (Benzodiazepin) - Untuk meredakan kecemasan akut, panik, dan insomnia jangka pendek.</option>
+        <option value="3" {{ old('medication') == '3' ? 'selected' : '' }}>Mood Stabilizers (Penstabil Suasana Hati) - Digunakan untuk mengelola fluktuasi mood ekstrem, seperti pada gangguan bipolar.</option>
+        <option value="4" {{ old('medication') == '4' ? 'selected' : '' }}>SSRIs (Selective Serotonin Reuptake Inhibitors) - Kelas antidepresan umum untuk depresi dan beberapa gangguan kecemasan.</option>
+        <option value="5" {{ old('medication') == '5' ? 'selected' : '' }}>Anxiolytics (Anxiolitik/Anti-kecemasan) - Obat untuk mengurangi kecemasan dan ketegangan (sering tumpang tindih dengan Benzodiazepin).</option>
+    </select>
+</div>
                 <div class="mb-4">
-                    <label for="therapy_type" class="form-label">6. Jenis terapi yang sedang Anda jalani?</label>
-                    <select id="therapy_type" name="therapy_type" class="form-select" required>
-                        <option value="" disabled selected>Pilih Jenis Terapi</option>
-                        <option value="0">Cognitive Behavioral Therapy (CBT)</option>
-                        <option value="1">Dialectical Behavioral Therapy (DBT)</option>
-                        <option value="2">Interpersonal Therapy (IPT)</option>
-                        <option value="3">Mindfulness-Based Therapy (Terapi Berbasis Kesadaran)</option>
-                        <option value="99">Tidak sedang menjalani terapi</option>
-                    </select>
-                    <p class="mt-1 text-sm text-gray-600">Pilih jenis terapi yang sedang Anda jalani. Jika tidak ada, pilih opsi terakhir.</p>
-                </div>
+    <label for="therapy_type" class="form-label">6. Jenis terapi yang sedang Anda jalani?</label>
+    <select id="therapy_type" name="therapy_type" class="form-select" required>
+        <option value="" disabled selected>Pilih Jenis Terapi</option>
+        <option value="0">Cognitive Behavioral Therapy (CBT) - Terapi mengubah pola pikir negatif</option>
+        <option value="1">Dialectical Behavioral Therapy (DBT) - Terapi fokus regulasi emosi & hubungan</option>
+        <option value="2">Interpersonal Therapy (IPT) - Terapi fokus pada masalah hubungan antarpersonal</option>
+        <option value="3">Mindfulness-Based Therapy (Terapi Berbasis Kesadaran) - Terapi melalui perhatian penuh di momen kini</option>
+    </select>
+    <p class="mt-1 text-sm text-gray-600">Pilih jenis terapi yang sedang Anda jalani. Jika tidak ada, pilih opsi terakhir.</p>
+</div>
 
                 <div class="mb-4">
                     <label for="treatment_duration" class="form-label">7. Berapa lama Anda sudah menjalani pengobatan/terapi (dalam minggu)?</label>
@@ -228,7 +223,7 @@
                     <i class="mr-2 fas fa-arrow-left"></i> Kembali ke Dashboard
                 </a>
                 <button type="submit" class="submit-button">
-                    Dapatkan Prediksi Perkembangan <i class="ml-2 fas fa-chart-line"></i>
+                    Dapatkan Klasifikasi Perkembangan <i class="ml-2 fas fa-chart-line"></i>
                 </button>
             </div>
         </form>

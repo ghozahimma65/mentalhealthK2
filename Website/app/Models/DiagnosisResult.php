@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use MongoDB\Laravel\Eloquent\Model; // <-- PASTIKAN INI!
+use MongoDB\Laravel\Eloquent\Model; 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use App\Models\User; // Jika relasi dibutuhkan
+use App\Models\User; 
 
 class DiagnosisResult extends Model
 {
@@ -15,7 +15,7 @@ class DiagnosisResult extends Model
     protected $primaryKey = '_id';
 
     protected $fillable = [
-        'user_id',          // Pastikan user_id ada dan tipe datanya sesuai dengan ID di Auth::id()
+        'user_id',          
         'input_data',
         'predicted_diagnosis',
         'timestamp',

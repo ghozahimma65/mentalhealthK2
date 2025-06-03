@@ -13,21 +13,24 @@ use App\Http\Controllers\RiwayatDiagnosisController;
 use App\Http\Controllers\Admin\MeditationController;
 use App\Http\Controllers\Admin\QuoteController;
 use App\Http\Controllers\OutcomeController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PredictionHistoryController;
 use App\Http\Controllers\Admin\AdminOutcomeController; 
 use App\Http\Controllers\Admin\RiwayatOutcomeController;
+use App\Http\Controllers\Admin\AdminTambahController;
 
 
 // --- RUTE PUBLIK / UMUM ---
 
-// -------KALAU MAU NAMBAHIN ROUTE SESUAIKAN TEMPATNYA YA(ROUTE UNTUK ADMIN DAN USER-------)
-// Halaman landing
+// Halaman landing page
 Route::get('/', function () {
-    return view('landing');
-})->name('landing');
+    return view('landing'); 
+})->name('landing'); 
 
 // Rute untuk halaman diagnosis (bisa diakses tanpa login) - Untuk Pasien/User Biasa
 Route::get('/diagnosis', [DiagnosisController::class, 'showDiagnosisForm'])->name('diagnosis.form');
 Route::post('/diagnosis', [DiagnosisController::class, 'submitDiagnosis'])->name('diagnosis.submit');
+
 
 // Rute untuk pengujian koneksi MongoDB
 Route::get('/test-mongo', function () {
@@ -45,34 +48,38 @@ Route::get('/test-mongo', function () {
 })->name('test.mongo');
 
 
-// --- RUTE YANG MEMERLUKAN AUTENTIKASI (PENGGUNA BIASA) ---
-Route::middleware('auth')->group(function () {
-    // Rute untuk dashboard umum (akan mengarahkan ke dashboard admin jika user adalah admin)
-    Route::get('/dashboard', function () {
-        if (Auth::user()->isAdmin()) { // Pastikan method isAdmin() ada di model User Anda
-            return redirect()->route('admin.dashboard');
-        }
-        return view('dashboard'); // View untuk pengguna biasa
-    })->name('dashboard');
+// --- RUTE YANG MEMERLUKAN AUTENTIKASI (PENGGUNA BIASA & ADMIN) ---
+// Middleware 'verified' ditambahkan untuk verifikasi email
+Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Rute untuk fitur prediksi (jika ini untuk pengguna biasa)
-    Route::get('/predict', [PredictionController::class, 'showCreateForm'])->name('predictions.create');
-    Route::post('/predict', [PredictionController::class, 'predict'])->name('predictions.predict');
-    Route::get('/history', [PredictionController::class, 'showHistory'])->name('predictions.history');
+    // Rute Dashboard Utama
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 
     Route::get('/outcome/create', [OutcomeController::class, 'create'])->name('outcome.create');
+    // Proses submit form perkembangan
     Route::post('/outcome', [OutcomeController::class, 'store'])->name('outcome.store');
-    
-    Route::get('/outcome/progress', [OutcomeController::class, 'progress'])->name('outcome.progress');
-    
+    // Melihat riwayat/progress perkembangan (metode progress() sudah punya logika user/admin)
+    Route::get('/outcome/comprehensive-history', [OutcomeController::class, 'viewComprehensiveHistory'])->name('outcome.comprehensive_history'); 
+    // Rute untuk detail satu record perkembangan
     Route::get('/outcome/{outcome}', [OutcomeController::class, 'show'])->name('outcome.show');
+
+    Route::get('/predictions/history', [DiagnosisController::class, 'historyIndex'])->name('predictions.history');
+    Route::get('/predictions/{diagnosisResult}', [DiagnosisController::class, 'historyShow'])->name('predictions.show');
+
+    Route::get('/history/select-type', [PredictionHistoryController::class, 'selectHistoryType'])->name('history.select_type');
+    // --- PENGATURAN PROFIL PENGGUNA ---
+    // Uncomment jika Anda menggunakan ProfileController
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 
 // --- RUTE KHUSUS ADMIN ---
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    // Dashboard Admin
+    // Dashboard Admin (akan memanggil AdminDashboardController@index)
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // --- Rute untuk Manajemen Pengguna (DetailPenggunaController) ---
@@ -108,17 +115,20 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('/quotes', [QuoteController::class, 'store'])->name('quotes.store');
     Route::delete('/quotes/{quote}', [QuoteController::class, 'destroy'])->name('quotes.destroy');
 
+    Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah');
+    Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store');
+
     Route::get('/classification-trends', [AdminDashboardController::class, 'showClassificationTrends'])->name('classification_trends');
 });
 
 
 // --- RUTE AUTENTIKASI BAWAAN LARAVEL BREEZE/FORTIFY ---
-    // Rute untuk menambah data 
-    Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah');
-    Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store');
 
+    // Rute untuk admin melihat semua data outcome dari semua pengguna
+    // Metode 'progress' di OutcomeController sudah memiliki logika isAdmin()
     Route::get('/outcomes/all', [OutcomeController::class, 'progress'])->name('outcomes.all');
 
 
 
+// Rute autentikasi bawaan Laravel (login, register, reset password, dll.)
 require __DIR__.'/auth.php';
