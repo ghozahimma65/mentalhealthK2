@@ -131,9 +131,9 @@ class MyApp extends StatelessWidget {
           } else {
             // Fallback jika argumen tidak valid atau hilang
             print("ERROR: Rute /hasil_outcome dipanggil tanpa argumen yang valid. Argumen asli: $args");
-            return const Scaffold(
-              appBar: AppBar(title: const Text('Error')), // <--- Hapus 'const' di sini: appBar: const AppBar(...)
-              body: Center(child: const Text('Argumen hasil tes perkembangan tidak valid atau hilang.')), // <--- Hapus 'const' di sini: body: const Center(...)
+            return Scaffold(
+              appBar: AppBar(title: Text('Error')), // <--- Hapus 'const' di sini: appBar: const AppBar(...)
+              body: Center(child: Text('Argumen hasil tes perkembangan tidak valid atau hilang.')), // <--- Hapus 'const' di sini: body: const Center(...)
             );
           }
         },
@@ -168,8 +168,8 @@ class MyApp extends StatelessWidget {
             return DetailHasilDiagnosaPage(rawDiagnosisResultCode: resultCode);
           } else {
             print("ERROR: Rute /detailhasil dipanggil tanpa argumen kode diagnosis yang valid atau dapat dikonversi. Argumen asli: $args");
-            return const Scaffold(
-              appBar: AppBar(title: const Text('Error')), // <--- Hapus 'const' di sini: appBar: const AppBar(...)
+            return Scaffold(
+              appBar: AppBar(title: Text('Error')), // <--- Hapus 'const' di sini: appBar: const AppBar(...)
               body: Center(child: const Text('Argumen kode diagnosis tidak valid atau hilang.')), // <--- Hapus 'const' di sini: body: const Center(...)
             );
           }

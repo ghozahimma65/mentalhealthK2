@@ -4,15 +4,12 @@ import 'dart:convert';
 
 // Model untuk data input yang akan dikirim ke API
 class OutcomeInput {
-  // Mengubah tipe data menjadi int
-  final int? diagnosis; // Tipe int karena value di Option sekarang int
+  final int? diagnosis;
   final int? symptomSeverity;
   final int? moodScore;
-  final double? physicalActivity; // Tipe double untuk mendukung desimal
-  // Mengubah tipe data menjadi int
-  final int? medication; // Tipe int
-  // Mengubah tipe data menjadi int
-  final int? therapyType; // Tipe int
+  final double? physicalActivity;
+  final int? medication;
+  final int? therapyType;
   final int? treatmentDuration;
   final int? stressLevel;
   final String? userId;
@@ -29,7 +26,6 @@ class OutcomeInput {
     this.userId,
   });
 
-  // Konversi objek OutcomeInput ke format JSON (Map<String, dynamic>)
   Map<String, dynamic> toJson() {
     return {
       'diagnosis': diagnosis,
@@ -45,25 +41,31 @@ class OutcomeInput {
   }
 }
 
-// Model untuk data hasil yang diterima dari API (tidak ada perubahan signifikan)
+// Model untuk data hasil yang diterima dari API
 class OutcomeOutput {
-  final String? predictedOutcome; // String karena hasil AI bisa berupa kategori teks
+  final int? predictedOutcome; // DIUBAH KE int? agar sesuai HasilPenilaianDiriPage
   final String? userId;
   final DateTime? timestamp;
+  final Map<String, dynamic>? originalAnswers; // Opsional: jika API mengembalikan input
+  final String? feedbackMessage; // Opsional: jika API memberikan pesan feedback
 
   OutcomeOutput({
     this.predictedOutcome,
     this.userId,
     this.timestamp,
+    this.originalAnswers,
+    this.feedbackMessage,
   });
 
   factory OutcomeOutput.fromJson(Map<String, dynamic> json) {
     return OutcomeOutput(
-      predictedOutcome: json['predicted_outcome'] as String?,
+      predictedOutcome: json['predicted_outcome'] as int?, // Pastikan API mengirim int
       userId: json['user_id'] as String?,
       timestamp: json['timestamp'] != null
           ? DateTime.tryParse(json['timestamp'])
           : null,
+      originalAnswers: json['input_data'] as Map<String, dynamic>?, // Jika API mengirim input kembali
+      feedbackMessage: json['feedback_message'] as String?, // Pesan feedback dari API
     );
   }
 }

@@ -117,6 +117,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('/tambah', [AdminTambahController::class, 'create'])->name('tambah');
     Route::post('/tambah', [AdminTambahController::class, 'store'])->name('tambah.store');
+
+    Route::get('/classification-trends', [AdminDashboardController::class, 'showClassificationTrends'])->name('classification_trends');
 });
 
 

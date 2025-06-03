@@ -1,26 +1,30 @@
 @extends('admin.dashboard')
 
-@section('title', 'Klasifikasi Outcome')
-@section('header_title', 'Klasifikasi Outcome')
+@section('title', 'Klasifikasi Outcome Tertunda') {{-- Judul disesuaikan --}}
+@section('header_title', 'Klasifikasi Outcome Tertunda') {{-- Judul disesuaikan --}}
 
 @section('content')
     <div class="container p-6 mx-auto bg-white rounded shadow-md">
         <h1 class="mb-4 text-2xl font-bold">Detail Pengguna & Inputan Outcome</h1>
+    <div class="container p-6 mx-auto bg-white rounded shadow-md">
+        <h1 class="mb-4 text-2xl font-bold">Detail Pengguna & Inputan Outcome Tertunda</h1>
 
         @if (session('success'))
-            <div class="alert-success">
-                {{ session('success') }}
+            <div class="relative px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded" role="alert">
+                <strong class="font-bold">Sukses!</strong>
+                <span class="block sm:inline">{{ session('success') }}</span>
             </div>
         @endif
 
         @if (session('error'))
-            <div class="alert-error">
-                {{ session('error') }}
+            <div class="relative px-4 py-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline">{{ session('error') }}</span>
             </div>
         @endif
 
         @if ($outcomeResults->isEmpty())
-            <p class="text-center text-gray-600">Tidak ada data outcome yang menunggu untuk diklasifikasi.</p>
+            <p class="py-10 text-center text-gray-600">Tidak ada data outcome yang menunggu untuk diklasifikasi.</p>
         @else
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white">
@@ -30,86 +34,41 @@
                             <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">WAKTU PENGAJUAN</th>
                             <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">INPUTAN (OUTCOME)</th>
                             <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">AKSI</th>
+                            <th class="px-4 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">USER</th>
+                            <th class="px-4 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">WAKTU PENGAJUAN</th>
+                            <th class="px-4 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">INPUTAN (OUTCOME)</th>
+                            <th class="px-4 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b border-gray-200">AKSI</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-gray-700">
                         @foreach ($outcomeResults as $outcome)
                             <tr>
-                                <td class="px-4 py-2 border-b border-gray-200">{{ $outcome->user ? $outcome->user->name : 'Pengguna Tidak Dikenal' }}</td>
-                                <td class="px-4 py-2 border-b border-gray-200">{{ $outcome->timestamp ? $outcome->timestamp->format('d M Y, H:i') : '-' }}</td>
-                                <td class="px-4 py-2 border-b border-gray-200">
-                                    <ul class="pl-5 text-sm list-disc"> {{-- Menambah text-sm agar lebih ringkas --}}
-                                        {{-- Iterasi melalui input_data dan panggil method helper untuk deskripsi --}}
-                                        {{-- Perhatikan bahwa kunci di input_data (dari Flask) mungkin memiliki format yang sedikit berbeda --}}
-
-                                <td class="px-4 py-2 border-b border-gray-200">{{ $outcome->user ? $outcome->user->name : 'Pengguna Tidak Dikenal' }}</td>
-                                <td class="px-4 py-2 border-b border-gray-200">{{ $outcome->timestamp ? $outcome->timestamp->format('d M Y, H:i') : '-' }}</td>
-                                <td class="px-4 py-2 border-b border-gray-200">
-                                    <ul class="pl-5 text-sm list-disc">
-                                        {{-- Untuk 'user_id' (jika Anda ingin menampilkan ini dari input_data) --}}
-                                        @if (isset($outcome->input_data['user_id']))
-                                            <li><strong>ID Pengguna Input:</strong> {{ $outcome->input_data['user_id'] }}</li>
-                                        @endif
-
-                                        {{-- Perbaikan: Sesuaikan nama kunci dengan yang ada di MongoDB --}}
-
-                                        {{-- Untuk 'Diagnosis' --}}
-                                        @if (isset($outcome->input_data['Diagnosis']))
-                                            <li><strong>Diagnosis Awal:</strong> {{ $outcome->getDiagnosisDescription($outcome->input_data['Diagnosis']) }}</li>
-                                        @endif
-                                        
-                                        {{-- Untuk 'Symptom Severity (1-10)' --}}
-                                        @if (isset($outcome->input_data['Symptom Severity (1-10)']))
-                                            <li><strong>Tingkat Keparahan Gejala:</strong> {{ $outcome->getSymptomSeverityDescription($outcome->input_data['Symptom Severity (1-10)']) }}</li>
-                                        @endif
-
-                                        {{-- Untuk 'Mood Score (1-10)' --}}
-                                        @if (isset($outcome->input_data['Mood Score (1-10)']))
-                                            <li><strong>Skor Suasana Hati:</strong> {{ $outcome->getMoodScoreDescription($outcome->input_data['Mood Score (1-10)']) }}</li>
-                                        @endif
-
-                                        {{-- Untuk 'Physical Activity (hrs/week)' --}}
-                                        @if (isset($outcome->input_data['Physical Activity (hrs/week)']))
-                                            <li><strong>Aktivitas Fisik:</strong> {{ $outcome->getPhysicalActivityDescription($outcome->input_data['Physical Activity (hrs/week)']) }}</li>
-                                        @endif
-
-                                        {{-- Untuk 'Medication' --}}
-                                        @if (isset($outcome->input_data['Medication']))
-                                            <li><strong>Pengobatan:</strong> {{ $outcome->getMedicationDescription($outcome->input_data['Medication']) }}</li>
-                                        @endif
-
-                                        {{-- Untuk 'Therapy Type' --}}
-                                        @if (isset($outcome->input_data['Therapy Type']))
-                                            <li><strong>Jenis Terapi:</strong> {{ $outcome->getTherapyTypeDescription($outcome->input_data['Therapy Type']) }}</li>
-                                        @endif
-
-                                        {{-- Untuk 'Treatment Duration (weeks)' --}}
-                                        @if (isset($outcome->input_data['Treatment Duration (weeks)']))
-                                            <li><strong>Durasi Pengobatan:</strong> {{ $outcome->getTreatmentDurationDescription($outcome->input_data['Treatment Duration (weeks)']) }}</li>
-                                        @endif
-
-                                        {{-- Untuk 'Stress Level (1-10)' --}}
-                                        @if (isset($outcome->input_data['Stress Level (1-10)']))
-                                            <li><strong>Tingkat Stres:</strong> {{ $outcome->getStressLevelDescription($outcome->input_data['Stress Level (1-10)']) }}</li>
-                                        @endif
-
-                                        {{-- Jika ada field lain yang tersimpan di input_data yang tidak memiliki metode khusus, tampilkan langsung --}}
-                                        @foreach ($outcome->input_data as $key => $value)
-                                            {{-- Lewati kunci yang sudah dihandle di atas untuk menghindari duplikasi --}}
-                                            @if (!in_array($key, [
-                                                'user_id', 'Diagnosis', 'Symptom Severity (1-10)', 'Mood Score (1-10)',
-                                                'Physical Activity (hrs/week)', 'Medication', 'Therapy Type',
-                                                'Treatment Duration (weeks)', 'Stress Level (1-10)'
-                                            ]))
-                                                <li><strong>{{ str_replace('_', ' ', ucfirst($key)) }}:</strong> {{ $value }}</li>
-                                            @endif
-                                        @endforeach
+                                <td class="px-4 py-3 border-b border-gray-200">{{ $outcome->user ? $outcome->user->name : 'Pengguna Tidak Dikenal' }}</td>
+                                <td class="px-4 py-3 border-b border-gray-200">{{ $outcome->timestamp ? $outcome->timestamp->format('d M Y, H:i') : '-' }}</td>
+                                <td class="px-4 py-3 text-sm border-b border-gray-200">
+                                    {{-- Memanggil metode helper dari model $outcome --}}
+                                    {{-- Metode helper ini akan mengakses $outcome->input_data secara internal --}}
+                                    {{-- Pastikan nama kunci di input_data cocok dengan yang diakses metode helper model --}}
+                                    <ul class="pl-5 list-disc">
+                                        <li><strong>Diagnosis Awal:</strong> {{ $outcome->getDiagnosisDescriptionFromInput() }}</li>
+                                        <li><strong>Tingkat Keparahan Gejala:</strong> {{ $outcome->getSymptomSeverityDescriptionFromInput() }}</li>
+                                        <li><strong>Skor Suasana Hati:</strong> {{ $outcome->getMoodScoreDescriptionFromInput() }}</li>
+                                        <li><strong>Aktivitas Fisik:</strong> {{ $outcome->getPhysicalActivityDescriptionFromInput() }}</li>
+                                        <li><strong>Pengobatan:</strong> {{ $outcome->getMedicationDescriptionFromInput() }}</li>
+                                        <li><strong>Jenis Terapi:</strong> {{ $outcome->getTherapyTypeDescriptionFromInput() }}</li>
+                                        <li><strong>Durasi Pengobatan:</strong> {{ $outcome->getTreatmentDurationDescriptionFromInput() }}</li>
+                                        <li><strong>Tingkat Stres:</strong> {{ $outcome->getStressLevelDescriptionFromInput() }}</li>
+                                        {{-- Jika ada field lain di input_data yang ingin ditampilkan deskripsinya, buatkan metode helper di model --}}
                                     </ul>
                                 </td>
                                 <td class="px-4 py-2 border-b border-gray-200">
                                     <form action="{{ route('admin.outcome.prediksi', $outcome->id) }}" method="POST">
+                                <td class="px-4 py-3 text-center border-b border-gray-200">
+                                    <form action="{{ route('admin.outcome.prediksi', $outcome->id) }}" method="POST"> {{-- Pastikan nama rute 'admin.outcome.prediksi' benar --}}
                                         @csrf
-                                        <button type="submit" class="px-3 py-1 text-sm font-bold text-white bg-blue-500 rounded hover:bg-blue-700">Klasifikasi</button>
+                                        <button type="submit" class="px-4 py-2 text-xs font-bold text-white bg-blue-500 rounded hover:bg-blue-700">
+                                            Klasifikasi
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
@@ -122,33 +81,8 @@
 @endsection
 
 @push('styles')
+    {{-- Anda bisa menggunakan kelas Tailwind langsung atau CSS kustom jika diperlukan --}}
     <style>
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        /* Tambahkan gaya khusus tabel jika diperlukan */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            text-align: left;
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
+        /* .alert-success, .alert-error bisa diganti dengan kelas Tailwind */
     </style>
 @endpush
