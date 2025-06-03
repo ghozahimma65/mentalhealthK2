@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mobile_project/models/meditation_track.dart';
 import 'package:mobile_project/provider/meditation_provider.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:mobile_project/ApiVar.dart';
 
 class MeditationController extends GetxController {
   final MeditationProvider _provider = MeditationProvider();
@@ -75,13 +76,17 @@ class MeditationController extends GetxController {
       } else {
         // Track baru atau track berbeda, atau track yang sama tapi sudah berhenti/selesai
         currentTrack.value = track;
-        print('Mencoba memutar audio dari URL: ${track.audioPath}');
-        if (track.audioPath.isNotEmpty && Uri.tryParse(track.audioPath)?.isAbsolute == true) {
+        print(
+            'Mencoba memutar audio dari URL: ${MainUrl}/storage/${track.audioPath}');
+        if (track.audioPath.isNotEmpty && // 1. Periksa apakah audioPath tidak kosong
+    Uri.tryParse('$MainUrl/storage/${track.audioPath}')?.isAbsolute == true) {
           await audioPlayer.stop(); // Hentikan dulu audio sebelumnya jika ada
-          await audioPlayer.play(UrlSource(track.audioPath));
+          await audioPlayer.play(UrlSource(
+              "${MainUrl}/storage/${track.audioPath}")); //pakai BASEURL ATAU MAINURL YA
           playerState.value = PlayerState.playing;
         } else {
-          print('Error: audioPath tidak valid atau bukan URL absolut: ${track.audioPath}');
+          print(
+              'Error: audioPath tidak valid atau bukan URL absolut: ${track.audioPath}');
           Get.snackbar('Error', 'URL audio tidak valid.',
               backgroundColor: Colors.orange, colorText: Colors.white);
           playerState.value = PlayerState.stopped;
@@ -91,7 +96,8 @@ class MeditationController extends GetxController {
       print("Error playing track: $e"); // Untuk debugging di konsol
       Get.snackbar('Error', 'Gagal memulai meditasi: ${e.toString()}',
           backgroundColor: Colors.red, colorText: Colors.white);
-      playerState.value = PlayerState.stopped; // Pastikan state diset jika ada error
+      playerState.value =
+          PlayerState.stopped; // Pastikan state diset jika ada error
     }
   }
 

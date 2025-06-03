@@ -1,7 +1,8 @@
-// Nama file: lib/screen/profile_screen.dart
+// lib/screen/profile_screen.dart
 import 'package:flutter/material.dart';
-
-// Asumsi Anda punya route '/login' yang sudah terdaftar di main.dart
+import 'package:get/get.dart'; // Digunakan untuk dialog dan navigasi Get.offAllNamed
+import 'package:shared_preferences/shared_preferences.dart';
+import '../services/auth_service.dart'; // Sesuaikan path jika perlu
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -11,202 +12,237 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // Contoh data, nanti diganti dengan data asli dari user
-  String userName = "Dyahna"; // Anda bisa ambil dari state management
-  String userHandle = "@dyahnaa14";
-  String userEmail = "dyahna@example.com";
-  final String userImageUrl =
-      'assets/images/avatar_placeholder.png'; // GANTI PATH INI
+  String _userName = "Pengguna"; // Nilai default
+  String _userEmail = "email@example.com"; // Nilai default
+  bool _isLoading = true;
 
-  // Helper widget untuk membuat satu baris menu/opsi
-  Widget _buildSettingsTile({
-    required IconData icon,
-    required String title,
-    String? subtitle,
-    VoidCallback? onTap,
-  }) {
-    return ListTile(
-      leading: CircleAvatar(
-        radius: 20,
-        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-        child: Icon(icon, color: Theme.of(context).primaryColor, size: 20),
+  // Instance AuthService untuk menggunakan metode logout
+  final AuthService _authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    if (!mounted) return; // Pastikan widget masih ada di tree
+    setState(() {
+      _isLoading = true;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return; // Cek lagi setelah await
+    setState(() {
+      // Mengambil data pengguna yang disimpan oleh AuthService saat login
+      _userName = prefs.getString('user_name') ?? "Pengguna";
+      _userEmail = prefs.getString('user_email') ?? "email@example.com";
+      _isLoading = false;
+    });
+  }
+
+  // Widget untuk bagian header profil yang sudah dimodifikasi
+  Widget _buildProfileHeader(BuildContext context) {
+    if (_isLoading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 40.0),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
+      margin: const EdgeInsets.only(bottom: 24.0, top: 10.0),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16.0),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withOpacity(0.05),
+            spreadRadius: 1,
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-      subtitle: subtitle != null
-          ? Text(subtitle,
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600))
-          : null,
-      trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 0),
-      dense: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Foto profil dihilangkan
+          const SizedBox(height: 8),
+          Text(
+            _userName, // Menampilkan nama pengguna dinamis
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge?.color
+                ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 6.0),
+          Text(
+            _userEmail, // Menampilkan email pengguna dinamis
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey.shade600,
+                ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          // Username handle dan tombol edit dihilangkan
+        ],
+      ),
     );
   }
 
-  // Fungsi untuk menampilkan SnackBar (jika halaman belum ada)
+  // Helper widget untuk membuat item menu
+  Widget _buildSettingsTile({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    VoidCallback? onTap,
+    Color? iconColor,
+    Color? textColor,
+    bool showArrow = true,
+  }) {
+    return ListTile(
+      leading: CircleAvatar(
+        radius: 22,
+        backgroundColor: (iconColor ?? Theme.of(context).colorScheme.primaryContainer).withOpacity(0.7),
+        child: Icon(icon, color: iconColor ?? Theme.of(context).colorScheme.onPrimaryContainer, size: 22),
+      ),
+      title: Text(title, style: TextStyle(fontWeight: FontWeight.w500, color: textColor ?? Theme.of(context).textTheme.bodyLarge?.color, fontSize: 16)),
+      trailing: showArrow ? Icon(Icons.chevron_right, color: Colors.grey.shade500) : null,
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    );
+  }
+
+  // Fungsi untuk menampilkan Snackbar jika fitur belum ada
   void _showFeatureNotAvailableSnackbar(String featureName) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content: Text('Halaman $featureName belum tersedia'),
-          duration: const Duration(seconds: 1)),
+    Get.snackbar(
+      'Segera Hadir',
+      'Fitur $featureName belum tersedia saat ini.',
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.grey.shade800,
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(10),
+      borderRadius: 8,
+      duration: const Duration(seconds: 2),
     );
   }
 
   // Fungsi untuk menangani logout
   void _handleLogout() {
-    showDialog(
-      context: context,
-      builder: (BuildContext ctx) => AlertDialog(
-        title: const Text('Konfirmasi Logout'),
-        content: const Text('Anda yakin ingin keluar?'),
-        actions: <Widget>[
-          TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Batal')),
-          TextButton(
-            child: const Text('Logout', style: TextStyle(color: Colors.red)),
-            onPressed: () {
-              Navigator.of(ctx).pop(); // Tutup dialog
-              // Navigasi ke login dan hapus semua route sebelumnya
-              Navigator.pushNamedAndRemoveUntil(
-                  context, '/login', (Route<dynamic> route) => false);
-            },
-          ),
-        ],
-      ),
+    Get.defaultDialog(
+        title: "Konfirmasi Logout",
+        middleText: "Anda yakin ingin keluar dari akun ini?",
+        titleStyle: Get.textTheme.titleLarge?.copyWith(color: Theme.of(context).textTheme.bodyLarge?.color),
+        middleTextStyle: Get.textTheme.bodyMedium?.copyWith(color: Theme.of(context).textTheme.bodySmall?.color),
+        textConfirm: "Logout",
+        textCancel: "Batal",
+        cancelTextColor: Get.isDarkMode ? Colors.white70 : Colors.black87,
+        confirmTextColor: Colors.white,
+        buttonColor: Colors.redAccent.shade400,
+        backgroundColor: Theme.of(context).dialogBackgroundColor,
+        barrierDismissible: false,
+        radius: 15.0,
+        onConfirm: () async {
+          await _authService.logout(); // Panggil method logout dari AuthService
+          print('User logged out, navigating to login.');
+          if (mounted) {
+            Get.offAllNamed('/login'); // Pastikan rute '/login' terdaftar
+          }
+           Get.snackbar(
+            "Logout Berhasil",
+            "Anda telah keluar.",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+        },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // AppBar sederhana
       appBar: AppBar(
         title: const Text('Profil Saya'),
-        elevation: 0.5, // Sedikit shadow
-        // backgroundColor: Colors.white, // Atau warna tema Anda
-        // foregroundColor: Colors.black87,
+        elevation: 0.8,
+        centerTitle: true,
+        automaticallyImplyLeading: false, // Menghilangkan tombol back otomatis
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-        children: [
-          // Kartu Header Profil
-          Card(
-            elevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            margin: const EdgeInsets.only(bottom: 25.0),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
+      body: RefreshIndicator(
+        onRefresh: _loadUserData, // Memanggil _loadUserData saat refresh
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+          children: [
+            _buildProfileHeader(context),
+
+            // Opsi "Ubah Kata Sandi" dan "Pengaturan Notifikasi" dihilangkan
+
+            // --- Informasi & Bantuan ---
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0, bottom: 8.0, left: 8.0, right: 8.0),
+              child: Text('Informasi & Bantuan',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w600,
+                      )),
+            ),
+            Card(
+              elevation: 1.0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 32,
-                    backgroundImage: AssetImage(userImageUrl),
-                    onBackgroundImageError: (e, s) {
-                      print("Error load avatar: $e");
-                    },
-                    child: userImageUrl.isEmpty
-                        ? const Icon(Icons.person,
-                            size: 32, color: Colors.white70)
-                        : null,
-                    backgroundColor: Colors.grey.shade300,
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(userName,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 4),
-                        Text(userHandle,
-                            style: TextStyle(
-                                fontSize: 14, color: Colors.grey.shade700)),
-                        const SizedBox(height: 4),
-                        Text(userEmail,
-                            style: TextStyle(
-                                fontSize: 12, color: Colors.grey.shade600)),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                      icon: Icon(Icons.edit_outlined,
-                          color: Theme.of(context).primaryColor, size: 20),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/edit_profile');
-                      })
+                  _buildSettingsTile(
+                      context: context,
+                      icon: Icons.help_outline_rounded,
+                      title: 'Bantuan & Dukungan',
+                      onTap: () {
+                        // Ganti dengan navigasi jika halaman sudah ada
+                        // Contoh: Get.toNamed('/bantuan');
+                        _showFeatureNotAvailableSnackbar('Bantuan & Dukungan');
+                      }),
+                  const Divider(height: 0, indent: 70, endIndent: 16),
+                  _buildSettingsTile(
+                      context: context,
+                      icon: Icons.info_outline_rounded,
+                      title: 'Tentang Aplikasi',
+                      onTap: () {
+                        // Contoh: Get.toNamed('/tentang_aplikasi');
+                        _showFeatureNotAvailableSnackbar('Tentang Aplikasi');
+                      }),
+                  const Divider(height: 0, indent: 70, endIndent: 16),
+                  _buildSettingsTile(
+                      context: context,
+                      icon: Icons.privacy_tip_outlined,
+                      title: 'Kebijakan Privasi',
+                      onTap: () {
+                        // Contoh: Get.toNamed('/kebijakan_privasi');
+                        _showFeatureNotAvailableSnackbar('Kebijakan Privasi');
+                      }),
                 ],
               ),
             ),
-          ),
+            const SizedBox(height: 24),
 
-          // --- Pengaturan Akun ---
-          Text('Pengaturan Akun',
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade700)),
-          const SizedBox(height: 8),
-          _buildSettingsTile(
-              icon: Icons.lock_outline_rounded,
-              title: 'Ubah Kata Sandi',
-              subtitle: 'Perbarui kata sandi Anda',
-              onTap: () => Navigator.pushNamed(context, '/ubah_kata_sandi')),
-          const Divider(height: 1),
-          _buildSettingsTile(
-              icon: Icons.notifications_active_outlined,
-              title: 'Pengaturan Notifikasi',
-              subtitle: 'Atur pengingat dan pemberitahuan',
-              onTap: () =>
-                  Navigator.pushNamed(context, '/pengaturan_notifikasi')),
-          const SizedBox(height: 25),
-
-          // --- Informasi & Bantuan ---
-          Text('Informasi & Bantuan',
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade700)),
-          const SizedBox(height: 8),
-          _buildSettingsTile(
-              icon: Icons.help_outline_rounded,
-              title: 'Bantuan & Dukungan',
-              onTap: () => Navigator.pushNamed(context, '/bantuan')),
-          const Divider(height: 1),
-          _buildSettingsTile(
-              icon: Icons.info_outline_rounded,
-              title: 'Tentang Aplikasi',
-              onTap: () => Navigator.pushNamed(context, '/tentang_aplikasi')),
-          const Divider(height: 1),
-          _buildSettingsTile(
-              icon: Icons.privacy_tip_outlined,
-              title: 'Kebijakan Privasi',
-              onTap: () => Navigator.pushNamed(context, '/kebijakan_privasi')),
-          const SizedBox(height: 30),
-
-          // --- Logout ---
-          ListTile(
-            // Menggunakan ListTile agar bisa ganti warna ikon dan teks
-            leading: CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.red.withOpacity(0.1),
-              child:
-                  const Icon(Icons.logout_rounded, color: Colors.red, size: 20),
+            // --- Logout ---
+            Card(
+               elevation: 1.0,
+               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+               child: _buildSettingsTile(
+                context: context,
+                icon: Icons.logout_rounded,
+                title: 'Logout',
+                iconColor: Colors.redAccent.shade400,
+                textColor: Colors.redAccent.shade400,
+                showArrow: false,
+                onTap: _handleLogout,
+              ),
             ),
-            title: const Text('Logout',
-                style:
-                    TextStyle(fontWeight: FontWeight.w500, color: Colors.red)),
-            trailing: const Icon(Icons.chevron_right, color: Colors.red),
-            onTap: _handleLogout,
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 2.0, horizontal: 0),
-            dense: true,
-          ),
-          const SizedBox(height: 20),
-        ],
+            const SizedBox(height: 20),
+          ],
+        ),
       ),
     );
   }

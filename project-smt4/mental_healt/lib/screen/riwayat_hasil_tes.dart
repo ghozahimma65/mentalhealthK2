@@ -279,7 +279,6 @@ class _RiwayatHasilTesScreenState extends State<RiwayatHasilTesScreen> with Sing
                 arguments: {
                   'outcomePrediction': item.predictedOutcome,
                   'answers': item.originalAnswers, // Pastikan API mengembalikan ini dan model menyimpannya
-                  'feedbackMessage': item.feedbackMessage, // Jika ada
                   'timestamp': item.timestamp?.toIso8601String(),
                 },
               );

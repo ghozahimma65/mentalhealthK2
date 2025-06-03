@@ -43,29 +43,29 @@ class OutcomeInput {
 
 // Model untuk data hasil yang diterima dari API
 class OutcomeOutput {
-  final int? predictedOutcome; // DIUBAH KE int? agar sesuai HasilPenilaianDiriPage
+  final int? predictedOutcome; // **** DIUBAH KE int? ****
   final String? userId;
   final DateTime? timestamp;
-  final Map<String, dynamic>? originalAnswers; // Opsional: jika API mengembalikan input
-  final String? feedbackMessage; // Opsional: jika API memberikan pesan feedback
+  final Map<String, dynamic>? originalAnswers; // Untuk menampilkan jawaban asli jika API mengirimkannya
+
 
   OutcomeOutput({
     this.predictedOutcome,
     this.userId,
     this.timestamp,
     this.originalAnswers,
-    this.feedbackMessage,
+
   });
 
   factory OutcomeOutput.fromJson(Map<String, dynamic> json) {
     return OutcomeOutput(
-      predictedOutcome: json['predicted_outcome'] as int?, // Pastikan API mengirim int
+      predictedOutcome: json['predicted_outcome'] as int?, // **** DIPARSING SEBAGAI int? ****
       userId: json['user_id'] as String?,
       timestamp: json['timestamp'] != null
           ? DateTime.tryParse(json['timestamp'])
           : null,
-      originalAnswers: json['input_data'] as Map<String, dynamic>?, // Jika API mengirim input kembali
-      feedbackMessage: json['feedback_message'] as String?, // Pesan feedback dari API
+      originalAnswers: json['input_data'] as Map<String, dynamic>?, // Sesuaikan dengan kunci dari API
+
     );
   }
 }

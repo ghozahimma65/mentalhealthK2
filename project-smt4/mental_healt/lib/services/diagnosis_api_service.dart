@@ -91,6 +91,7 @@ class DiagnosisApiService {
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         if (jsonResponse['success'] == true && jsonResponse['data'] is List) {
           List<dynamic> data = jsonResponse['data'];
+          print(data);
           // Pastikan format 'data' dari API Anda sesuai dengan yang diharapkan DiagnosisOutput.fromJson
           // Jika API Anda mengembalikan input_data juga, dan Anda ingin menampilkannya di riwayat,
           // pastikan DiagnosisOutput.fromJson bisa menerimanya atau Anda memetakannya di sini.

@@ -2,8 +2,10 @@
 
 class ApiEndpoints {
   // PASTIKAN ADA 'static const String' DI SINI
-  static const String baseUrl = 'http://127.0.0.1:8000/api';
-  // static const String baseUrl = 'ngrok';
+   static const String baseUrl = 'http://127.0.0.1:8000/api';
+   static const String mainUrl = 'http://127.0.0.1:8000/api';
+   
+  // static const String baseUrl = 'https://fb48-103-109-209-253.ngrok-free.app/api';
 
   static const String meditations =
       '/meditasi'; // Pastikan ini singular jika rute Laravel Anda singular
@@ -19,5 +21,13 @@ class ApiEndpoints {
   static const String resetPassword =
       '/auth/password/reset'; // Sesuaikan jika path di Laravel berbeda
 
+
+  // --- Endpoint untuk Diagnosis ---
+  static const String submitDiagnosis = '/diagnosa/submit';
+  static const String historyDiagnosis = '/diagnosa/history';
+
+  // --- Endpoint untuk Tes Perkembangan (Outcome) ---
+  static const String submitOutcome = '/outcome/submit';
+  static const String historyOutcome = '/outcome/history';
   // ... endpoint lain ...
 }

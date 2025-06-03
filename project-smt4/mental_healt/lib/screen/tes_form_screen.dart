@@ -327,13 +327,11 @@ class _TesFormScreenState extends State<TesFormScreen> {
           arguments: {
             'outcomePrediction': _outcomeController.latestOutcome!.predictedOutcome, // Dari API (int?)
             'answers': Map<String, dynamic>.from(_answers), // Jawaban asli pengguna
-            'feedbackMessage': _outcomeController.latestOutcome!.feedbackMessage, // Dari API
             'timestamp': _outcomeController.latestOutcome!.timestamp?.toIso8601String(), // Dari API
           },
         );
       } else if (_outcomeController.errorMessage != null) {
         // Error message sudah ditangani oleh EasyLoading di controller
-        // Bisa tambahkan log atau feedback spesifik di sini jika perlu
         print("Gagal mengirim tes perkembangan: ${_outcomeController.errorMessage}");
       } else {
         // Fallback jika tidak ada hasil dan tidak ada error (seharusnya jarang terjadi)
