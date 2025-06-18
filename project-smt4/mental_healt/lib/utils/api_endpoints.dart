@@ -2,10 +2,10 @@
 
 class ApiEndpoints {
   // PASTIKAN ADA 'static const String' DI SINI
-   static const String baseUrl = 'http://127.0.0.1:8000/api';
-   static const String mainUrl = 'http://127.0.0.1:8000/api';
+   static const String baseUrl = 'https://b163-103-109-209-253.ngrok-free.app/api';
+   //http://127.0.0.1:8000/api';
    
-  // static const String baseUrl = 'https://fb48-103-109-209-253.ngrok-free.app/api';
+  // static const String baseUrl = 'http://127.0.0.1:8000https://b163-103-109-209-253.ngrok-free.app/api';
 
   static const String meditations =
       '/meditasi'; // Pastikan ini singular jika rute Laravel Anda singular

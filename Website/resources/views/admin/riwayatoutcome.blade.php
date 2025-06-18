@@ -4,38 +4,35 @@
 @section('header_title', 'Riwayat Outcome Pengguna')
 
 @section('content')
+    {{-- Menggunakan satu kontainer utama dan satu judul H1 --}}
     <div class="container p-6 mx-auto bg-white rounded shadow-md">
-        <h1 class="mb-4 text-2xl font-bold">Riwayat Outcome Pengguna</h1>
-    <div class="container py-8 mx-auto">
-        <h1 class="mb-6 text-3xl font-bold text-center text-gray-800">Riwayat Outcome Pengguna</h1>
+        <h1 class="mb-6 text-2xl font-bold text-gray-800">Riwayat Outcome Pengguna</h1>
 
         @if (session('success'))
-            <div class="alert-success">
-                {{ session('success') }}
+            {{-- Menggunakan kelas Tailwind untuk alert sukses --}}
+            <div class="relative px-4 py-3 mb-4 text-green-700 bg-green-100 border border-green-400 rounded" role="alert">
+                <strong class="font-bold">Sukses!</strong>
+                <span class="block sm:inline">{{ session('success') }}</span>
             </div>
         @endif
 
         @if (session('error'))
-            <div class="alert-error">
-                {{ session('error') }}
+            {{-- Menggunakan kelas Tailwind untuk alert error --}}
+            <div class="relative px-4 py-3 mb-4 text-red-700 bg-red-100 border border-red-400 rounded" role="alert">
+                <strong class="font-bold">Error!</strong>
+                <span class="block sm:inline">{{ session('error') }}</span>
             </div>
         @endif
 
         @if ($riwayatOutcomes->isEmpty())
-            <p class="text-center text-gray-600">Tidak ada riwayat outcome yang tersedia.</p>
-            <div class="relative px-4 py-3 text-blue-700 bg-blue-100 border border-blue-400 rounded" role="alert">
-                <strong class="font-bold">Info:</strong>
-                <span class="block sm:inline">Belum ada riwayat outcome yang tersimpan. Lakukan klasifikasi terlebih dahulu.</span>
-            </div>
+            {{-- Pesan sederhana ketika tidak ada data --}}
+            <p class="py-10 text-center text-gray-600">Tidak ada riwayat outcome yang tersedia.</p>
         @else
             <div class="overflow-x-auto bg-white rounded-lg shadow-md">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">PENGGUNA</th>
-                            <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">HASIL OUTCOME</th>
-                            <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">TANGGAL & WAKTU OUTCOME</th>
-                            <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">PROSES ADMIN</th>
+                            {{-- Menyesuaikan kolom header tabel --}}
                             <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                 Pengguna
                             </th>
@@ -45,7 +42,6 @@
                             <th scope="col" class="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">
                                 Tanggal & Waktu Outcome
                             </th>
-                            {{-- Kolom "PROSES ADMIN" telah dihapus dari thead --}}
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -68,14 +64,15 @@
                                             default: $outcomeText = 'Outcome tidak diketahui'; break;
                                         }
                                     @endphp
-                                    <span class="text-lg font-bold">
+                                    {{-- Menghilangkan styling text-lg font-bold agar konsisten dengan riwayatdiagnosis --}}
+                                    <span> 
                                         {{ $outcomeText }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                                     {{ $outcome->timestamp ? $outcome->timestamp->format('d M Y, H:i:s') : '-' }}
                                 </td>
-                                {{-- Data "PROSES ADMIN" telah dihapus dari tbody --}}
+                                {{-- Kolom "PROSES ADMIN" sudah dihilangkan dari tbody dan thead --}}
                             </tr>
                         @endforeach
                     </tbody>
@@ -86,32 +83,8 @@
 @endsection
 
 @push('styles')
-    <style>
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        .container {
-            width: 95%;
-            margin: 0 auto;
-            padding: 3rem;
-            border-radius: 0.75rem;
-        }
-        .min-w-full {
-            min-width: 100%;
-        }
-        .divide-y > * + * {
-            border-top-width: 1px;
-        }
-    </style>
+    {{-- CSS kustom di sini bisa dihapus jika tidak ada lagi yang digunakan --}}
+    {{-- <style>
+        .container { -- Jika ini mendefinisikan ulang container Tailwind, sebaiknya dihapus -- }
+    </style> --}}
 @endpush

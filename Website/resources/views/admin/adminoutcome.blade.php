@@ -4,8 +4,7 @@
 @section('header_title', 'Klasifikasi Outcome Tertunda') {{-- Judul disesuaikan --}}
 
 @section('content')
-    <div class="container p-6 mx-auto bg-white rounded shadow-md">
-        <h1 class="mb-4 text-2xl font-bold">Detail Pengguna & Inputan Outcome</h1>
+    {{-- Menghapus duplikasi container dan h1 yang pertama --}}
     <div class="container p-6 mx-auto bg-white rounded shadow-md">
         <h1 class="mb-4 text-2xl font-bold">Detail Pengguna & Inputan Outcome Tertunda</h1>
 
@@ -30,14 +29,11 @@
                 <table class="min-w-full bg-white">
                     <thead>
                         <tr>
+                            {{-- Memperbaiki header tabel agar sesuai dengan struktur admindiagnosis.blade.php --}}
                             <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">USER</th>
                             <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">WAKTU PENGAJUAN</th>
                             <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">INPUTAN (OUTCOME)</th>
-                            <th class="px-4 py-2 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">AKSI</th>
-                            <th class="px-4 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">USER</th>
-                            <th class="px-4 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">WAKTU PENGAJUAN</th>
-                            <th class="px-4 py-3 text-xs font-semibold tracking-wider text-left text-gray-600 uppercase bg-gray-100 border-b border-gray-200">INPUTAN (OUTCOME)</th>
-                            <th class="px-4 py-3 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b border-gray-200">AKSI</th>
+                            <th class="px-4 py-2 text-xs font-semibold tracking-wider text-center text-gray-600 uppercase bg-gray-100 border-b border-gray-200">AKSI</th> {{-- Menambahkan text-center untuk konsistensi --}}
                         </tr>
                     </thead>
                     <tbody class="text-gray-700">
@@ -61,8 +57,7 @@
                                         {{-- Jika ada field lain di input_data yang ingin ditampilkan deskripsinya, buatkan metode helper di model --}}
                                     </ul>
                                 </td>
-                                <td class="px-4 py-2 border-b border-gray-200">
-                                    <form action="{{ route('admin.outcome.prediksi', $outcome->id) }}" method="POST">
+                                {{-- Memperbaiki struktur untuk sel "AKSI" --}}
                                 <td class="px-4 py-3 text-center border-b border-gray-200">
                                     <form action="{{ route('admin.outcome.prediksi', $outcome->id) }}" method="POST"> {{-- Pastikan nama rute 'admin.outcome.prediksi' benar --}}
                                         @csrf
